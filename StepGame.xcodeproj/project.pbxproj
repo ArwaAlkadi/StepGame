@@ -108,7 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				ECCB95CC2F29478100DBC1F5 /* App */,
-				ECCB95C92F29473600DBC1F5 /* Core */,
+				ECCB95C82F29473600DBC1F5 /* Services */,
 				ECCB95C72F29473600DBC1F5 /* Models */,
 				ECCB95C62F29472F00DBC1F5 /* Pages */,
 				ECCB95C12F29472F00DBC1F5 /* Resources */,
@@ -223,14 +223,6 @@
 				ECCB95D62F29484A00DBC1F5 /* HealthKitService.swift */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		ECCB95C92F29473600DBC1F5 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				ECCB95C82F29473600DBC1F5 /* Services */,
-			);
-			path = Core;
 			sourceTree = "<group>";
 		};
 		ECCB95CC2F29478100DBC1F5 /* App */ = {
