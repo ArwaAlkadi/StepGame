@@ -38,7 +38,9 @@
 		ECCB96012F294DE900DBC1F5 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96002F294DE900DBC1F5 /* ProfileView.swift */; };
 		ECCB96032F294DFF00DBC1F5 /* JoinWithCodePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */; };
 		ECCB96052F294E0F00DBC1F5 /* ShareCodePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96042F294E0F00DBC1F5 /* ShareCodePopup.swift */; };
-		ECCB96072F2952CD00DBC1F5 /* WaitingForPlayersPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96062F2952CD00DBC1F5 /* WaitingForPlayersPopup.swift */; };
+		ECCB97882F2C3DA100DBC1F5 /* WaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB97872F2C3DA100DBC1F5 /* WaitingView.swift */; };
+		ECCB978A2F2C3DB300DBC1F5 /* WaitingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */; };
+		ECCB978F2F2D89E500DBC1F5 /* RussoOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,7 +74,9 @@
 		ECCB96002F294DE900DBC1F5 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinWithCodePopup.swift; sourceTree = "<group>"; };
 		ECCB96042F294E0F00DBC1F5 /* ShareCodePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCodePopup.swift; sourceTree = "<group>"; };
-		ECCB96062F2952CD00DBC1F5 /* WaitingForPlayersPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingForPlayersPopup.swift; sourceTree = "<group>"; };
+		ECCB97872F2C3DA100DBC1F5 /* WaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingView.swift; sourceTree = "<group>"; };
+		ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingViewModel.swift; sourceTree = "<group>"; };
+		ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RussoOne-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +161,8 @@
 		ECCB95C12F29472F00DBC1F5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				ECCB97912F2D8B3D00DBC1F5 /* UI-Component */,
+				ECCB978D2F2D89DE00DBC1F5 /* Fonts */,
 				ECCAEE3D2F218AAA0047C5DF /* Assets.xcassets */,
 				ECCAEE3F2F218AAA0047C5DF /* GoogleService-Info.plist */,
 			);
@@ -168,7 +174,7 @@
 			children = (
 				ECCB95EA2F294CA700DBC1F5 /*  SetupChallengeView.swift */,
 				ECCB95EC2F294CAE00DBC1F5 /*  SetupChallengeViewModel.swift */,
-				ECCB960A2F29537000DBC1F5 /* SetupChallengePopups */,
+				ECCB96042F294E0F00DBC1F5 /* ShareCodePopup.swift */,
 			);
 			path = SetupChallengePage;
 			sourceTree = "<group>";
@@ -187,6 +193,7 @@
 			children = (
 				ECCB95E62F294C8100DBC1F5 /* StartView.swift */,
 				ECCB95E82F294C8F00DBC1F5 /* StartViewModel.swift */,
+				ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */,
 			);
 			path = StartPage;
 			sourceTree = "<group>";
@@ -199,6 +206,7 @@
 				ECCB95BC2F29472F00DBC1F5 /* EnterNamePage */,
 				ECCB95C52F29472F00DBC1F5 /* StartPage */,
 				ECCB95C22F29472F00DBC1F5 /* SetupChallengePage */,
+				ECCB97862F2C3D5900DBC1F5 /* WaitingPage */,
 				ECCB95BD2F29472F00DBC1F5 /* MapPage */,
 				ECCB95D92F294BED00DBC1F5 /* Puzzle */,
 				ECCB95BF2F29472F00DBC1F5 /* ProfilePage */,
@@ -243,14 +251,28 @@
 			path = Puzzle;
 			sourceTree = "<group>";
 		};
-		ECCB960A2F29537000DBC1F5 /* SetupChallengePopups */ = {
+		ECCB97862F2C3D5900DBC1F5 /* WaitingPage */ = {
 			isa = PBXGroup;
 			children = (
-				ECCB96042F294E0F00DBC1F5 /* ShareCodePopup.swift */,
-				ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */,
-				ECCB96062F2952CD00DBC1F5 /* WaitingForPlayersPopup.swift */,
+				ECCB97872F2C3DA100DBC1F5 /* WaitingView.swift */,
+				ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */,
 			);
-			path = SetupChallengePopups;
+			path = WaitingPage;
+			sourceTree = "<group>";
+		};
+		ECCB978D2F2D89DE00DBC1F5 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		ECCB97912F2D8B3D00DBC1F5 /* UI-Component */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "UI-Component";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -320,6 +342,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECCAEE422F218AAA0047C5DF /* Assets.xcassets in Resources */,
+				ECCB978F2F2D89E500DBC1F5 /* RussoOne-Regular.ttf in Resources */,
 				ECCAEE432F218AAA0047C5DF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,10 +356,12 @@
 			files = (
 				ECCB95D32F29481800DBC1F5 /* GameEnums.swift in Sources */,
 				ECCB95D52F29483B00DBC1F5 /* FirebaseService.swift in Sources */,
+				ECCB97882F2C3DA100DBC1F5 /* WaitingView.swift in Sources */,
 				ECCB95E52F294C6100DBC1F5 /* EnterNameViewModel.swift in Sources */,
 				ECCB95EB2F294CA700DBC1F5 /*  SetupChallengeView.swift in Sources */,
 				ECCB95F52F294D3500DBC1F5 /*  ChallengeResultPopup.swift in Sources */,
 				ECCB96032F294DFF00DBC1F5 /* JoinWithCodePopup.swift in Sources */,
+				ECCB978A2F2C3DB300DBC1F5 /* WaitingViewModel.swift in Sources */,
 				ECCB95D72F29484A00DBC1F5 /* HealthKitService.swift in Sources */,
 				ECCB95DF2F294C3D00DBC1F5 /* OnboardingView.swift in Sources */,
 				ECCB96012F294DE900DBC1F5 /* ProfileView.swift in Sources */,
@@ -352,7 +377,6 @@
 				ECCB95CD2F29478100DBC1F5 /* StepGameApp.swift in Sources */,
 				ECCB95CF2F2947E200DBC1F5 /*  PlayerModel.swift in Sources */,
 				ECCB95DB2F294C0F00DBC1F5 /* SplashView.swift in Sources */,
-				ECCB96072F2952CD00DBC1F5 /* WaitingForPlayersPopup.swift in Sources */,
 				ECCB95DD2F294C2100DBC1F5 /* SplashViewModel.swift in Sources */,
 				ECCB95F72F294D5C00DBC1F5 /* PuzzleView.swift in Sources */,
 				ECCB95F92F294D7000DBC1F5 /* PuzzleViewModel.swift in Sources */,
@@ -496,8 +520,9 @@
 				DEVELOPMENT_TEAM = Q3BRAU32HS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "الوصول للخطوات";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "الوصوول";
+				INFOPLIST_FILE = StepGame/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We use your step count to track your in-game progress";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Step data is used to update challenge progress";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -534,8 +559,9 @@
 				DEVELOPMENT_TEAM = Q3BRAU32HS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "الوصول للخطوات";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "الوصوول";
+				INFOPLIST_FILE = StepGame/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We use your step count to track your in-game progress";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Step data is used to update challenge progress";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
