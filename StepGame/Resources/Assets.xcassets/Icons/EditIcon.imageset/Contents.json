@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "EditIcon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
