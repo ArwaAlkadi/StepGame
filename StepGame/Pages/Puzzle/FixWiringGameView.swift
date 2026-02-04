@@ -18,11 +18,11 @@ struct FixWiringGameView: View {
     
     var body: some View {
         ZStack {
-            // Background gradient
+            // Background gradient - matching popup color palette
             LinearGradient(
-                colors: [Color(red: 0.1, green: 0.1, blue: 0.15),
-                        Color(red: 0.15, green: 0.15, blue: 0.2),
-                        Color(red: 0.1, green: 0.1, blue: 0.15)],
+                colors: [Color(red: 0.96, green: 0.87, blue: 0.70),
+                        Color(red: 0.94, green: 0.85, blue: 0.68),
+                        Color(red: 0.96, green: 0.87, blue: 0.70)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -37,20 +37,20 @@ struct FixWiringGameView: View {
                         VStack(spacing: 8) {
                             Text("Fix Wiring")
                                 .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
                             
                             // Timer
                             HStack(spacing: 8) {
                                 Image(systemName: "timer")
-                                    .foregroundColor(viewModel.timeRemaining <= 3 ? .red : .white)
+                                    .foregroundColor(viewModel.timeRemaining <= 3 ? .red : Color(red: 0.17, green: 0.09, blue: 0.06))
                                 Text(String(format: "%.1f", max(0, viewModel.timeRemaining)))
                                     .font(.system(size: 24, weight: .bold))
-                                    .foregroundColor(viewModel.timeRemaining <= 3 ? .red : .white)
+                                    .foregroundColor(viewModel.timeRemaining <= 3 ? .red : Color(red: 0.17, green: 0.09, blue: 0.06))
                                     .monospacedDigit()
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(Color.black.opacity(0.3))
+                            .background(Color(red: 0.91, green: 0.79, blue: 0.64))
                             .cornerRadius(10)
                         }
                         
@@ -63,7 +63,7 @@ struct FixWiringGameView: View {
                                 .font(.system(size: 20, weight: .semibold))
                                 .foregroundColor(.white)
                                 .padding(12)
-                                .background(Color.gray.opacity(0.3))
+                                .background(Color(red: 0.63, green: 0.32, blue: 0.18))
                                 .clipShape(Circle())
                         }
                     }
@@ -74,7 +74,7 @@ struct FixWiringGameView: View {
                 // Game Board
                 ZStack {
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(Color(red: 0.2, green: 0.2, blue: 0.25))
+                        .fill(Color(red: 0.85, green: 0.75, blue: 0.60))
                         .shadow(radius: 20)
                     
                     GeometryReader { geometry in
@@ -191,16 +191,16 @@ struct FixWiringGameView: View {
                     // Completion Overlay
                     if viewModel.isComplete {
                         RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.black.opacity(0.9))
+                            .fill(Color(red: 0.17, green: 0.09, blue: 0.06).opacity(0.95))
                         
                         VStack(spacing: 20) {
                             Text("✓")
                                 .font(.system(size: 80))
-                                .foregroundColor(.green)
+                                .foregroundColor(Color(red: 0.4, green: 0.8, blue: 0.4))
                             
                             Text(getSuccessMessage())
                                 .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.green)
+                                .foregroundColor(Color(red: 0.96, green: 0.87, blue: 0.70))
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal)
                             
@@ -212,7 +212,7 @@ struct FixWiringGameView: View {
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 30)
                                     .padding(.vertical, 15)
-                                    .background(Color.green)
+                                    .background(Color(red: 0.4, green: 0.8, blue: 0.4))
                                     .cornerRadius(10)
                             }
                         }
@@ -221,45 +221,34 @@ struct FixWiringGameView: View {
                     // Failure Overlay
                     if viewModel.hasFailed {
                         RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.black.opacity(0.9))
+                            .fill(Color(red: 0.17, green: 0.09, blue: 0.06).opacity(0.95))
                         
                         VStack(spacing: 20) {
                             Text("✕")
-                                .font(.system(size: 80))
+                                .font(.system(size: 80,weight: .bold))
                                 .foregroundColor(.red)
                             
                             Text("Time's Up!")
                                 .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.red)
+                                .foregroundColor(Color(red: 0.96, green: 0.87, blue: 0.70))
                             
                             Text(getFailureMessage())
                                 .font(.system(size: 16))
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color(red: 0.91, green: 0.79, blue: 0.64))
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal)
                             
-                            HStack(spacing: 16) {
-                                Button(action: {
-                                    viewModel.resetGame()
-                                }) {
-                                    Text("Try Again")
-                                        .font(.system(size: 18, weight: .semibold))
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 30)
-                                        .padding(.vertical, 15)
-                                        .background(Color.orange)
-                                        .cornerRadius(10)
-                                }
+                            HStack() {
                                 
                                 Button(action: {
                                     dismiss()
                                 }) {
                                     Text("Close")
                                         .font(.system(size: 18, weight: .semibold))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
                                         .padding(.horizontal, 30)
                                         .padding(.vertical, 15)
-                                        .background(Color.gray)
+                                        .background(Color(red: 0.91, green: 0.79, blue: 0.64))
                                         .cornerRadius(10)
                                 }
                             }
