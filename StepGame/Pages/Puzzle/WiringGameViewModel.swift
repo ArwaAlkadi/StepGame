@@ -27,9 +27,10 @@ class WiringGameViewModel: ObservableObject {
     
     private let model: WiringGameModel
     private var timer: Timer?
-    private let timeLimit: Double = 8.0
+    var timeLimit: Double = 8.0
     
-    init() {
+    init(timeLimit: Double = 8.0) {
+        self.timeLimit = timeLimit
         self.model = WiringGameModel()
         updateState()
         startTimer()

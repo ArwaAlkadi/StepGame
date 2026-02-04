@@ -1,4 +1,24 @@
+//
+//  GameMode.swift
+//  StepGame
+//
+//  Created by Rana Alqubaly on 16/08/1447 AH.
+//
+
+
 import SwiftUI
+
+// MARK: - Game Mode Enum
+enum GameMode {
+    case solo
+    case group
+}
+
+// MARK: - Player Role Enum (for Group mode)
+enum PlayerRole {
+    case attacker
+    case defender
+}
 
 // MARK: - Model
 struct WireColor: Identifiable, Equatable {
