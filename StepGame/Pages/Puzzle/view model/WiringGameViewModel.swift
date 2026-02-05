@@ -10,7 +10,7 @@ import Combine
 import SwiftUI
 
 
-// MARK: - ViewModel
+// MARK: - ViewModels
 class WiringGameViewModel: ObservableObject {
     @Published var leftWires: [WireColor] = []
     @Published var rightWires: [WireColor] = []
@@ -69,18 +69,15 @@ class WiringGameViewModel: ObservableObject {
         timer = nil
     }
     
-    // Tap handlers for bidirectional connection
     func handleLeftTap(index: Int) {
         guard !hasFailed && !isComplete else { return }
         
-        // If there's a selected right wire, connect them
         if let rightIndex = selectedRight {
             if model.connect(leftIndex: index, rightIndex: rightIndex) {
                 selectedRight = nil
                 selectedLeft = nil
             }
         } else {
-            // Toggle selection or disconnect
             if connections.contains(where: { $0.leftIndex == index }) {
                 model.disconnect(leftIndex: index)
                 selectedLeft = nil
@@ -95,14 +92,12 @@ class WiringGameViewModel: ObservableObject {
     func handleRightTap(index: Int) {
         guard !hasFailed && !isComplete else { return }
         
-        // If there's a selected left wire, connect them
         if let leftIndex = selectedLeft {
             if model.connect(leftIndex: leftIndex, rightIndex: index) {
                 selectedLeft = nil
                 selectedRight = nil
             }
         } else {
-            // Toggle selection or disconnect
             if connections.contains(where: { $0.rightIndex == index }) {
                 model.disconnectRight(rightIndex: index)
                 selectedRight = nil
@@ -114,7 +109,6 @@ class WiringGameViewModel: ObservableObject {
         updateState()
     }
     
-    // Drag handlers for left side
     func startDraggingLeft(index: Int) {
         guard !hasFailed && !isComplete else { return }
         draggedLeftIndex = index
@@ -134,7 +128,6 @@ class WiringGameViewModel: ObservableObject {
         updateState()
     }
     
-    // Drag handlers for right side
     func startDraggingRight(index: Int) {
         guard !hasFailed && !isComplete else { return }
         draggedRightIndex = index
@@ -161,14 +154,6 @@ class WiringGameViewModel: ObservableObject {
         hoveredRightIndex = nil
     }
     
-    func setHoveredRight(index: Int?) {
-        hoveredRightIndex = index
-    }
-    
-    func setHoveredLeft(index: Int?) {
-        hoveredLeftIndex = index
-    }
-    
     func resetGame() {
         model.reset()
         selectedLeft = nil
@@ -186,7 +171,37 @@ class WiringGameViewModel: ObservableObject {
     }
 }
 
-// MARK: - View Components
+class GameCoordinatorViewModel: ObservableObject {
+    @Published var currentView: GameView = .groupAttackerChallenge
+    @Published var attackerCompleted: Bool = false
+    
+    enum GameView {
+        case groupAttackerChallenge
+        case groupDefenderChallenge
+        case attackerGame
+        case defenderGame
+    }
+    
+    func startAttackerGame() {
+        currentView = .attackerGame
+    }
+    
+    func attackerGameCompleted() {
+        attackerCompleted = true
+        currentView = .groupDefenderChallenge
+    }
+    
+    func startDefenderGame() {
+        currentView = .defenderGame
+    }
+    
+    func reset() {
+        currentView = .groupAttackerChallenge
+        attackerCompleted = false
+    }
+}
+
+// MARK: - Reusable Components
 struct WireNodeView: View {
     let color: WireColor
     let isSelected: Bool

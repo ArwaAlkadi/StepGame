@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B61094682F336A6C00B7FBB1 /* WiringGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61094672F336A6C00B7FBB1 /* WiringGameViewModel.swift */; };
-		B610946A2F336A9300B7FBB1 /* FixWiringGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61094692F336A9300B7FBB1 /* FixWiringGameView.swift */; };
 		B67E7DA92F3392F8000EA73A /* GameMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67E7DA82F3392F8000EA73A /* GameMode.swift */; };
 		ECCAEE3A2F218A8B0047C5DF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = ECCAEE392F218A8B0047C5DF /* FirebaseAuth */; };
 		ECCAEE3C2F218A8B0047C5DF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = ECCAEE3B2F218A8B0047C5DF /* FirebaseFirestore */; };
@@ -34,7 +32,6 @@
 		ECCB95F12F294CD100DBC1F5 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */; };
 		ECCB95F32F294CEF00DBC1F5 /* ChallengesSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */; };
 		ECCB95F52F294D3500DBC1F5 /*  ChallengeResultPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F42F294D3500DBC1F5 /*  ChallengeResultPopup.swift */; };
-		ECCB95FB2F294D9D00DBC1F5 /* PuzzleResultPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */; };
 		ECCB95FF2F294DD900DBC1F5 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95FE2F294DD900DBC1F5 /* ProfileViewModel.swift */; };
 		ECCB96012F294DE900DBC1F5 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96002F294DE900DBC1F5 /* ProfileView.swift */; };
 		ECCB96032F294DFF00DBC1F5 /* JoinWithCodePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */; };
@@ -45,8 +42,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B61094672F336A6C00B7FBB1 /* WiringGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiringGameViewModel.swift; sourceTree = "<group>"; };
-		B61094692F336A9300B7FBB1 /* FixWiringGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixWiringGameView.swift; sourceTree = "<group>"; };
 		B67E7DA82F3392F8000EA73A /* GameMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMode.swift; sourceTree = "<group>"; };
 		ECCAEE282F21888B0047C5DF /* StepGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAEE3D2F218AAA0047C5DF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -71,7 +66,6 @@
 		ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengesSheet.swift; sourceTree = "<group>"; };
 		ECCB95F42F294D3500DBC1F5 /*  ChallengeResultPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = " ChallengeResultPopup.swift"; sourceTree = "<group>"; };
-		ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleResultPopup.swift; sourceTree = "<group>"; };
 		ECCB95FE2F294DD900DBC1F5 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		ECCB96002F294DE900DBC1F5 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinWithCodePopup.swift; sourceTree = "<group>"; };
@@ -80,6 +74,19 @@
 		ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingViewModel.swift; sourceTree = "<group>"; };
 		ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RussoOne-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B67E7DB12F34BDEE000EA73A /* view */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = view;
+			sourceTree = "<group>";
+		};
+		B67E7DB22F34BDFC000EA73A /* view model */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "view model";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		ECCAEE252F21888B0047C5DF /* Frameworks */ = {
@@ -246,9 +253,8 @@
 		ECCB95D92F294BED00DBC1F5 /* Puzzle */ = {
 			isa = PBXGroup;
 			children = (
-				B61094692F336A9300B7FBB1 /* FixWiringGameView.swift */,
-				B61094672F336A6C00B7FBB1 /* WiringGameViewModel.swift */,
-				ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */,
+				B67E7DB22F34BDFC000EA73A /* view model */,
+				B67E7DB12F34BDEE000EA73A /* view */,
 			);
 			path = Puzzle;
 			sourceTree = "<group>";
@@ -284,6 +290,10 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B67E7DB12F34BDEE000EA73A /* view */,
+				B67E7DB22F34BDFC000EA73A /* view model */,
 			);
 			name = StepGame;
 			packageProductDependencies = (
@@ -360,18 +370,15 @@
 				ECCB95D72F29484A00DBC1F5 /* HealthKitService.swift in Sources */,
 				ECCB95DF2F294C3D00DBC1F5 /* OnboardingView.swift in Sources */,
 				B67E7DA92F3392F8000EA73A /* GameMode.swift in Sources */,
-				B610946A2F336A9300B7FBB1 /* FixWiringGameView.swift in Sources */,
 				ECCB96012F294DE900DBC1F5 /* ProfileView.swift in Sources */,
 				ECCB96052F294E0F00DBC1F5 /* ShareCodePopup.swift in Sources */,
 				ECCB95E72F294C8100DBC1F5 /* StartView.swift in Sources */,
 				ECCB95D12F2947FA00DBC1F5 /* ChallengeModel.swift in Sources */,
 				ECCB95E92F294C8F00DBC1F5 /* StartViewModel.swift in Sources */,
 				ECCB95EF2F294CC900DBC1F5 /* MapView.swift in Sources */,
-				ECCB95FB2F294D9D00DBC1F5 /* PuzzleResultPopup.swift in Sources */,
 				ECCB95ED2F294CAE00DBC1F5 /*  SetupChallengeViewModel.swift in Sources */,
 				ECCB95FF2F294DD900DBC1F5 /* ProfileViewModel.swift in Sources */,
 				ECCB95E12F294C4500DBC1F5 /* OnboardingViewModel.swift in Sources */,
-				B61094682F336A6C00B7FBB1 /* WiringGameViewModel.swift in Sources */,
 				ECCB95CD2F29478100DBC1F5 /* StepGameApp.swift in Sources */,
 				ECCB95CF2F2947E200DBC1F5 /*  PlayerModel.swift in Sources */,
 				ECCB95DB2F294C0F00DBC1F5 /* SplashView.swift in Sources */,

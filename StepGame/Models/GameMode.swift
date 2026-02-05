@@ -5,22 +5,25 @@
 //  Created by Rana Alqubaly on 16/08/1447 AH.
 //
 
-
 import SwiftUI
 
-// MARK: - Game Mode Enum
+// MARK: - Enums
 enum GameMode {
     case solo
     case group
 }
 
-// MARK: - Player Role Enum (for Group mode)
 enum PlayerRole {
     case attacker
     case defender
 }
 
-// MARK: - Model
+enum GameResult {
+    case success
+    case failure
+}
+
+// MARK: - Models
 struct WireColor: Identifiable, Equatable {
     let id = UUID()
     let color: Color
@@ -72,15 +75,8 @@ class WiringGameModel {
         
         guard leftColor == rightColor else { return false }
         
-        // Remove existing connections for both indices
         connections.removeAll { $0.leftIndex == leftIndex || $0.rightIndex == rightIndex }
-        
-        // Add new connection
-        connections.append(WireConnection(
-            leftIndex: leftIndex,
-            rightIndex: rightIndex,
-            color: leftColor
-        ))
+        connections.append(WireConnection(leftIndex: leftIndex, rightIndex: rightIndex, color: leftColor))
         
         return true
     }
