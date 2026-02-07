@@ -1,18 +1,31 @@
-import SwiftUI
+//
+//  StepGameApp.swift
+//  StepGame
+//
+//  Created by Arwa Alkadi on 03/02/2026.
+//
 
-// MARK: - App Entry
+import SwiftUI
+import FirebaseCore
+
 @main
 struct StepGameApp: App {
+
+    // MARK: - State Objects
+    @StateObject private var session = GameSession()
+    @StateObject private var health = HealthKitManager()
+
+    // MARK: - Init
+    init() {
+        FirebaseApp.configure()
+    }
+
+    // MARK: - Body
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environmentObject(session)
+                .environmentObject(health)
         }
     }
 }
-
-struct ContentView: View {
-    var body: some View {
-       Text("Hello, World!")
-    }
-}
-

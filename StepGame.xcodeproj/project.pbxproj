@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EC2548B32F34194E0003414C /* MapPathEditorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */; };
+		EC6BAB1C2F3159E300BDBEC8 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6BAB1B2F3159E300BDBEC8 /* RootView.swift */; };
+		EC6BAB1E2F315A3000BDBEC8 /* GameSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */; };
 		ECCAEE3A2F218A8B0047C5DF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = ECCAEE392F218A8B0047C5DF /* FirebaseAuth */; };
 		ECCAEE3C2F218A8B0047C5DF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = ECCAEE3B2F218A8B0047C5DF /* FirebaseFirestore */; };
 		ECCAEE422F218AAA0047C5DF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ECCAEE3D2F218AAA0047C5DF /* Assets.xcassets */; };
@@ -30,7 +33,6 @@
 		ECCB95EF2F294CC900DBC1F5 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95EE2F294CC900DBC1F5 /* MapView.swift */; };
 		ECCB95F12F294CD100DBC1F5 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */; };
 		ECCB95F32F294CEF00DBC1F5 /* ChallengesSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */; };
-		ECCB95F52F294D3500DBC1F5 /*  ChallengeResultPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F42F294D3500DBC1F5 /*  ChallengeResultPopup.swift */; };
 		ECCB95F72F294D5C00DBC1F5 /* PuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F62F294D5C00DBC1F5 /* PuzzleView.swift */; };
 		ECCB95F92F294D7000DBC1F5 /* PuzzleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F82F294D7000DBC1F5 /* PuzzleViewModel.swift */; };
 		ECCB95FB2F294D9D00DBC1F5 /* PuzzleResultPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */; };
@@ -41,9 +43,14 @@
 		ECCB97882F2C3DA100DBC1F5 /* WaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB97872F2C3DA100DBC1F5 /* WaitingView.swift */; };
 		ECCB978A2F2C3DB300DBC1F5 /* WaitingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */; };
 		ECCB978F2F2D89E500DBC1F5 /* RussoOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */; };
+		ECDB399A2F36A18D00453224 /* ChallengeResultPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDB39992F36A18D00453224 /* ChallengeResultPopupView.swift */; };
+		ECDB399C2F36A19F00453224 /* ChallengeResultPopupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDB399B2F36A19F00453224 /* ChallengeResultPopupViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPathEditorHelper.swift; sourceTree = "<group>"; };
+		EC6BAB1B2F3159E300BDBEC8 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSession.swift; sourceTree = "<group>"; };
 		ECCAEE282F21888B0047C5DF /* StepGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAEE3D2F218AAA0047C5DF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ECCAEE3F2F218AAA0047C5DF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -66,7 +73,6 @@
 		ECCB95EE2F294CC900DBC1F5 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengesSheet.swift; sourceTree = "<group>"; };
-		ECCB95F42F294D3500DBC1F5 /*  ChallengeResultPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = " ChallengeResultPopup.swift"; sourceTree = "<group>"; };
 		ECCB95F62F294D5C00DBC1F5 /* PuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleView.swift; sourceTree = "<group>"; };
 		ECCB95F82F294D7000DBC1F5 /* PuzzleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleViewModel.swift; sourceTree = "<group>"; };
 		ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleResultPopup.swift; sourceTree = "<group>"; };
@@ -77,6 +83,8 @@
 		ECCB97872F2C3DA100DBC1F5 /* WaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingView.swift; sourceTree = "<group>"; };
 		ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingViewModel.swift; sourceTree = "<group>"; };
 		ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RussoOne-Regular.ttf"; sourceTree = "<group>"; };
+		ECDB39992F36A18D00453224 /* ChallengeResultPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResultPopupView.swift; sourceTree = "<group>"; };
+		ECDB399B2F36A19F00453224 /* ChallengeResultPopupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResultPopupViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +100,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EC2548B12F34193E0003414C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		ECCAEE1F2F21888B0047C5DF = {
 			isa = PBXGroup;
 			children = (
@@ -135,7 +151,8 @@
 				ECCB95EE2F294CC900DBC1F5 /* MapView.swift */,
 				ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */,
 				ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */,
-				ECCB95F42F294D3500DBC1F5 /*  ChallengeResultPopup.swift */,
+				ECDB39982F36A16600453224 /* ChallengeResultPopup */,
+				EC2548B12F34193E0003414C /* Helpers */,
 			);
 			path = MapPage;
 			sourceTree = "<group>";
@@ -236,6 +253,8 @@
 			isa = PBXGroup;
 			children = (
 				ECCB95CB2F29478100DBC1F5 /* StepGameApp.swift */,
+				EC6BAB1B2F3159E300BDBEC8 /* RootView.swift */,
+				EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -265,6 +284,15 @@
 				ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		ECDB39982F36A16600453224 /* ChallengeResultPopup */ = {
+			isa = PBXGroup;
+			children = (
+				ECDB39992F36A18D00453224 /* ChallengeResultPopupView.swift */,
+				ECDB399B2F36A19F00453224 /* ChallengeResultPopupViewModel.swift */,
+			);
+			path = ChallengeResultPopup;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -351,7 +379,8 @@
 				ECCB97882F2C3DA100DBC1F5 /* WaitingView.swift in Sources */,
 				ECCB95E52F294C6100DBC1F5 /* EnterNameViewModel.swift in Sources */,
 				ECCB95EB2F294CA700DBC1F5 /*  SetupChallengeView.swift in Sources */,
-				ECCB95F52F294D3500DBC1F5 /*  ChallengeResultPopup.swift in Sources */,
+				ECDB399C2F36A19F00453224 /* ChallengeResultPopupViewModel.swift in Sources */,
+				EC2548B32F34194E0003414C /* MapPathEditorHelper.swift in Sources */,
 				ECCB96032F294DFF00DBC1F5 /* JoinWithCodePopup.swift in Sources */,
 				ECCB978A2F2C3DB300DBC1F5 /* WaitingViewModel.swift in Sources */,
 				ECCB95D72F29484A00DBC1F5 /* HealthKitService.swift in Sources */,
@@ -360,10 +389,13 @@
 				ECCB96052F294E0F00DBC1F5 /* ShareCodePopup.swift in Sources */,
 				ECCB95E72F294C8100DBC1F5 /* StartView.swift in Sources */,
 				ECCB95D12F2947FA00DBC1F5 /* ChallengeModel.swift in Sources */,
+				EC6BAB1C2F3159E300BDBEC8 /* RootView.swift in Sources */,
+				EC6BAB1E2F315A3000BDBEC8 /* GameSession.swift in Sources */,
 				ECCB95E92F294C8F00DBC1F5 /* StartViewModel.swift in Sources */,
 				ECCB95EF2F294CC900DBC1F5 /* MapView.swift in Sources */,
 				ECCB95FB2F294D9D00DBC1F5 /* PuzzleResultPopup.swift in Sources */,
 				ECCB95ED2F294CAE00DBC1F5 /*  SetupChallengeViewModel.swift in Sources */,
+				ECDB399A2F36A18D00453224 /* ChallengeResultPopupView.swift in Sources */,
 				ECCB95FF2F294DD900DBC1F5 /* ProfileViewModel.swift in Sources */,
 				ECCB95E12F294C4500DBC1F5 /* OnboardingViewModel.swift in Sources */,
 				ECCB95CD2F29478100DBC1F5 /* StepGameApp.swift in Sources */,
@@ -505,21 +537,23 @@
 		ECCAEE342F21888C0047C5DF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = StepGame/StepGame.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q3BRAU32HS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepGame/Info.plist;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "We use your step count to track your in-game progress";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Step data is used to update challenge progress";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "افتح الخطوات للعب";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -544,21 +578,23 @@
 		ECCAEE352F21888C0047C5DF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = StepGame/StepGame.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q3BRAU32HS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepGame/Info.plist;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "We use your step count to track your in-game progress";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Step data is used to update challenge progress";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "افتح الخطوات للعب";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
