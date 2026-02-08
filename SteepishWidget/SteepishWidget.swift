@@ -46,6 +46,14 @@ func avatarImageName(avatar: AvatarType, state: AvatarState) -> String {
     "\(avatar.rawValue)\(state.rawValue)"
 }
 
+// MARK: - Custom Font (Russo One)
+
+extension Font {
+    static func russo(_ size: CGFloat) -> Font {
+        .custom("RussoOne-Regular", size: size)
+    }
+}
+
 // MARK: - Provider
 
 struct Provider: TimelineProvider {
@@ -85,7 +93,7 @@ struct Provider: TimelineProvider {
     }
 }
 
-// MARK: - Player Card (FINAL)
+// MARK: - Player Card
 
 struct PlayerCardView: View {
 
@@ -96,11 +104,11 @@ struct PlayerCardView: View {
     let name: String
 
     var body: some View {
-        VStack(spacing: -15) {
+        VStack(spacing: -19) {
 
             // Goal
             Text("\(goal)")
-                .font(.system(size: 40, weight: .heavy, design: .rounded))
+                .font(.russo(40))
                 .foregroundColor(Color("TextBeige"))
                 .opacity(0.7)
 
@@ -111,19 +119,19 @@ struct PlayerCardView: View {
                 .frame(height: 110)
                 .offset(y: -25)
 
-            // Steps + Name (⬆️ مرفوعين)
-            VStack(spacing: 1
-        ) {
+            // Steps + Name
+            VStack(spacing: -2) {
 
                 HStack(spacing: 2) {
                     Image(systemName: "figure.walk")
                     Text("\(steps)")
+                        .font(.russo(15))
                 }
 
                 Text(name)
+                    .font(.russo(12))
             }
-            .offset(y: -15)   // 🔼 التحكم بالارتفاع
-            .font(.system(size: 12, weight: .medium, design: .rounded))
+            .offset(y: -15)
             .foregroundColor(Color("TextBrown"))
         }
         .frame(width: 150, height: 150)

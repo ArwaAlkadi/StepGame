@@ -14,6 +14,8 @@
 		82B7E69D2F35F2D80022BFB9 /* SheredStepService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B7E69C2F35F2C20022BFB9 /* SheredStepService.swift */; };
 		82B7E6A22F35F6340022BFB9 /* AvatarStateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B7E6A12F35F6290022BFB9 /* AvatarStateCalculator.swift */; };
 		82B7E6A42F35F6490022BFB9 /* AvatarModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B7E6A32F35F6410022BFB9 /* AvatarModels.swift */; };
+		82B7E6B82F38BB740022BFB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82B7E6B72F38BB740022BFB9 /* Assets.xcassets */; };
+		82B7E6BB2F38BD240022BFB9 /* RussoOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */; };
 		ECCAEE3A2F218A8B0047C5DF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = ECCAEE392F218A8B0047C5DF /* FirebaseAuth */; };
 		ECCAEE3C2F218A8B0047C5DF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = ECCAEE3B2F218A8B0047C5DF /* FirebaseFirestore */; };
 		ECCAEE432F218AAA0047C5DF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECCAEE3F2F218AAA0047C5DF /* GoogleService-Info.plist */; };
@@ -82,6 +84,7 @@
 		82B7E69C2F35F2C20022BFB9 /* SheredStepService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheredStepService.swift; sourceTree = "<group>"; };
 		82B7E6A12F35F6290022BFB9 /* AvatarStateCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarStateCalculator.swift; sourceTree = "<group>"; };
 		82B7E6A32F35F6410022BFB9 /* AvatarModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarModels.swift; sourceTree = "<group>"; };
+		82B7E6B72F38BB740022BFB9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ECCAEE282F21888B0047C5DF /* StepGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAEE3F2F218AAA0047C5DF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		ECCB95CB2F29478100DBC1F5 /* StepGameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepGameApp.swift; sourceTree = "<group>"; };
@@ -252,6 +255,7 @@
 		ECCB95C12F29472F00DBC1F5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				82B7E6B72F38BB740022BFB9 /* Assets.xcassets */,
 				ECCB978D2F2D89DE00DBC1F5 /* Fonts */,
 				ECCAEE3F2F218AAA0047C5DF /* GoogleService-Info.plist */,
 			);
@@ -452,6 +456,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82B7E6BB2F38BD240022BFB9 /* RussoOne-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -460,6 +465,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECCB978F2F2D89E500DBC1F5 /* RussoOne-Regular.ttf in Resources */,
+				82B7E6B82F38BB740022BFB9 /* Assets.xcassets in Resources */,
 				ECCAEE432F218AAA0047C5DF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
