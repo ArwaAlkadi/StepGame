@@ -44,14 +44,14 @@ struct StartView: View {
                 // Greeting Text
                 VStack(spacing: 10) {
                     Text("Hello, \(playerName)!")
-                        .font(.custom("RussoOne-Regular", size: 32))
+                        .font(.custom("RussoOne-Regular", size: 50))
                         .foregroundColor(Color("Light1"))
-                        .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
+                     //   .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
                     
                     Text("stay active")
-                        .font(.custom("RussoOne-Regular", size: 28))
+                        .font(.custom("RussoOne-Regular", size: 35))
                         .foregroundColor(Color("Light1"))
-                        .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
+                     //   .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
                 }
                 .padding(.bottom, 40)
                 
