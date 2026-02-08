@@ -23,6 +23,16 @@ struct ShowWiringGameSheet: View {
             .ignoresSafeArea()
             
             switch coordinator.currentView {
+                
+            case .none:
+                EmptyView()
+                        
+            case .soloChallenge:
+                SoloChallengeView(viewModel: coordinator)
+                        
+            case .soloGame:
+                WiringGameView(coordinator: coordinator, gameMode: .solo, playerRole: nil, timeLimit: 6.0)
+                
             case .groupAttackerChallenge:
                 GroupAttackerChallengeView(viewModel: coordinator)
                 
@@ -30,10 +40,10 @@ struct ShowWiringGameSheet: View {
                 GroupDefenderChallengeView(viewModel: coordinator)
                 
             case .attackerGame:
-                WiringGameView(coordinator: coordinator, gameMode: .group, playerRole: .attacker, timeLimit: 10.0)
+                WiringGameView(coordinator: coordinator, gameMode: .group, playerRole: .attacker, timeLimit: 6.0)
                 
             case .defenderGame:
-                WiringGameView(coordinator: coordinator, gameMode: .group, playerRole: .defender, timeLimit: 10.0)
+                WiringGameView(coordinator: coordinator, gameMode: .group, playerRole: .defender, timeLimit: 6.0)
             }
         }
     }

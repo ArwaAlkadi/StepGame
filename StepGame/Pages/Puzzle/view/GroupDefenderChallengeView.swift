@@ -1,25 +1,24 @@
 //
-//  GroupAttackerChallengeView.swift
+//  GroupDefenderChallengeView.swift
 //  StepGame
 //
-//  Created by Rana Alqubaly on 17/08/1447 AH.
+//  Created by Rana Alqubaly on 20/08/1447 AH.
 //
 
 import SwiftUI
 
 
-// MARK: - Popup Views
-struct GroupAttackerChallengeView: View {
+struct GroupDefenderChallengeView: View {
     @ObservedObject var viewModel: GameCoordinatorViewModel
     
     var body: some View {
         DialogBaseView(onClose: { viewModel.reset() }) {
             VStack(spacing: 20) {
-                Text("Take Your Chance")
+                Text("Defend Your Progress")
                     .font(.custom("RussoOne-Regular", size: 28))
                     .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
                 
-                Text("Win this puzzle to mess up your friend's character for 3 hours.")
+                Text("Solve the puzzle to protect your progress. Hurry!")
                     .font(.custom("RussoOne-Regular", size: 18))
                     .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
                     .multilineTextAlignment(.center)
@@ -28,9 +27,9 @@ struct GroupAttackerChallengeView: View {
                 
                 HStack(spacing: 15) {
                     Button(action: {
-                        viewModel.startAttackerGame()
+                        viewModel.startDefenderGame()
                     }) {
-                        Text("Yes")
+                        Text("Defend")
                             .font(.custom("RussoOne-Regular", size: 18))
                             .foregroundColor(.white)
                             .frame(width: 120)
@@ -42,7 +41,7 @@ struct GroupAttackerChallengeView: View {
                     Button(action: {
                         viewModel.reset()
                     }) {
-                        Text("No")
+                        Text("Give Up")
                             .font(.custom("RussoOne-Regular", size: 18))
                             .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.07))
                             .frame(width: 120)
@@ -56,5 +55,3 @@ struct GroupAttackerChallengeView: View {
         }
     }
 }
-
-

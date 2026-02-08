@@ -1,42 +1,32 @@
-//
-//  GroupAttackerChallengeView.swift
-//  StepGame
-//
-//  Created by Rana Alqubaly on 17/08/1447 AH.
-//
-
 import SwiftUI
 
 
-// MARK: - Popup Views
-struct GroupAttackerChallengeView: View {
+struct SoloChallengeView: View {
     @ObservedObject var viewModel: GameCoordinatorViewModel
     
     var body: some View {
         DialogBaseView(onClose: { viewModel.reset() }) {
             VStack(spacing: 20) {
-                Text("Take Your Chance")
+                Text("Need More Time?")
                     .font(.custom("RussoOne-Regular", size: 28))
-                    .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
                 
-                Text("Win this puzzle to mess up your friend's character for 3 hours.")
+                Text("Complete this puzzle to earn a secret reward.")
                     .font(.custom("RussoOne-Regular", size: 18))
-                    .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
                     .multilineTextAlignment(.center)
-                    .lineSpacing(4)
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal)
                 
                 HStack(spacing: 15) {
+                    
                     Button(action: {
-                        viewModel.startAttackerGame()
+                        viewModel.startSoloGame()   // ✅ OPEN PUZZLE
                     }) {
                         Text("Yes")
                             .font(.custom("RussoOne-Regular", size: 18))
                             .foregroundColor(.white)
                             .frame(width: 120)
-                            .padding(.vertical, 15)
-                            .background(Color(red: 0.29, green: 0.15, blue: 0.07))
-                            .cornerRadius(25)
+                            .padding(.vertical, 12)
+                            .background(Color.brown)
+                            .cornerRadius(20)
                     }
                     
                     Button(action: {
@@ -44,17 +34,28 @@ struct GroupAttackerChallengeView: View {
                     }) {
                         Text("No")
                             .font(.custom("RussoOne-Regular", size: 18))
-                            .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.07))
+                            .foregroundColor(.brown)
                             .frame(width: 120)
-                            .padding(.vertical, 15)
+                            .padding(.vertical, 12)
                             .background(Color(red: 0.91, green: 0.79, blue: 0.64))
-                            .cornerRadius(25)
+                            .cornerRadius(20)
                     }
                 }
-                .padding(.top, 10)
             }
         }
     }
 }
 
 
+
+// MARK: - Preview
+struct SoloChallengeView_Previews: PreviewProvider {
+    static var previews: some View {
+        ZStack {
+            Color.gray.opacity(0.3).ignoresSafeArea()
+            
+            SoloChallengeView(viewModel: GameCoordinatorViewModel())
+        }
+        .previewDisplayName("Solo Challenge - Need More Time")
+    }
+}

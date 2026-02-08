@@ -180,6 +180,18 @@ class GameCoordinatorViewModel: ObservableObject {
         case groupDefenderChallenge
         case attackerGame
         case defenderGame
+        case soloChallenge
+        case none
+        case soloGame
+    }
+    
+    
+    func startSoloGame() {
+        currentView = .soloGame
+    }
+
+    func SoloChallengeView() {
+        currentView = .soloChallenge
     }
     
     func startAttackerGame() {
@@ -196,8 +208,7 @@ class GameCoordinatorViewModel: ObservableObject {
     }
     
     func reset() {
-        currentView = .groupAttackerChallenge
-        attackerCompleted = false
+        currentView = .none
     }
 }
 
