@@ -1,5 +1,5 @@
-
-
+//
+//
 //import SwiftUI
 //
 //struct SetupChallengeView: View {
@@ -65,25 +65,46 @@
 //                    .padding(.bottom, 20)
 //                
 //                VStack(alignment: .leading, spacing: 20) {
-//                    // Challenge Name Input
-//                    VStack(alignment: .leading, spacing: 5) {
-//                        TextField("Challenge Name", text: $challengeName)
-//                            .font(.custom("RussoOne-Regular", size: 15))
-//                            .foregroundColor(Color("Light1").opacity(0.6))
-//                            .padding()
-//                            .background(Color("Light2")).opacity(0.3)
-//                            .cornerRadius(23)
-//                            .onChange(of: challengeName) { oldValue, newValue in
-//                                if newValue.count > maxChallengeNameLength {
-//                                    challengeName = String(newValue.prefix(maxChallengeNameLength))
-//                                }
-//                            }
-//                        
-//                        Text("\(challengeName.count)/\(maxChallengeNameLength)")
-//                            .font(.custom("RussoOne-Regular", size: 11))
-//                            .foregroundColor(Color("Light1").opacity(0.6))
-//                            .padding(.leading, 5)
-//                    }
+//                                    // Challenge Name Input
+//                                    VStack(alignment: .leading, spacing: 5) {
+//                                        TextField("Challenge Name", text: $challengeName)
+//                                            .font(.custom("RussoOne-Regular", size: 15))
+//                                            .foregroundColor(Color("Light1")) // Changed to full opacity when typing
+//                                            .padding()
+//                                            .background(Color("Light2").opacity(0.3))
+//                                            .cornerRadius(23)
+//                                            //.frame(width: 350) // Fixed width
+//                                            .onChange(of: challengeName) { oldValue, newValue in
+//                                                if newValue.count > maxChallengeNameLength {
+//                                                    challengeName = String(newValue.prefix(maxChallengeNameLength))
+//                                                }
+//                                            }
+//                
+//                                        Text("\(challengeName.count)/\(maxChallengeNameLength)")
+//                                            .font(.custom("RussoOne-Regular", size: 11))
+//                                            .foregroundColor(Color("Light1").opacity(0.6))
+//                                            .padding(.leading, 5)
+//                                    }
+////                VStack(alignment: .leading, spacing: 20) {
+////                    // Challenge Name Input
+////                    VStack(alignment: .leading, spacing: 5) {
+////                        TextField("Challenge Name", text: $challengeName)
+////                            .font(.custom("RussoOne-Regular", size: 15))
+////                            .foregroundColor(Color("Light1").opacity(0.6))
+////                            .padding()
+////                            .background(Color("Light2")).opacity(0.3)
+////                            .cornerRadius(23)
+////                            .onChange(of: challengeName) { oldValue, newValue in
+////                                if newValue.count > maxChallengeNameLength {
+////                                    challengeName = String(newValue.prefix(maxChallengeNameLength))
+////                                }
+////                            }
+////                        
+////                        Text("\(challengeName.count)/\(maxChallengeNameLength)")
+////                            .font(.custom("RussoOne-Regular", size: 11))
+////                            .foregroundColor(Color("Light1").opacity(0.6))
+////                            .padding(.leading, 5)
+////                    }
 //                    
 //                    // Period Selection
 //                    VStack(alignment: .leading, spacing: 10) {
@@ -318,7 +339,7 @@ struct SetupChallengeView: View {
                             .padding()
                             .background(Color("Light2").opacity(0.3))
                             .cornerRadius(23)
-                            .frame(width: 350) // Fixed width
+                          //  .frame(width: 350) // Fixed width
                             .onChange(of: challengeName) { oldValue, newValue in
                                 if newValue.count > maxChallengeNameLength {
                                     challengeName = String(newValue.prefix(maxChallengeNameLength))
@@ -332,60 +353,62 @@ struct SetupChallengeView: View {
                     }
                     
                     // Period Selection
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Period")
-                            .font(.custom("RussoOne-Regular", size: 16))
-                            .foregroundColor(Color("Light1"))
-                        
-                        HStack(spacing: 12) {
-                            ForEach(ChallengePeriod.allCases, id: \.self) { period in
-                                Button(action: {
-                                    selectedPeriod = period
-                                }) {
-                                    Text(period.rawValue)
-                                        .font(.custom("RussoOne-Regular", size: 15))
-                                        .foregroundColor(selectedPeriod == period ? .white : Color("Light1"))
-                                        .frame(width: 90, height: 40)
-                                        .background(
-                                            selectedPeriod == period ?
-                                            Color("Light1") : Color.white
-                                        )
-                                        .cornerRadius(20)
-                                }
-                            }
-                        }
-                    }
+                                       VStack(alignment: .leading, spacing: 10) {
+Text("Period")
+    .font(.custom("RussoOne-Regular", size: 16))
+    .foregroundColor(Color("Light1"))
+
+HStack(spacing: 12) {
+    ForEach(ChallengePeriod.allCases, id: \.self) { period in
+        Button(action: {
+            selectedPeriod = period
+        }) {
+            Text(period.rawValue)
+                .font(.custom("RussoOne-Regular", size: 15))
+                .foregroundColor(selectedPeriod == period ? .white : Color("Light1"))
+                .frame(width: 90, height: 40)
+                .background(
+                    selectedPeriod == period ?
+                    Color("Light1") : Color.white
+                )
+                .cornerRadius(20)
+        }
+    }
+}
+}
+
                     
                     // Steps Slider
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Steps")
-                            .font(.custom("RussoOne-Regular", size: 16))
-                            .foregroundColor(Color("Light1"))
-                        
-                        VStack(spacing: 6) {
-                            Slider(value: $stepGoal, in: minSteps...maxSteps, step: 1000)
-                                .tint(Color("Light1"))
-                            
-                            HStack {
-                                Text("\(Int(minSteps).formatted())")
-                                    .font(.custom("RussoOne-Regular", size: 11))
-                                    .foregroundColor(Color("Light1").opacity(0.6))
-                                
-                                Spacer()
-                                
-                                Text("\(Int(stepGoal).formatted())")
-                                    .font(.custom("RussoOne-Regular", size: 15))
-                                    .foregroundColor(Color("Light1"))
-                                
-                                Spacer()
-                                
-                                Text("\(Int(maxSteps).formatted())")
-                                    .font(.custom("RussoOne-Regular", size: 11))
-                                    .foregroundColor(Color("Light1").opacity(0.6))
-                            }
-                        }
-                    }
-                    
+                   VStack(alignment: .leading, spacing: 10) {
+Text("Steps")
+    .font(.custom("RussoOne-Regular", size: 16))
+    .foregroundColor(Color("Light1"))
+
+VStack(spacing: 6) {
+    Slider(value: $stepGoal, in: minSteps...maxSteps, step: 1000)
+        .tint(Color("Light1"))
+    
+    
+    HStack {
+        Text("\(Int(minSteps).formatted())")
+            .font(.custom("RussoOne-Regular", size: 11))
+            .foregroundColor(Color("Light1").opacity(0.6))
+        
+        Spacer()
+        
+        Text("\(Int(stepGoal).formatted())")
+            .font(.custom("RussoOne-Regular", size: 15))
+            .foregroundColor(Color("Light1"))
+        
+        Spacer()
+        
+        Text("\(Int(maxSteps).formatted())")
+            .font(.custom("RussoOne-Regular", size: 11))
+            .foregroundColor(Color("Light1").opacity(0.6))
+    }
+}
+}
+
                     // Mode Selection
                     HStack(spacing: 25) {
                         // Solo Mode
@@ -574,3 +597,4 @@ struct SetupChallengeView: View {
         SetupChallengeView(playerName: "Aisha")
     }
 }
+

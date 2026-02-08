@@ -316,7 +316,7 @@ struct JoinWithCodeView: View {
                             .overlay(
                                 Group {
                                     if joinCode.isEmpty {
-                                        Text("qu123z")
+                                        Text("ex: qu123z..")
                                             .font(.custom("RussoOne-Regular", size: 18))
                                             .foregroundColor(Color("Light1").opacity(0.4))
                                             .padding(.leading, 16)
