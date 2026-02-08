@@ -1,9 +1,4 @@
-//
-//  StartView.swift
-//  StepGame
-//
-//  Created by Claude on 02/02/2026.
-//
+
 
 import SwiftUI
 

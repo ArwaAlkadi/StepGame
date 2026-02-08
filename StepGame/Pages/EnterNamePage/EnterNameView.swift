@@ -1,6 +1,7 @@
 
 import SwiftUI
-
+// Dummy data
+//  let USE_DUMMY_DATA_ENTER = true
 struct EnterNameView: View {
     @State private var playerName: String = ""
     @State private var navigateToStart = false

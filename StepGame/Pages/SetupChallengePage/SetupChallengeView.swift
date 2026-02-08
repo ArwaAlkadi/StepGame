@@ -4,7 +4,7 @@ import SwiftUI
 import FirebaseFirestore
 import FirebaseAuth
 // dummy data
- let USE_DUMMY_DATA = true
+private let USE_DUMMY_DATA = true
 
 struct SetupChallengeView: View {
     let playerName: String
@@ -74,7 +74,7 @@ struct SetupChallengeView: View {
                             .font(.custom("RussoOne-Regular", size: 15))
                             .foregroundColor(Color("Light1")) // Changed to full opacity when typing
                             .padding()
-                            .background(Color("Light2").opacity(0.3))
+                            .background(Color("Light2").opacity(0.2))
                             .cornerRadius(23)
                           //  .frame(width: 350) // Fixed width
                             .onChange(of: challengeName) { oldValue, newValue in
@@ -203,8 +203,9 @@ VStack(spacing: 6) {
                             Text("Create")
                                 .font(.custom("RussoOne-Regular", size: 18))
                                 .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 50)
+                                .frame(width: 195, height: 50, alignment: .trailing )
+//                                .frame(maxWidth: .infinity)
+//                                .frame(height: 50)
                         }
                     }
                     .background(Color("Light2"))
