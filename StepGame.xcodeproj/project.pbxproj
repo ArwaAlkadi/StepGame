@@ -161,7 +161,6 @@
 		ECCB95C12F29472F00DBC1F5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				ECCB97912F2D8B3D00DBC1F5 /* UI-Component */,
 				ECCB978D2F2D89DE00DBC1F5 /* Fonts */,
 				ECCAEE3D2F218AAA0047C5DF /* Assets.xcassets */,
 				ECCAEE3F2F218AAA0047C5DF /* GoogleService-Info.plist */,
@@ -266,13 +265,6 @@
 				ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */,
 			);
 			path = Fonts;
-			sourceTree = "<group>";
-		};
-		ECCB97912F2D8B3D00DBC1F5 /* UI-Component */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "UI-Component";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
