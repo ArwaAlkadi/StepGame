@@ -113,58 +113,35 @@ struct GameResultView: View {
     let onRetry: () -> Void
     
     var body: some View {
+        var lunaImageName: String {
+                            result == .success ? "luna happy" : "luna sad"
+                        }
         DialogBaseView(onClose: onClose) {
             VStack(spacing: 20) {
-                Text(result == .success ? "✓" : "✕")
-                    .font(.system(size: 80))
-                    .foregroundColor(result == .success ? .green : .red)
                 
+
+                
+                    
                 Text(getTitle())
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
-                    .multilineTextAlignment(.center)
+                    .font(.custom("RussoOne-Regular", size: 35))
+                                    .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
+                                    .multilineTextAlignment(.center)
+            
+                Image(lunaImageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 400, height: 250)
+                
                 
                 Text(getMessage())
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.custom("RussoOne-Regular", size: 25))
                     .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 20)
                 
-                if result == .failure {
-                    HStack(spacing: 15) {
-                        Button(action: onRetry) {
-                            Text("Try Again")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 120)
-                                .padding(.vertical, 15)
-                                .background(Color.orange)
-                                .cornerRadius(25)
-                        }
-                        
-                        Button(action: onClose) {
-                            Text("Close")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.07))
-                                .frame(width: 120)
-                                .padding(.vertical, 15)
-                                .background(Color(red: 0.91, green: 0.79, blue: 0.64))
-                                .cornerRadius(25)
-                        }
-                    }
-                } else {
-                    Button(action: onClose) {
-                        Text("Close")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(width: 200)
-                            .padding(.vertical, 15)
-                            .background(Color.green)
-                            .cornerRadius(25)
-                    }
-                }
+            
             }
-            .padding(.top, 20)
+            //.padding(.top, 20)
         }
     }
     

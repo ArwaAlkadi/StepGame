@@ -33,7 +33,7 @@ struct ShowWiringGameSheet: View {
                 WiringGameView(coordinator: coordinator, gameMode: .group, playerRole: .attacker, timeLimit: 10.0)
                 
             case .defenderGame:
-                WiringGameView(coordinator: coordinator, gameMode: .group, playerRole: .defender, timeLimit: 6.0)
+                WiringGameView(coordinator: coordinator, gameMode: .group, playerRole: .defender, timeLimit: 10.0)
             }
         }
     }
