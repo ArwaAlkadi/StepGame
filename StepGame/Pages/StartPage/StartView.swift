@@ -34,18 +34,11 @@ struct StartView: View {
                             .scaledToFit()
                             .frame(width: 60, height: 60)
                             .clipShape(Circle())
-                            .overlay(
+                            .background(
                                 Circle()
                                     .fill(Color.white)
                                     .opacity(0.2)
-                                    //.glassEffect(Color.white, radius: 10)
-                                    //.stroke(Color.black, lineWidth: 2)
                             )
-//                        Image("Avatar")
-//                            .resizable()
-//                            .scaledToFit()
-//                            .frame(width: 60, height: 60)
-//                            .clipShape(Circle())
                     }
                     .padding(.trailing, 20)
                     .padding(.top, -220)
