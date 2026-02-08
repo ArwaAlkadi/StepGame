@@ -134,7 +134,7 @@ struct PlayerCardView: View {
             .offset(y: -15)
             .foregroundColor(Color("TextBrown"))
         }
-        .frame(width: 150, height: 150)
+        .frame(width: 160, height: 150)
         .background(
             RoundedRectangle(cornerRadius: 18)
                 .fill(Color("WidgetCream"))
