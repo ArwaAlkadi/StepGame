@@ -14,7 +14,7 @@ struct ProfileView: View {
     @StateObject private var vm = ProfileViewModel()
 
     @Environment(\.dismiss) private var dismiss
-
+    
     var body: some View {
         ZStack {
             Color.light3.ignoresSafeArea()
@@ -47,6 +47,7 @@ struct ProfileView: View {
             Text(vm.errorMessage ?? "Something went wrong.")
         }
     }
+        
 
     // MARK: - Top Bar
 
@@ -127,16 +128,25 @@ struct ProfileView: View {
     }
 
     private var nameEditor: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color.light4.opacity(0.7))
-                .frame(height: 54)
+        VStack(alignment: .leading, spacing: 6) {
 
-            TextField("Name", text: $vm.draftName)
-                .font(.custom("RussoOne-Regular", size: 22))
-                .foregroundStyle(Color.light1)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 14)
+            Text("Name")
+                .font(.custom("RussoOne-Regular", size: 14))
+                .foregroundStyle(Color.light1.opacity(0.5))
+                .padding(.horizontal)
+
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.light4.opacity(0.7))
+                    .stroke(Color.light1, lineWidth: 1)
+                    .frame(height: 54)
+
+                TextField("Name", text: $vm.draftName)
+                    .font(.custom("RussoOne-Regular", size: 22))
+                    .foregroundStyle(Color.light1)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 14)
+            }
         }
         .frame(maxWidth: 320)
     }

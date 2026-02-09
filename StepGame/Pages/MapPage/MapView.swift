@@ -316,7 +316,7 @@ private struct MapHUDLayer: View {
         VStack(spacing: 0) {
 
             Rectangle()
-                .frame(height: 140)
+                .frame(height: 155)
                 .cornerRadius(20)
                 .foregroundStyle(Color.light1.opacity(0.3))
                 .overlay(
