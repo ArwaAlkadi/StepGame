@@ -263,7 +263,7 @@ final class MapViewModel: ObservableObject {
     // MARK: - Flags
     var milestones: [Int] {
         guard let ch = challenge else { return [] }
-        return makeMilestones(goalSteps: ch.goalSteps, count: flagAnchors.count, unit: 500)
+        return makeMilestones(goalSteps: ch.goalSteps, count: flagAnchors.count, unit: 100)
     }
 
     func isFlagReached(_ milestone: Int) -> Bool { mySteps >= milestone }
