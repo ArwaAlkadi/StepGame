@@ -152,10 +152,15 @@ struct ChallengesCard: View {
 
             VStack(alignment: .leading, spacing: 10) {
 
-                HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
+
                     Text(challenge.name)
                         .font(.custom("RussoOne-Regular", size: 20))
                         .foregroundStyle(.light1)
+
+                    Text(dateRangeText())
+                        .font(.custom("RussoOne-Regular", size: 12))
+                        .foregroundStyle(.light1.opacity(0.7))
                 }
 
                 HStack(spacing: 10) {
@@ -264,5 +269,27 @@ struct ChallengesCard: View {
     /// Player count icon
     private func systemIconName(for count: Int) -> String {
         count <= 1 ? "person.fill" : "person.2.fill"
+    }
+    
+    /// Date Format
+    private func dateRangeText() -> String {
+        let calendar = Calendar.current
+        let currentYear = calendar.component(.year, from: Date())
+        
+        let startYear = calendar.component(.year, from: challenge.startDate)
+        let endYear = calendar.component(.year, from: challenge.effectiveEndDate)
+        
+        let formatter = DateFormatter()
+        
+        if startYear == currentYear && endYear == currentYear {
+            formatter.dateFormat = "MMM d"
+        } else {
+            formatter.dateFormat = "MMM d, yyyy"
+        }
+        
+        let start = formatter.string(from: challenge.startDate)
+        let end = formatter.string(from: challenge.effectiveEndDate)
+        
+        return "\(start) - \(end)"
     }
 }

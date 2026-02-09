@@ -131,8 +131,6 @@ struct MapView: View {
             myAvatar: vm.myHudAvatar,
             stepsLeftText: vm.stepsLeftText,
             daysLeftText: vm.daysLeftText,
-            startDate: vm.challenge?.startedAt ?? vm.challenge?.startDate,
-            endDate: vm.challenge?.effectiveEndDate,
             onTapMyAvatar: {
                 reopenChallengesSheetAfterProfileDismiss = true
                 selectedDetent = .height(90)
@@ -312,9 +310,6 @@ private struct MapHUDLayer: View {
     var stepsLeftText: String
     var daysLeftText: String
 
-    var startDate: Date?
-    var endDate: Date?
-
     var onTapMyAvatar: () -> Void
 
     var body: some View {
@@ -333,13 +328,6 @@ private struct MapHUDLayer: View {
                             myAvatar: myAvatar,
                             onTapMyAvatar: onTapMyAvatar
                         )
-
-                        if let start = startDate, let end = endDate {
-                            Text("\(formatted(start)) - \(formatted(end))")
-                                .font(.custom("RussoOne-Regular", size: 14))
-                                .foregroundStyle(.white.opacity(0.85))
-                                .padding()
-                        }
                     }
                     .padding(.horizontal, 18)
                     .padding(.top, 50)
@@ -359,12 +347,6 @@ private struct MapHUDLayer: View {
         .ignoresSafeArea()
     }
 
-    // \\ Date formatting for HUD
-    private func formatted(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d, yyyy"
-        return formatter.string(from: date)
-    }
 }
 
 // MARK: - Player Marker (On Map)
