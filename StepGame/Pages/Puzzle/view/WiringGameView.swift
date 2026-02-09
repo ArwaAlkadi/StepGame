@@ -95,64 +95,35 @@ struct WiringGameView: View {
                             WireConnectionView(connection: connection, leftPositions: leftPositions, rightPositions: rightPositions)
                         }
                         
-                        // Left Wires
-                        VStack(spacing: 20) {
-                            ForEach(Array(viewModel.leftWires.enumerated()), id: \.element.id) { index, wire in
-                                WireNodeView(
-                                    color: wire,
-                                    isSelected: viewModel.selectedLeft == index,
-                                    isDragging: viewModel.draggedLeftIndex == index,
-                                    isHovered: viewModel.hoveredLeftIndex == index
-                                )
-                                .onTapGesture {
-                                    viewModel.handleLeftTap(index: index)
-                                }
-                                .gesture(
-                                    DragGesture()
-                                        .onChanged { _ in
-                                            viewModel.startDraggingLeft(index: index)
-                                        }
-                                        .onEnded { value in
-                                            handleLeftDragEnd(value: value, geometry: geometry, rightPositions: rightPositions)
-                                        }
-                                )
-                            }
+                        // Active dragging wire
+                        if let dragLocation = viewModel.currentDragLocation {
+                            ActiveDragWireView(
+                                dragLocation: dragLocation,
+                                draggedLeftIndex: viewModel.draggedLeftIndex,
+                                draggedRightIndex: viewModel.draggedRightIndex,
+                                leftPositions: leftPositions,
+                                rightPositions: rightPositions,
+                                leftWires: viewModel.leftWires,
+                                rightWires: viewModel.rightWires,
+                                width: geometry.size.width
+                            )
                         }
-                        .padding(.leading, 30)
-                        .padding(.top, 30)
                         
-                        // Right Wires
-                        VStack(spacing: 20) {
-                            ForEach(Array(viewModel.rightWires.enumerated()), id: \.element.id) { index, wire in
-                                WireNodeView(
-                                    color: wire,
-                                    isSelected: viewModel.selectedRight == index,
-                                    isDragging: viewModel.draggedRightIndex == index,
-                                    isHovered: viewModel.hoveredRightIndex == index
-                                )
-                                .onTapGesture {
-                                    viewModel.handleRightTap(index: index)
-                                }
-                                .gesture(
-                                    DragGesture()
-                                        .onChanged { _ in
-                                            viewModel.startDraggingRight(index: index)
-                                        }
-                                        .onEnded { value in
-                                            handleRightDragEnd(value: value, geometry: geometry, leftPositions: leftPositions)
-                                        }
-                                )
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .padding(.trailing, 30)
-                        .padding(.top, 30)
+                        
+                        
+                        LeftWiresColumn(
+                            viewModel: viewModel,
+                            geometry: geometry,
+                            rightPositions: rightPositions
+                        )
+                        
+                        RightWiresColumn(
+                            viewModel: viewModel,
+                            geometry: geometry,
+                            leftPositions: leftPositions
+                        )
                     }
                 }
-                .frame(height: 520)
-                .padding(.horizontal)
-                
-                Spacer()
             }
             
             // Result overlay
@@ -247,4 +218,5 @@ struct WiringGameView: View {
             viewModel.cancelDrag()
         }
     }
+    
 }

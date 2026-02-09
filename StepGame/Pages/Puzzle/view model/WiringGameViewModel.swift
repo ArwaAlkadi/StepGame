@@ -24,6 +24,8 @@ class WiringGameViewModel: ObservableObject {
     @Published var draggedRightIndex: Int? = nil
     @Published var hoveredLeftIndex: Int? = nil
     @Published var hoveredRightIndex: Int? = nil
+    @Published var currentDragLocation: CGPoint? = nil
+
     
     private let model: WiringGameModel
     private var timer: Timer?
@@ -35,6 +37,15 @@ class WiringGameViewModel: ObservableObject {
         updateState()
         startTimer()
     }
+    
+    func cancelDrag() {
+        draggedLeftIndex = nil
+        draggedRightIndex = nil
+        hoveredLeftIndex = nil
+        hoveredRightIndex = nil
+        currentDragLocation = nil
+    }
+
     
     private func updateState() {
         leftWires = model.leftWires
@@ -121,6 +132,8 @@ class WiringGameViewModel: ObservableObject {
     func dropOnRight(rightIndex: Int) {
         guard !hasFailed && !isComplete else { return }
         guard let leftIndex = draggedLeftIndex else { return }
+        currentDragLocation = nil
+
         
         _ = model.connect(leftIndex: leftIndex, rightIndex: rightIndex)
         draggedLeftIndex = nil
@@ -140,6 +153,8 @@ class WiringGameViewModel: ObservableObject {
     func dropOnLeft(leftIndex: Int) {
         guard !hasFailed && !isComplete else { return }
         guard let rightIndex = draggedRightIndex else { return }
+        currentDragLocation = nil
+
         
         _ = model.connect(leftIndex: leftIndex, rightIndex: rightIndex)
         draggedRightIndex = nil
@@ -147,12 +162,7 @@ class WiringGameViewModel: ObservableObject {
         updateState()
     }
     
-    func cancelDrag() {
-        draggedLeftIndex = nil
-        draggedRightIndex = nil
-        hoveredLeftIndex = nil
-        hoveredRightIndex = nil
-    }
+  
     
     func resetGame() {
         model.reset()
