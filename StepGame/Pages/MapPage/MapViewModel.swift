@@ -581,4 +581,9 @@ final class MapViewModel: ObservableObject {
         if id.count <= 6 { return id }
         return "\(id.prefix(3))...\(id.suffix(3))"
     }
+    
+    func syncFromHealth(health: HealthKitManager) async {
+        await syncOnce(health: health)
+    }
+    
 }

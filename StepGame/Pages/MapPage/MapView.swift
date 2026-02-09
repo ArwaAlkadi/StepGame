@@ -63,7 +63,7 @@ struct MapView: View {
         }
         .onChange(of: session.challenge?.id) { _, _ in
             vm.bind(session: session)
-            vm.startStepsSync(health: health) // ✅ يبدأ فقط إذا مو منتهي
+            vm.startStepsSync(health: health)
         }
         .onChange(of: session.player?.name) { _, _ in
             vm.bind(session: session)
@@ -335,7 +335,7 @@ struct FlagMarker: View {
             Image(reached ? "Flag1" : "Flag2")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 90, height: 90)
+                .frame(width: 70, height: 70)
 
             Text("\(number)")
                 .font(.custom("RussoOne-Regular", size: 12))

@@ -32,6 +32,12 @@ final class HealthKitManager: ObservableObject {
             guard let self else { return }
             Task { @MainActor in
                 await self.refreshAuthorizationState()
+
+                if self.isAuthorized {
+                    self.enableBackgroundStepsUpdates()
+                    self.startObservingSteps {
+                    }
+                }
             }
         }
     }
@@ -115,5 +121,43 @@ final class HealthKitManager: ObservableObject {
 
             self.store.execute(query)
         }
+    }
+
+    // MARK: - Background Delivery
+
+    func enableBackgroundStepsUpdates() {
+        guard HKHealthStore.isHealthDataAvailable(),
+              let stepsType = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
+
+        store.enableBackgroundDelivery(
+            for: stepsType,
+            frequency: HKUpdateFrequency.immediate
+        ) { success, error in
+            if success {
+                print("Background delivery enabled")
+            } else {
+                print("Failed background delivery: \(error?.localizedDescription ?? "Unknown")")
+            }
+        }
+    }
+
+    // MARK: - Observer Query
+
+    func startObservingSteps(onUpdate: @escaping () -> Void) {
+        guard HKHealthStore.isHealthDataAvailable(),
+              let stepsType = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
+
+        let query = HKObserverQuery(sampleType: stepsType, predicate: nil) { _, completionHandler, error in
+
+            if error == nil {
+                DispatchQueue.main.async {
+                    onUpdate()
+                }
+            }
+
+            completionHandler()
+        }
+
+        store.execute(query)
     }
 }
