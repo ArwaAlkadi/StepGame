@@ -43,6 +43,7 @@
 		ECCB97882F2C3DA100DBC1F5 /* WaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB97872F2C3DA100DBC1F5 /* WaitingView.swift */; };
 		ECCB978A2F2C3DB300DBC1F5 /* WaitingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */; };
 		ECCB978F2F2D89E500DBC1F5 /* RussoOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */; };
+		ECCF7DCE2F3A5EA70003F772 /* WindTumbleweed.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCF7DCD2F3A5EA70003F772 /* WindTumbleweed.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +82,7 @@
 		ECCB97872F2C3DA100DBC1F5 /* WaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingView.swift; sourceTree = "<group>"; };
 		ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingViewModel.swift; sourceTree = "<group>"; };
 		ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RussoOne-Regular.ttf"; sourceTree = "<group>"; };
+		ECCF7DCD2F3A5EA70003F772 /* WindTumbleweed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindTumbleweed.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */,
+				ECCF7DCD2F3A5EA70003F772 /* WindTumbleweed.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -383,6 +386,7 @@
 				ECCB96052F294E0F00DBC1F5 /* ShareCodePopup.swift in Sources */,
 				ECCB95E72F294C8100DBC1F5 /* StartView.swift in Sources */,
 				EC6BAB1C2F3159E300BDBEC8 /* RootView.swift in Sources */,
+				ECCF7DCE2F3A5EA70003F772 /* WindTumbleweed.swift in Sources */,
 				EC6BAB1E2F315A3000BDBEC8 /* GameSession.swift in Sources */,
 				ECCB95E92F294C8F00DBC1F5 /* StartViewModel.swift in Sources */,
 				ECCB95EF2F294CC900DBC1F5 /* MapView.swift in Sources */,

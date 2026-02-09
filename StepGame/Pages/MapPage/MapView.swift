@@ -23,17 +23,11 @@ struct MapView: View {
     @State private var showProfile = false
     @State private var reopenChallengesSheetAfterProfileDismiss = false
 
-    // MARK: - Sheet Router
+    
+    // MARK: - Single Sheet (Challenges only)
     private enum ActiveSheet: Identifiable {
         case challenges
-        case resultSummary
-
-        var id: Int {
-            switch self {
-            case .challenges: return 1
-            case .resultSummary: return 2
-            }
-        }
+        var id: Int { 1 }
     }
 
     @State private var activeSheet: ActiveSheet? = .challenges
@@ -43,13 +37,11 @@ struct MapView: View {
             Color.light2.ignoresSafeArea()
 
             mapContent
-
             hudLayer
-
             resultPopup
         }
-        .sheet(item: $activeSheet) { sheet in
-            makeSheet(for: sheet)
+        .sheet(item: $activeSheet) { _ in
+            makeChallengesSheet()
         }
         .fullScreenCover(isPresented: $showJoinPopup, onDismiss: onJoinDismiss) {
             makeJoinPopup()
@@ -90,7 +82,11 @@ struct MapView: View {
                 .scaledToFit()
                 .overlay {
                     GeometryReader { geo in
-                        mapOverlay(size: geo.size)
+                        ZStack {
+                            mapOverlay(size: geo.size)
+                            WindTumbleweedView(mapSize: geo.size)
+                                .allowsHitTesting(false) 
+                        }
                     }
                 }
         }
@@ -103,9 +99,7 @@ struct MapView: View {
                     number: value,
                     reached: vm.isFlagReached(value)
                 )
-                .position(
-                    vm.flagPosition(index: index, mapSize: size)
-                )
+                .position(vm.flagPosition(index: index, mapSize: size))
             }
 
             ForEach(vm.mapPlayers) { p in
@@ -115,9 +109,7 @@ struct MapView: View {
                     steps: p.steps,
                     isMe: p.isMe
                 )
-                .position(
-                    vm.positionForPlayer(p, mapSize: size)
-                )
+                .position(vm.positionForPlayer(p, mapSize: size))
                 .animation(.easeInOut(duration: 0.35), value: p.progress)
             }
         }
@@ -135,7 +127,6 @@ struct MapView: View {
                 reopenChallengesSheetAfterProfileDismiss = true
                 selectedDetent = .height(90)
                 activeSheet = nil
-
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                     showProfile = true
                 }
@@ -150,9 +141,7 @@ struct MapView: View {
                 isPresented: Binding(
                     get: { vm.isShowingResultPopup },
                     set: { newValue in
-                        if !newValue {
-                            vm.dismissResultPopup()
-                        }
+                        if !newValue { vm.dismissResultPopup() }
                     }
                 ),
                 vm: popupVM
@@ -162,17 +151,7 @@ struct MapView: View {
         }
     }
 
-    // MARK: - Sheet Builders
-
-    @ViewBuilder
-    private func makeSheet(for sheet: ActiveSheet) -> some View {
-        switch sheet {
-        case .challenges:
-            makeChallengesSheet()
-        case .resultSummary:
-            makeResultSummarySheet()
-        }
-    }
+    // MARK: - Challenges Sheet
 
     private func makeChallengesSheet() -> some View {
         ChallengesSheet(
@@ -185,20 +164,14 @@ struct MapView: View {
             onTapJoin: {
                 reopenChallengesSheetAfterJoinDismiss = true
                 activeSheet = nil
-
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                     showJoinPopup = true
                 }
             },
             onTapChallenge: { ch in
                 session.selectChallenge(ch)
-
-                if session.isChallengeInResultState(ch) {
-                    activeSheet = nil
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                        activeSheet = .resultSummary
-                    }
-                }
+                selectedDetent = .height(90)
+                activeSheet = .challenges
             }
         )
         .environmentObject(session)
@@ -208,48 +181,14 @@ struct MapView: View {
         .interactiveDismissDisabled(true)
     }
 
-    private func makeResultSummarySheet() -> some View {
-        NavigationStack {
-            if let challenge = vm.challenge {
-                ResultSummaryView(
-                    challenge: challenge,
-                    participants: vm.participants,
-                    playersById: vm.playersById
-                )
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Back") {
-                            selectedDetent = .height(90)
-                            activeSheet = nil
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                activeSheet = .challenges
-                            }
-                        }
-                        .font(.custom("RussoOne-Regular", size: 16))
-                        .foregroundStyle(.light1)
-                    }
-                }
-            } else {
-                Text("No challenge selected")
-                    .foregroundStyle(.light1)
-            }
-        }
-        .presentationDetents([.height(200),.medium, .large])
-        .presentationDragIndicator(.visible)
-        .presentationBackgroundInteraction(.enabled)
-        .interactiveDismissDisabled(true)
-    }
+    // MARK: - Other Views
 
     private func makeJoinPopup() -> some View {
         JoinCodePopup(
             isPresented: $showJoinPopup,
             onJoin: { code in
                 await session.joinWithCode(code)
-
-                if let msg = session.errorMessage, !msg.isEmpty {
-                    return msg
-                }
-
+                if let msg = session.errorMessage, !msg.isEmpty { return msg }
                 reopenChallengesSheetAfterJoinDismiss = false
                 return nil
             }
@@ -290,7 +229,6 @@ struct MapView: View {
 
     private func onProfileDismiss() {
         selectedDetent = .height(90)
-
         if reopenChallengesSheetAfterProfileDismiss {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 activeSheet = .challenges
@@ -314,7 +252,6 @@ private struct MapHUDLayer: View {
 
     var body: some View {
         VStack(spacing: 0) {
-
             Rectangle()
                 .frame(height: 155)
                 .cornerRadius(20)
@@ -346,7 +283,6 @@ private struct MapHUDLayer: View {
         }
         .ignoresSafeArea()
     }
-
 }
 
 // MARK: - Player Marker (On Map)
@@ -359,7 +295,6 @@ private struct MapPlayerMarker: View {
 
     var body: some View {
         VStack(spacing: 6) {
-
             Image(systemName: "bubble.middle.bottom.fill")
                 .resizable()
                 .scaledToFit()

@@ -296,17 +296,6 @@ final class FirebaseService {
         }
     }
 
-    func markDidShowResultPopup(challengeId: String, uid: String) async throws {
-        let ref = db.collection("challenges")
-            .document(challengeId)
-            .collection("participants")
-            .document(uid)
-
-        try await ref.setData([
-            "didShowResultPopup": true
-        ], merge: true)
-    }
-
     // MARK: - Mark Challenge Ended
     func markChallengeEnded(challengeId: String, now: Date = Date()) async throws {
         try await db.collection("challenges")

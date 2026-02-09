@@ -9,7 +9,6 @@ import Combine
 import FirebaseFirestore
 import UIKit
 
-// MARK: - Map ViewModel
 @MainActor
 final class MapViewModel: ObservableObject {
 
@@ -54,12 +53,10 @@ final class MapViewModel: ObservableObject {
             stopStepsSync()
         }
         syncTimerCancellable?.cancel()
-        syncTimerCancellable = nil
         appForegroundCancellable?.cancel()
-        appForegroundCancellable = nil
     }
 
-    /// Map path points (normalized 0...1)
+    // MARK: - Map Points
     private let pathPoints: [CGPoint] = [
         .init(x: 0.315, y: 0.938),
         .init(x: 0.383, y: 0.894),
@@ -85,7 +82,6 @@ final class MapViewModel: ObservableObject {
         .init(x: 0.632, y: 0.073),
     ]
 
-    /// Flag anchor points (normalized 0...1)
     private let flagAnchors: [CGPoint] = [
         .init(x: 0.736, y: 0.862),
         .init(x: 0.445, y: 0.711),
@@ -102,9 +98,14 @@ final class MapViewModel: ObservableObject {
 
         unbind()
 
+        participants = []
+        myParticipant = nil
+        playersById = [:]
+        resultPopupVM = nil
+        isShowingResultPopup = false
+
         self.challenge = session.challenge
         rebuildAllUI()
-        evaluateResultPopupIfNeeded()
 
         guard let chId = session.challenge?.id else { return }
 
@@ -158,6 +159,7 @@ final class MapViewModel: ObservableObject {
             }
             playersById = dict
         } catch {
+            // silent
         }
     }
 
@@ -178,7 +180,6 @@ final class MapViewModel: ObservableObject {
             let hudAvatar = type.avatarKey()
 
             let progress = min(max(Double(part.steps) / Double(goal), 0), 1)
-
             let state = computedCharacterState(challenge: ch, steps: part.steps)
             let mapSprite = type.imageKey(state: state)
 
@@ -254,10 +255,10 @@ final class MapViewModel: ObservableObject {
         let angle = (2.0 * Double.pi) * (Double(idx) / Double(grouped.count))
         let radius: CGFloat = player.isMe ? 18 : 14
 
-        let dx = CGFloat(cos(angle)) * radius
-        let dy = CGFloat(sin(angle)) * radius
-
-        return CGPoint(x: base.x + dx, y: base.y + dy)
+        return CGPoint(
+            x: base.x + CGFloat(cos(angle)) * radius,
+            y: base.y + CGFloat(sin(angle)) * radius
+        )
     }
 
     // MARK: - Flags
@@ -273,7 +274,7 @@ final class MapViewModel: ObservableObject {
         return CGPoint(x: mapSize.width * a.x, y: mapSize.height * a.y)
     }
 
-    // MARK: - Steps Sync (Today)
+    // MARK: - Steps Sync
     func startStepsSync(health: HealthKitManager) {
         stopStepsSync()
 
@@ -301,7 +302,6 @@ final class MapViewModel: ObservableObject {
         appForegroundCancellable = nil
     }
 
-    // MARK: - Steps Sync Once
     private func syncOnce(health: HealthKitManager) async {
         guard let session else { return }
         guard let ch = session.challenge, let chId = ch.id else { return }
@@ -337,81 +337,33 @@ final class MapViewModel: ObservableObject {
                     now: now
                 )
             }
-
-            Task { [weak self] in
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
-                await self?.syncRetryIfChanged(health: health, start: startOfDay, end: Date())
-            }
         } catch {
+            // silent
         }
     }
 
-    /// Retry sync to handle delayed Health updates
-    private func syncRetryIfChanged(health: HealthKitManager, start: Date, end: Date) async {
-        guard let session else { return }
-        guard let ch = session.challenge, let chId = ch.id else { return }
-        guard let uid = session.uid else { return }
-        guard health.isAuthorized else { return }
-        guard ch.status == .active else { return }
-
-        do {
-            let stepsToday = try await health.fetchSteps(from: start, to: end)
-            if lastUploadedSteps == stepsToday { return }
-
-            let goal = max(ch.goalSteps, 1)
-            let progress = min(max(Double(stepsToday) / Double(goal), 0), 1)
-            let state: CharacterState = (progress >= 1) ? .active : .normal
-
-            try await firebase.updateParticipantSteps(
-                challengeId: chId,
-                uid: uid,
-                steps: stepsToday,
-                progress: progress,
-               characterState: state
-            )
-
-            lastUploadedSteps = stepsToday
-
-            if stepsToday >= goal {
-                try? await firebase.tryMarkFinishedAndClaimWinnerIfNeeded(
-                    challengeId: chId,
-                    uid: uid,
-                    now: Date()
-                )
-            }
-        } catch {
-        }
-    }
-
-    // MARK: - Result Popup Rules
+    // MARK: - Result Popup (NEW RULES)
     private func evaluateResultPopupIfNeeded(now: Date = Date()) {
         guard !isShowingResultPopup else { return }
         guard let ch = challenge, let chId = ch.id else { return }
         guard let me = session?.player else { return }
         guard let myPart = myParticipant else { return }
 
-        if myPart.hasShownResultPopup { return }
+        if myPart.challengeId != chId { return }
 
         let iFinished = (myPart.finishedAt != nil)
         let timeEnded = (now >= ch.effectiveEndDate)
 
         guard iFinished || timeEnded else { return }
 
-        let vm = ChallengeResultPopupViewModel(
+        resultPopupVM = ChallengeResultPopupViewModel(
             challenge: ch,
             me: me,
             myParticipant: myPart,
             participants: participants,
             playersById: playersById
         )
-
-        resultPopupVM = vm
         isShowingResultPopup = true
-
-        Task {
-            do { try await firebase.markDidShowResultPopup(challengeId: chId, uid: myPart.playerId) }
-            catch { }
-        }
     }
 
     func dismissResultPopup() {
@@ -447,7 +399,7 @@ final class MapViewModel: ObservableObject {
         return min(max(CGFloat(p), 0), 1)
     }
 
-    // MARK: - Path Helpers
+    // MARK: - Path
     private func positionForProgress(progress: CGFloat, mapSize: CGSize) -> CGPoint {
         guard pathPoints.count >= 2 else { return .zero }
 
@@ -469,7 +421,7 @@ final class MapViewModel: ObservableObject {
         return CGPoint(x: xNorm * mapSize.width, y: yNorm * mapSize.height)
     }
 
-    // MARK: - Challenge End
+    // MARK: - End Challenge
     private func maybeEndChallengeIfNeeded(now: Date = Date()) {
         guard let ch = challenge, let chId = ch.id else { return }
         guard ch.status != .ended else { return }
@@ -480,8 +432,7 @@ final class MapViewModel: ObservableObject {
         guard timeEnded || allFinished else { return }
 
         Task {
-            do { try await firebase.markChallengeEnded(challengeId: chId, now: now) }
-            catch { }
+            try? await firebase.markChallengeEnded(challengeId: chId, now: now)
         }
     }
 
@@ -510,7 +461,6 @@ final class MapViewModel: ObservableObject {
         return ms
     }
 
-    ///Shortens a uid for display
     private func shortId(_ id: String) -> String {
         if id.count <= 6 { return id }
         return "\(id.prefix(3))...\(id.suffix(3))"

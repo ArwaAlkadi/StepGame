@@ -173,14 +173,6 @@ final class GameSession: ObservableObject {
         (ch.winnerId != nil) || (now >= ch.effectiveEndDate) || (ch.status == .ended)
     }
 
-    func markMyResultPopupShownIfNeeded(challengeId: String) async {
-        guard let uid else { return }
-        do {
-            try await firebase.markDidShowResultPopup(challengeId: challengeId, uid: uid)
-        } catch {
-        }
-    }
-
     // MARK: - Player
     func createPlayer(name: String) async {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)

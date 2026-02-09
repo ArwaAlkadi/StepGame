@@ -213,7 +213,7 @@ private struct LobbyCenter: View {
         .frame(height: 360)
     }
 
-    // \\ Lobby avatar positions
+    /// Lobby avatar positions
     private func slotPositions() -> [CGPoint] {
         [
             CGPoint(x: 90,  y: 120),
@@ -233,7 +233,7 @@ private struct LobbyAvatar: View {
             Image(image)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 70, height: 70)
+                .frame(width: 90, height: 90)
                 .background(Circle().fill(Color.light4.opacity(0.7)))
 
             Text(name)
