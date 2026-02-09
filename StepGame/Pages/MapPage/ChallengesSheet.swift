@@ -5,6 +5,7 @@
 
 import SwiftUI
 import Combine
+import FirebaseFirestore
 
 struct ChallengesSheet: View {
 
@@ -133,6 +134,11 @@ struct ChallengesCard: View {
 
     @State private var showConfirmAlert = false
 
+    @State private var myPlaceForThisChallenge: Int? = nil
+    @State private var placeListener: ListenerRegistration? = nil
+
+    private let firebase = FirebaseService.shared
+
     private var isHost: Bool {
         guard let uid = session.uid else { return false }
         return challenge.createdBy == uid
@@ -186,6 +192,13 @@ struct ChallengesCard: View {
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(Capsule().fill(statusColor(challenge.status)))
+
+                    if let crown = crownImageName {
+                        Image(crown)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 35, height: 35)
+                    }
 
                     Spacer()
                 }
@@ -246,6 +259,32 @@ struct ChallengesCard: View {
         } message: {
             Text(alertMessage)
         }
+        .onAppear {
+            attachPlaceListenerIfNeeded()
+        }
+        .onDisappear {
+            placeListener?.remove()
+            placeListener = nil
+        }
+    }
+
+    private func attachPlaceListenerIfNeeded() {
+        guard challenge.status == .ended else {
+            myPlaceForThisChallenge = nil
+            placeListener?.remove()
+            placeListener = nil
+            return
+        }
+
+        guard let chId = challenge.id else { return }
+        guard let uid = session.uid else { return }
+
+        placeListener?.remove()
+        placeListener = firebase.listenMyParticipant(challengeId: chId, uid: uid) { part in
+            DispatchQueue.main.async {
+                self.myPlaceForThisChallenge = part?.place
+            }
+        }
     }
 
     /// Status title label
@@ -270,26 +309,38 @@ struct ChallengesCard: View {
     private func systemIconName(for count: Int) -> String {
         count <= 1 ? "person.fill" : "person.2.fill"
     }
-    
+
     /// Date Format
     private func dateRangeText() -> String {
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
-        
+
         let startYear = calendar.component(.year, from: challenge.startDate)
         let endYear = calendar.component(.year, from: challenge.effectiveEndDate)
-        
+
         let formatter = DateFormatter()
-        
+
         if startYear == currentYear && endYear == currentYear {
             formatter.dateFormat = "MMM d"
         } else {
             formatter.dateFormat = "MMM d, yyyy"
         }
-        
+
         let start = formatter.string(from: challenge.startDate)
         let end = formatter.string(from: challenge.effectiveEndDate)
-        
+
         return "\(start) - \(end)"
+    }
+
+    private var crownImageName: String? {
+        guard challenge.status == .ended else { return nil }
+        guard let place = myPlaceForThisChallenge else { return nil }
+
+        switch place {
+        case 1: return "Place1"
+        case 2: return "Place2"
+        case 3: return "Place3"
+        default: return nil
+        }
     }
 }

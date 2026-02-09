@@ -383,4 +383,19 @@ final class FirebaseService {
         let letters = Array("ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
         return String((0..<6).compactMap { _ in letters.randomElement() })
     }
+    
+    func listenMyParticipant(
+        challengeId: String,
+        uid: String,
+        onChange: @escaping (ChallengeParticipant?) -> Void
+    ) -> ListenerRegistration {
+        db.collection("challenges")
+            .document(challengeId)
+            .collection("participants")
+            .document(uid)
+            .addSnapshotListener { snap, _ in
+                guard let snap, snap.exists else { onChange(nil); return }
+                onChange(try? snap.data(as: ChallengeParticipant.self))
+            }
+    }
 }
