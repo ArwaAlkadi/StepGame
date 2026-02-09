@@ -23,6 +23,12 @@ struct MapView: View {
     @State private var showProfile = false
     @State private var reopenChallengesSheetAfterProfileDismiss = false
 
+    @State private var activeMapPopup: MapPopupType? = nil
+    @StateObject private var gameCoordinator = GameCoordinatorViewModel()
+    
+   // @StateObject private var coordinator = GameCoordinatorViewModel()
+
+
     // MARK: - Sheet Router
     private enum ActiveSheet: Identifiable {
         case challenges
@@ -47,6 +53,9 @@ struct MapView: View {
             hudLayer
 
             resultPopup
+            
+            mapPopupLayer
+
         }
         .sheet(item: $activeSheet) { sheet in
             makeSheet(for: sheet)
@@ -79,6 +88,10 @@ struct MapView: View {
         .onChange(of: session.player?.characterType) { _, _ in
             vm.bind(session: session)
         }
+        .onChange(of: vm.pendingMapPopup) { popup in
+            activeMapPopup = popup
+        }
+
     }
 
     // MARK: - Subviews
@@ -163,6 +176,31 @@ struct MapView: View {
             .zIndex(1000)
         }
     }
+    
+    @ViewBuilder
+    private var mapPopupLayer: some View {
+        if let popup = activeMapPopup {
+            ZStack {
+                // Dark background (blocks map interaction)
+                Color.black.opacity(0.45)
+                    .ignoresSafeArea()
+
+                switch popup {
+
+                case .soloLate:
+                    SoloChallengeView(viewModel: gameCoordinator)
+
+                case .groupAttacker:
+                    GroupAttackerChallengeView(viewModel: gameCoordinator)
+
+                case .groupDefender:
+                    GroupDefenderChallengeView(viewModel: gameCoordinator)
+                }
+            }
+            .zIndex(3000) // ALWAYS on top
+        }
+    }
+
 
     // MARK: - Sheet Builders
 

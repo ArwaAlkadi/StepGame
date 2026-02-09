@@ -18,7 +18,7 @@ final class MapViewModel: ObservableObject {
     @Published private(set) var participants: [ChallengeParticipant] = []
     @Published private(set) var playersById: [String: Player] = [:]
     @Published private(set) var myParticipant: ChallengeParticipant? = nil
-
+    @Published var pendingMapPopup: MapPopupType? = nil
     @Published var isShowingResultPopup: Bool = false
     @Published var resultPopupVM: ChallengeResultPopupViewModel? = nil
 
@@ -130,6 +130,10 @@ final class MapViewModel: ObservableObject {
                 self.maybeEndChallengeIfNeeded()
             }
         }
+        evaluateSoloLate()
+        evaluateGroupAttacker()
+        evaluateGroupDefender()
+
     }
 
     func unbind() {
@@ -160,7 +164,49 @@ final class MapViewModel: ObservableObject {
         } catch {
         }
     }
+    
 
+    
+
+
+
+    
+    private func evaluateSoloLate(now: Date = Date()) {
+        guard let ch = challenge else { return }
+        guard ch.originalMode == .solo else { return }
+        guard let myPart = myParticipant else { return }
+
+        let expected = expectedProgressByTime(challenge: ch, now: now)
+        let actual = CGFloat(myPart.steps) / CGFloat(max(ch.goalSteps, 1))
+
+        if actual + 0.1 < expected {
+            pendingMapPopup = .soloLate
+        }
+    }
+
+    private func evaluateGroupAttacker() {
+        guard isGroupChallenge else { return }
+        guard let myPart = myParticipant else { return }
+
+        let sorted = participants.sorted { $0.steps > $1.steps }
+        guard let last = sorted.last else { return }
+
+        if last.playerId == myPart.playerId {
+            pendingMapPopup = .groupAttacker
+        }
+    }
+    
+    private func evaluateGroupDefender(now: Date = Date()) {
+        guard let myPart = myParticipant else { return }
+        guard let until = myPart.isUnderAttackUntil else { return }
+
+        if now < until {
+            pendingMapPopup = .groupDefender
+        }
+    }
+
+
+    
     // MARK: - UI Builders
     private func rebuildAllUI() {
         guard let session else { return }
@@ -516,3 +562,4 @@ final class MapViewModel: ObservableObject {
         return "\(id.prefix(3))...\(id.suffix(3))"
     }
 }
+

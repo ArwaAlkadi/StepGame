@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B65F3A7D2F3A09F500935C9B /* GameMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65F3A7C2F3A09F500935C9B /* GameMode.swift */; };
+		B65F3AA72F3A2DAF00935C9B /* MapPopupType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65F3AA62F3A2DAF00935C9B /* MapPopupType.swift */; };
 		EC2548B32F34194E0003414C /* MapPathEditorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */; };
 		EC6BAB1C2F3159E300BDBEC8 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6BAB1B2F3159E300BDBEC8 /* RootView.swift */; };
 		EC6BAB1E2F315A3000BDBEC8 /* GameSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */; };
@@ -45,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		B65F3A7C2F3A09F500935C9B /* GameMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMode.swift; sourceTree = "<group>"; };
+		B65F3AA62F3A2DAF00935C9B /* MapPopupType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPopupType.swift; sourceTree = "<group>"; };
 		EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPathEditorHelper.swift; sourceTree = "<group>"; };
 		EC6BAB1B2F3159E300BDBEC8 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSession.swift; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 		ECCB95BD2F29472F00DBC1F5 /* MapPage */ = {
 			isa = PBXGroup;
 			children = (
+				B65F3AA62F3A2DAF00935C9B /* MapPopupType.swift */,
 				ECCB95EE2F294CC900DBC1F5 /* MapView.swift */,
 				ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */,
 				ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */,
@@ -388,6 +391,7 @@
 				ECCB95EB2F294CA700DBC1F5 /*  SetupChallengeView.swift in Sources */,
 				EC2548B32F34194E0003414C /* MapPathEditorHelper.swift in Sources */,
 				ECCB96032F294DFF00DBC1F5 /* JoinWithCodePopup.swift in Sources */,
+				B65F3AA72F3A2DAF00935C9B /* MapPopupType.swift in Sources */,
 				ECCB978A2F2C3DB300DBC1F5 /* WaitingViewModel.swift in Sources */,
 				ECCB95D72F29484A00DBC1F5 /* HealthKitService.swift in Sources */,
 				EC7628D62F39619F008952D9 /* ChallengeResultSheet.swift in Sources */,
@@ -469,7 +473,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -527,7 +531,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -545,7 +549,7 @@
 				CODE_SIGN_ENTITLEMENTS = StepGame/StepGame.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q3BRAU32HS;
+				DEVELOPMENT_TEAM = 4T9786P7T8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepGame/Info.plist;
@@ -562,7 +566,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.2026.StepGame;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranaalqbaly.stepgame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -586,7 +590,7 @@
 				CODE_SIGN_ENTITLEMENTS = StepGame/StepGame.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q3BRAU32HS;
+				DEVELOPMENT_TEAM = 4T9786P7T8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StepGame/Info.plist;
@@ -603,7 +607,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.2026.StepGame;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranaalqbaly.stepgame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

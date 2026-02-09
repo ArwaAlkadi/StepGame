@@ -14,6 +14,52 @@ final class FirebaseService {
     private init() {}
 
     private let db = Firestore.firestore()
+    
+    // MARK: - Attack / Defense
+
+    func attackLeadingPlayer(
+        challengeId: String,
+        attackerId: String,
+        durationSeconds: TimeInterval = 3 * 60 * 60
+    ) async throws {
+
+        let partsRef = db.collection("challenges")
+            .document(challengeId)
+            .collection("participants")
+
+        let snap = try await partsRef.getDocuments()
+
+        let participants = snap.documents.compactMap {
+            try? $0.data(as: ChallengeParticipant.self)
+        }
+
+        guard let leader = participants.max(by: { $0.steps < $1.steps }) else { return }
+        guard leader.playerId != attackerId else { return }
+
+        let until = Date().addingTimeInterval(durationSeconds)
+
+        try await partsRef.document(leader.playerId).setData([
+            "isUnderAttackUntil": Timestamp(date: until),
+            "attackedByPlayerId": attackerId
+        ], merge: true)
+    }
+
+    func cancelAttack(
+        challengeId: String,
+        defenderId: String
+    ) async throws {
+
+        let ref = db.collection("challenges")
+            .document(challengeId)
+            .collection("participants")
+            .document(defenderId)
+
+        try await ref.setData([
+            "isUnderAttackUntil": FieldValue.delete(),
+            "attackedByPlayerId": FieldValue.delete()
+        ], merge: true)
+    }
+
 
     // MARK: - Auth (Anonymous)
     func signInIfNeeded() async throws -> String {

@@ -201,6 +201,9 @@ struct ChallengeParticipant: Identifiable, Codable {
     var finishedAt: Date? = nil
     var place: Int? = nil
     var didShowResultPopup: Bool? = nil
+    
+    var isUnderAttackUntil: Date?        // defender window
+    var attackedByPlayerId: String?      // who attacked me
 
     init(
         id: String? = nil,
