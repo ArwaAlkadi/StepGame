@@ -236,7 +236,7 @@ struct MapView: View {
                     .foregroundStyle(.light1)
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.height(200),.medium, .large])
         .presentationDragIndicator(.visible)
         .presentationBackgroundInteraction(.enabled)
         .interactiveDismissDisabled(true)
@@ -381,16 +381,16 @@ private struct MapPlayerMarker: View {
             Image(systemName: "bubble.middle.bottom.fill")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 90)
+                .frame(width: 70)
                 .foregroundStyle(.white)
                 .overlay(
                     VStack(spacing: 2) {
                         Text(isMe ? "Me" : name)
-                            .font(.custom("RussoOne-Regular", size: 14))
+                            .font(.custom("RussoOne-Regular", size: 10))
                             .foregroundStyle(.light1)
 
-                        Text("\(steps.formatted())")
-                            .font(.custom("RussoOne-Regular", size: 12))
+                        Text("\(steps.formatted()) Steps")
+                            .font(.custom("RussoOne-Regular", size: 10))
                             .foregroundStyle(.light2)
                     }
                 )
@@ -398,7 +398,7 @@ private struct MapPlayerMarker: View {
             Image(mapSprite)
                 .resizable()
                 .scaledToFit()
-                .frame(width: isMe ? 120 : 90, height: isMe ? 120 : 90)
+                .frame(width: 90, height: 90)
         }
     }
 }

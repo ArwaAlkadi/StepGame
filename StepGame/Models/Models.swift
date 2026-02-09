@@ -131,7 +131,7 @@ struct Challenge: Identifiable, Codable {
         return mode
     }
 
-    var maxPlayers: Int { originalMode == .solo ? 1 : 2 }
+    var maxPlayers: Int { originalMode == .solo ? 1 : 5 }
     var isFull: Bool { playerIds.count >= maxPlayers }
 
     func canJoin() -> Bool {

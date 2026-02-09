@@ -85,7 +85,7 @@ final class MapViewModel: ObservableObject {
         .init(x: 0.632, y: 0.073),
     ]
 
-    // \\ Flag anchor points (normalized 0...1)
+    /// Flag anchor points (normalized 0...1)
     private let flagAnchors: [CGPoint] = [
         .init(x: 0.736, y: 0.862),
         .init(x: 0.445, y: 0.711),
