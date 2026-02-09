@@ -11,10 +11,12 @@ import SwiftUI
 // MARK: - Popup Views
 struct GroupAttackerChallengeView: View {
     @ObservedObject var viewModel: GameCoordinatorViewModel
-    
+    let onClose: () -> Void
+    let onConfirm: () -> Void
+
     var body: some View {
-        DialogBaseView(onClose: { viewModel.reset() }) {
-            VStack(spacing: 20) {
+        DialogBaseView(onClose: onClose) {      // ← important: pass onClose directly
+                   VStack(spacing: 20) {
                 Text("Take Your Chance")
                     .font(.custom("RussoOne-Regular", size: 28))
                     .foregroundColor(Color(red: 0.17, green: 0.09, blue: 0.06))
@@ -27,9 +29,9 @@ struct GroupAttackerChallengeView: View {
                     .padding(.horizontal, 20)
                 
                 HStack(spacing: 15) {
-                    Button(action: {
-                        viewModel.startAttackerGame()
-                    }) {
+                    Button {
+                        onConfirm()
+                    } label: {
                         Text("Yes")
                             .font(.custom("RussoOne-Regular", size: 18))
                             .foregroundColor(.white)
@@ -39,9 +41,9 @@ struct GroupAttackerChallengeView: View {
                             .cornerRadius(25)
                     }
                     
-                    Button(action: {
-                        viewModel.reset()
-                    }) {
+                    Button {
+                        onClose()
+                    } label: {
                         Text("No")
                             .font(.custom("RussoOne-Regular", size: 18))
                             .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.07))

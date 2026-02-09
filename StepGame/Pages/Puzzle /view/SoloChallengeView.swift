@@ -3,9 +3,12 @@ import SwiftUI
 
 struct SoloChallengeView: View {
     @ObservedObject var viewModel: GameCoordinatorViewModel
+    let onClose: () -> Void
+    let onConfirm: () -> Void
+
     
     var body: some View {
-        DialogBaseView(onClose: { viewModel.reset() }) {
+        DialogBaseView(onClose: onClose) {      // ← important: pass onClose directly
             VStack(spacing: 20) {
                 Text("Need More Time?")
                     .font(.custom("RussoOne-Regular", size: 28))
@@ -19,9 +22,9 @@ struct SoloChallengeView: View {
                     .padding(.horizontal, 20)
                 
                 HStack(spacing: 15) {
-                    Button(action: {
-                        viewModel.startAttackerGame()
-                    }) {
+                    Button {
+                        onConfirm()
+                    } label: {
                         Text("Yes")
                             .font(.custom("RussoOne-Regular", size: 18))
                             .foregroundColor(.white)
@@ -31,9 +34,10 @@ struct SoloChallengeView: View {
                             .cornerRadius(25)
                     }
                     
-                    Button(action: {
+                    Button {
                         viewModel.reset()
-                    }) {
+                        onClose()
+                    } label: {
                         Text("No")
                             .font(.custom("RussoOne-Regular", size: 18))
                             .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.07))
@@ -53,14 +57,4 @@ struct SoloChallengeView: View {
 
 
 
-// MARK: - Preview
-struct SoloChallengeView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            Color.gray.opacity(0.3).ignoresSafeArea()
-            
-            SoloChallengeView(viewModel: GameCoordinatorViewModel())
-        }
-        .previewDisplayName("Solo Challenge - Need More Time")
-    }
-}
+

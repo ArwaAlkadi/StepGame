@@ -181,46 +181,50 @@ class WiringGameViewModel: ObservableObject {
     }
 }
 
-class GameCoordinatorViewModel: ObservableObject {
-    @Published var currentView: GameView = .groupAttackerChallenge
-    @Published var attackerCompleted: Bool = false
-    
-    enum GameView {
-        case groupAttackerChallenge
-        case groupDefenderChallenge
-        case attackerGame
-        case defenderGame
-        case soloChallenge
+@MainActor
+final class GameCoordinatorViewModel: ObservableObject {
+
+    enum ViewState {
         case none
         case soloGame
-    }
-    
-    
-    func startSoloGame() {
-        currentView = .soloGame
+        case attackerGame
+        case defenderGame
     }
 
-    func SoloChallengeView() {
-        currentView = .soloChallenge
+    @Published var currentView: ViewState = .none
+    @Published var isGameActive: Bool = false
+
+    func startSoloGame() {
+        currentView = .soloGame
+        isGameActive = true
     }
-    
-    func startAttackerGame() {
-        currentView = .attackerGame
-    }
-    
-    func attackerGameCompleted() {
-        attackerCompleted = true
-        currentView = .groupDefenderChallenge
-    }
-    
+
     func startDefenderGame() {
         currentView = .defenderGame
+        isGameActive = true
     }
+
     
-    func reset() {
-        currentView = .none
+    func startAttackerGame() {
+        print("[Coordinator] startAttackerGame() called")
+        currentView = .attackerGame
+        isGameActive = true
+        print("[Coordinator] currentView=\(currentView), isGameActive=\(isGameActive)")
     }
+
+    func reset() {
+        print("[Coordinator] reset() called")
+        currentView = .none
+        isGameActive = false
+        print("[Coordinator] currentView=\(currentView), isGameActive=\(isGameActive)")
+    }
+
+    
+    
 }
+
+
+
 
 // MARK: - Reusable Components
 struct WireNodeView: View {

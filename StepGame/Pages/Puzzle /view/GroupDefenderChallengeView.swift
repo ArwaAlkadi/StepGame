@@ -10,9 +10,11 @@ import SwiftUI
 
 struct GroupDefenderChallengeView: View {
     @ObservedObject var viewModel: GameCoordinatorViewModel
-    
+    let onClose: () -> Void
+    let onConfirm: () -> Void
+
     var body: some View {
-        DialogBaseView(onClose: { viewModel.reset() }) {
+        DialogBaseView(onClose: onClose) {      // ← important: pass onClose directly
             VStack(spacing: 20) {
                 Text("Defend Your Progress")
                     .font(.custom("RussoOne-Regular", size: 28))
@@ -26,9 +28,9 @@ struct GroupDefenderChallengeView: View {
                     .padding(.horizontal, 20)
                 
                 HStack(spacing: 15) {
-                    Button(action: {
-                        viewModel.startDefenderGame()
-                    }) {
+                    Button {
+                        onConfirm()
+                    } label: {
                         Text("Defend")
                             .font(.custom("RussoOne-Regular", size: 18))
                             .foregroundColor(.white)
@@ -38,9 +40,9 @@ struct GroupDefenderChallengeView: View {
                             .cornerRadius(25)
                     }
                     
-                    Button(action: {
-                        viewModel.reset()
-                    }) {
+                    Button {
+                        onClose()
+                    } label: {
                         Text("Give Up")
                             .font(.custom("RussoOne-Regular", size: 18))
                             .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.07))

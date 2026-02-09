@@ -10,8 +10,8 @@ import SwiftUI
 
 // MARK: - Main Coordinator View
 struct ShowWiringGameSheet: View {
-    @StateObject private var coordinator = GameCoordinatorViewModel()
-    
+    @ObservedObject var coordinator: GameCoordinatorViewModel
+
     var body: some View {
         ZStack {
             LinearGradient(
@@ -23,35 +23,40 @@ struct ShowWiringGameSheet: View {
             .ignoresSafeArea()
             
             switch coordinator.currentView {
-                
             case .none:
                 EmptyView()
-                        
-            case .soloChallenge:
-                SoloChallengeView(viewModel: coordinator)
-                        
+
+            
+
+
             case .soloGame:
-                WiringGameView(coordinator: coordinator, gameMode: .solo, playerRole: nil, timeLimit: 6.0)
-                
-            case .groupAttackerChallenge:
-                GroupAttackerChallengeView(viewModel: coordinator)
-                
-            case .groupDefenderChallenge:
-                GroupDefenderChallengeView(viewModel: coordinator)
-                
+                WiringGameView(
+                    coordinator: coordinator,
+                    gameMode: .solo,
+                    playerRole: nil,
+                    timeLimit: 6.0
+                )
+
+
             case .attackerGame:
-                WiringGameView(coordinator: coordinator, gameMode: .group, playerRole: .attacker, timeLimit: 6.0)
-                
+                WiringGameView(
+                    coordinator: coordinator,
+                    gameMode: .group,
+                    playerRole: .attacker,
+                    timeLimit: 6.0
+                )
+
             case .defenderGame:
-                WiringGameView(coordinator: coordinator, gameMode: .group, playerRole: .defender, timeLimit: 6.0)
+                WiringGameView(
+                    coordinator: coordinator,
+                    gameMode: .group,
+                    playerRole: .defender,
+                    timeLimit: 6.0
+                )
             }
+
         }
     }
 }
 
-// MARK: - Preview
-struct WiringGame_Previews: PreviewProvider {
-    static var previews: some View {
-        ShowWiringGameSheet()
-    }
-}
+

@@ -69,6 +69,16 @@ struct MapView: View {
         .fullScreenCover(isPresented: $showProfile, onDismiss: onProfileDismiss) {
             makeProfileView()
         }
+                
+        .fullScreenCover(isPresented: $gameCoordinator.isGameActive) {
+            ShowWiringGameSheet(coordinator: gameCoordinator)
+                .onAppear {
+                    activeMapPopup = nil
+                }
+        }
+
+
+        
         .onAppear {
             selectedDetent = .height(90)
             activeSheet = .challenges
@@ -91,7 +101,52 @@ struct MapView: View {
         .onChange(of: vm.pendingMapPopup) { popup in
             activeMapPopup = popup
         }
+        .onChange(of: gameCoordinator.isGameActive) { isActive in
+            if isActive {
+                activeMapPopup = nil
+            }
+        }
+        
+       // for testing the puzzle
+        .onTapGesture(count: 3) {
+                    activeMapPopup = .soloLate
+                }
 
+
+
+
+    }
+    
+    private func startSoloGameSafely() {
+        activeSheet = nil          // ✅ dismiss challenges sheet
+        activeMapPopup = nil
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            gameCoordinator.startSoloGame()
+        }
+    }
+
+    private func startDefenderGameSafely() {
+        activeSheet = nil          // ✅ dismiss challenges sheet
+        activeMapPopup = nil
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            gameCoordinator.startDefenderGame()
+        }
+    }
+
+    private func startAttackerGameSafely() {
+        activeSheet = nil          // ✅ dismiss challenges sheet
+        activeMapPopup = nil       // ✅ dismiss popup
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            gameCoordinator.startAttackerGame()
+        }
+    }
+
+    
+    private func dismissMapPopup() {
+        activeMapPopup = nil
     }
 
     // MARK: - Subviews
@@ -181,23 +236,36 @@ struct MapView: View {
     private var mapPopupLayer: some View {
         if let popup = activeMapPopup {
             ZStack {
-                // Dark background (blocks map interaction)
                 Color.black.opacity(0.45)
                     .ignoresSafeArea()
 
                 switch popup {
 
                 case .soloLate:
-                    SoloChallengeView(viewModel: gameCoordinator)
+                    SoloChallengeView(
+                        viewModel: gameCoordinator,
+                        onClose: dismissMapPopup,
+                        onConfirm: startSoloGameSafely
+                    )
+
 
                 case .groupAttacker:
-                    GroupAttackerChallengeView(viewModel: gameCoordinator)
+                    GroupAttackerChallengeView(
+                        viewModel: gameCoordinator,
+                        onClose: dismissMapPopup,
+                        onConfirm: startAttackerGameSafely
+
+                    )
 
                 case .groupDefender:
-                    GroupDefenderChallengeView(viewModel: gameCoordinator)
+                    GroupDefenderChallengeView(
+                        viewModel: gameCoordinator,
+                        onClose: dismissMapPopup,
+                        onConfirm: startDefenderGameSafely
+                    )
                 }
             }
-            .zIndex(3000) // ALWAYS on top
+            .zIndex(3000)
         }
     }
 

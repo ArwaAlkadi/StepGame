@@ -137,17 +137,14 @@ struct WiringGameView: View {
                     role: playerRole,
                     onClose: {
                         dismiss()
-                        if gameMode == .group && playerRole == .attacker && gameResult == .success {
-                            coordinator.attackerGameCompleted()
-                        } else {
-                            coordinator.reset()
-                        }
+                        coordinator.reset()
                     },
                     onRetry: {
                         showResult = false
                         viewModel.resetGame()
                     }
                 )
+
             }
         }
         .onChange(of: viewModel.isComplete) { completed in
