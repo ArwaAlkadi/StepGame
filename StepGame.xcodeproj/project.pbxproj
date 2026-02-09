@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B65F3A7D2F3A09F500935C9B /* GameMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65F3A7C2F3A09F500935C9B /* GameMode.swift */; };
 		EC2548B32F34194E0003414C /* MapPathEditorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */; };
 		EC6BAB1C2F3159E300BDBEC8 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6BAB1B2F3159E300BDBEC8 /* RootView.swift */; };
 		EC6BAB1E2F315A3000BDBEC8 /* GameSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */; };
@@ -33,9 +34,6 @@
 		ECCB95EF2F294CC900DBC1F5 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95EE2F294CC900DBC1F5 /* MapView.swift */; };
 		ECCB95F12F294CD100DBC1F5 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */; };
 		ECCB95F32F294CEF00DBC1F5 /* ChallengesSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */; };
-		ECCB95F72F294D5C00DBC1F5 /* PuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F62F294D5C00DBC1F5 /* PuzzleView.swift */; };
-		ECCB95F92F294D7000DBC1F5 /* PuzzleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F82F294D7000DBC1F5 /* PuzzleViewModel.swift */; };
-		ECCB95FB2F294D9D00DBC1F5 /* PuzzleResultPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */; };
 		ECCB95FF2F294DD900DBC1F5 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95FE2F294DD900DBC1F5 /* ProfileViewModel.swift */; };
 		ECCB96012F294DE900DBC1F5 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96002F294DE900DBC1F5 /* ProfileView.swift */; };
 		ECCB96032F294DFF00DBC1F5 /* JoinWithCodePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */; };
@@ -46,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B65F3A7C2F3A09F500935C9B /* GameMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMode.swift; sourceTree = "<group>"; };
 		EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPathEditorHelper.swift; sourceTree = "<group>"; };
 		EC6BAB1B2F3159E300BDBEC8 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSession.swift; sourceTree = "<group>"; };
@@ -71,9 +70,6 @@
 		ECCB95EE2F294CC900DBC1F5 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengesSheet.swift; sourceTree = "<group>"; };
-		ECCB95F62F294D5C00DBC1F5 /* PuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleView.swift; sourceTree = "<group>"; };
-		ECCB95F82F294D7000DBC1F5 /* PuzzleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleViewModel.swift; sourceTree = "<group>"; };
-		ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleResultPopup.swift; sourceTree = "<group>"; };
 		ECCB95FE2F294DD900DBC1F5 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		ECCB96002F294DE900DBC1F5 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinWithCodePopup.swift; sourceTree = "<group>"; };
@@ -82,6 +78,19 @@
 		ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingViewModel.swift; sourceTree = "<group>"; };
 		ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RussoOne-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B65F3A642F3A098E00935C9B /* view model */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "view model";
+			sourceTree = "<group>";
+		};
+		B65F3A6F2F3A098E00935C9B /* view */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = view;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		ECCAEE252F21888B0047C5DF /* Frameworks */ = {
@@ -96,6 +105,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B65F3A702F3A098E00935C9B /* Puzzle  */ = {
+			isa = PBXGroup;
+			children = (
+				B65F3A642F3A098E00935C9B /* view model */,
+				B65F3A6F2F3A098E00935C9B /* view */,
+			);
+			path = "Puzzle ";
+			sourceTree = "<group>";
+		};
 		EC2548B12F34193E0003414C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -222,6 +240,7 @@
 		ECCB95C62F29472F00DBC1F5 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
+				B65F3A702F3A098E00935C9B /* Puzzle  */,
 				ECCB95C42F29472F00DBC1F5 /* SplashPage */,
 				ECCB95BE2F29472F00DBC1F5 /* OnboardingPage */,
 				ECCB95BC2F29472F00DBC1F5 /* EnterNamePage */,
@@ -229,7 +248,6 @@
 				ECCB95C22F29472F00DBC1F5 /* SetupChallengePage */,
 				ECCB97862F2C3D5900DBC1F5 /* WaitingPage */,
 				ECCB95BD2F29472F00DBC1F5 /* MapPage */,
-				ECCB95D92F294BED00DBC1F5 /* Puzzle */,
 				ECCB95BF2F29472F00DBC1F5 /* ProfilePage */,
 			);
 			path = Pages;
@@ -238,6 +256,7 @@
 		ECCB95C72F29473600DBC1F5 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B65F3A7C2F3A09F500935C9B /* GameMode.swift */,
 				EC7628CA2F395ADB008952D9 /* Models.swift */,
 			);
 			path = Models;
@@ -260,16 +279,6 @@
 				EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */,
 			);
 			path = App;
-			sourceTree = "<group>";
-		};
-		ECCB95D92F294BED00DBC1F5 /* Puzzle */ = {
-			isa = PBXGroup;
-			children = (
-				ECCB95F62F294D5C00DBC1F5 /* PuzzleView.swift */,
-				ECCB95F82F294D7000DBC1F5 /* PuzzleViewModel.swift */,
-				ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */,
-			);
-			path = Puzzle;
 			sourceTree = "<group>";
 		};
 		ECCB97862F2C3D5900DBC1F5 /* WaitingPage */ = {
@@ -303,6 +312,10 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B65F3A642F3A098E00935C9B /* view model */,
+				B65F3A6F2F3A098E00935C9B /* view */,
 			);
 			name = StepGame;
 			packageProductDependencies = (
@@ -368,6 +381,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B65F3A7D2F3A09F500935C9B /* GameMode.swift in Sources */,
 				ECCB95D52F29483B00DBC1F5 /* FirebaseService.swift in Sources */,
 				ECCB97882F2C3DA100DBC1F5 /* WaitingView.swift in Sources */,
 				ECCB95E52F294C6100DBC1F5 /* EnterNameViewModel.swift in Sources */,
@@ -386,7 +400,6 @@
 				EC6BAB1E2F315A3000BDBEC8 /* GameSession.swift in Sources */,
 				ECCB95E92F294C8F00DBC1F5 /* StartViewModel.swift in Sources */,
 				ECCB95EF2F294CC900DBC1F5 /* MapView.swift in Sources */,
-				ECCB95FB2F294D9D00DBC1F5 /* PuzzleResultPopup.swift in Sources */,
 				ECCB95ED2F294CAE00DBC1F5 /*  SetupChallengeViewModel.swift in Sources */,
 				EC7628D42F396171008952D9 /* ChallengeResultPopup.swift in Sources */,
 				ECCB95FF2F294DD900DBC1F5 /* ProfileViewModel.swift in Sources */,
@@ -394,8 +407,6 @@
 				ECCB95CD2F29478100DBC1F5 /* StepGameApp.swift in Sources */,
 				ECCB95DB2F294C0F00DBC1F5 /* SplashView.swift in Sources */,
 				ECCB95DD2F294C2100DBC1F5 /* SplashViewModel.swift in Sources */,
-				ECCB95F72F294D5C00DBC1F5 /* PuzzleView.swift in Sources */,
-				ECCB95F92F294D7000DBC1F5 /* PuzzleViewModel.swift in Sources */,
 				ECCB95E32F294C5A00DBC1F5 /* EnterNameView.swift in Sources */,
 				ECCB95F12F294CD100DBC1F5 /* MapViewModel.swift in Sources */,
 				ECCB95F32F294CEF00DBC1F5 /* ChallengesSheet.swift in Sources */,
