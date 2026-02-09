@@ -2,8 +2,6 @@
 //  ChallengesSheet.swift
 //  StepGame
 //
-//  Created by Arwa Alkadi on 27/01/2026.
-//
 
 import SwiftUI
 import Combine
@@ -12,35 +10,36 @@ struct ChallengesSheet: View {
 
     @EnvironmentObject private var session: GameSession
 
-    @State private var showJoinPopup = false
-    @State private var showCreate = false
+    var onTapCreate: () -> Void = {}
+    var onTapJoin: () -> Void = {}
+
+    var onTapChallenge: (Challenge) -> Void = { _ in }
 
     var body: some View {
         NavigationStack {
-            
             ZStack {
-                
                 Color.light3.ignoresSafeArea(edges: .all)
-                
+
                 VStack(spacing: 16) {
-                    
+
                     header
-                    
+
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 14) {
-                            
+
                             let activeChallenges = session.activeChallenges
-                            
+
                             if !activeChallenges.isEmpty {
                                 ForEach(activeChallenges) { ch in
                                     Button {
-                                        session.selectChallenge(ch)   // ✅ بدل session.challenge = ch
+                                        onTapChallenge(ch)
                                     } label: {
                                         ChallengesCard(
                                             challenge: ch,
                                             badgeText: badgeForChallenge(ch),
                                             showMenu: true
                                         )
+                                        .environmentObject(session)
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -48,24 +47,30 @@ struct ChallengesSheet: View {
                                 emptyState
                                     .padding(.top, 40)
                             }
-                            
+
                             let endedChallenges = session.endedChallenges
-                            
+
                             if !endedChallenges.isEmpty {
                                 Text("Ended")
                                     .font(.custom("RussoOne-Regular", size: 20))
                                     .foregroundStyle(.light1)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.top)
-                                
+
                                 Divider()
-                                
+
                                 ForEach(endedChallenges) { ch in
-                                    ChallengesCard(
-                                        challenge: ch,
-                                        badgeText: badgeForChallenge(ch),
-                                        showMenu: false
-                                    )
+                                    Button {
+                                        onTapChallenge(ch)
+                                    } label: {
+                                        ChallengesCard(
+                                            challenge: ch,
+                                            badgeText: badgeForChallenge(ch),
+                                            showMenu: false
+                                        )
+                                        .environmentObject(session)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
                         }
@@ -75,25 +80,9 @@ struct ChallengesSheet: View {
                 .padding()
             }
         }
-        .overlay {
-            if showJoinPopup {
-                JoinCodePopup(
-                    isPresented: $showJoinPopup,
-                    isLoading: session.isLoading,
-                    onJoin: { code in
-                        Task { await session.joinWithCode(code) }
-                    }
-                )
-            }
-        }
-        .sheet(isPresented: $showCreate) {
-            SetupChallengeView(isPresented: $showCreate)
-                .environmentObject(session)
-        }
     }
 
     // MARK: - Header
-
     private var header: some View {
         HStack {
             Text("Challenges")
@@ -103,18 +92,8 @@ struct ChallengesSheet: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Menu {
-                Button {
-                    showCreate = true
-                } label: {
-                    Text("Add a New Challenge")
-                }
-
-                Button {
-                    showJoinPopup = true
-                } label: {
-                    Text("Join With Code")
-                }
-
+                Button { onTapCreate() } label: { Text("Add a New Challenge") }
+                Button { onTapJoin() } label: { Text("Join With Code") }
             } label: {
                 Image(systemName: "plus.circle.fill")
                     .font(.system(size: 50))
@@ -124,22 +103,16 @@ struct ChallengesSheet: View {
         }
     }
 
-    // MARK: - Empty State
-
+    // \\ Empty state
     private var emptyState: some View {
         VStack(spacing: 12) {
-            Image(systemName: "flag.slash")
-                .font(.system(size: 50))
-                .foregroundColor(.gray)
-
             Text("No active challenges")
                 .font(.custom("RussoOne-Regular", size: 16))
                 .foregroundColor(.gray)
         }
     }
 
-    // MARK: - Badge
-
+    // \\ Badge label for a challenge
     private func badgeForChallenge(_ ch: Challenge) -> String? {
         if ch.originalMode == .solo { return "Solo" }
         if ch.status == .waiting { return "Waiting" }
@@ -148,13 +121,31 @@ struct ChallengesSheet: View {
     }
 }
 
-// MARK: - Card
+// MARK: - Challenges Card
 
 struct ChallengesCard: View {
+
+    @EnvironmentObject private var session: GameSession
 
     let challenge: Challenge
     var badgeText: String? = nil
     var showMenu: Bool = true
+
+    @State private var showConfirmAlert = false
+
+    private var isHost: Bool {
+        guard let uid = session.uid else { return false }
+        return challenge.createdBy == uid
+    }
+
+    private var actionTitle: String { isHost ? "Delete" : "Leave" }
+    private var alertTitle: String { isHost ? "Delete Challenge?" : "Leave Challenge?" }
+
+    private var alertMessage: String {
+        isHost
+            ? "This will permanently delete the challenge for everyone."
+            : "You will leave this challenge."
+    }
 
     var body: some View {
         HStack {
@@ -165,15 +156,6 @@ struct ChallengesCard: View {
                     Text(challenge.name)
                         .font(.custom("RussoOne-Regular", size: 20))
                         .foregroundStyle(.light1)
-
-                    if let badgeText {
-                        Text(badgeText)
-                            .font(.custom("RussoOne-Regular", size: 12))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(Capsule().fill(Color.light2))
-                    }
                 }
 
                 HStack(spacing: 10) {
@@ -210,9 +192,9 @@ struct ChallengesCard: View {
                 if showMenu {
                     Menu {
                         Button(role: .destructive) {
-                            // Later: Delete action
+                            showConfirmAlert = true
                         } label: {
-                            Text("Delete")
+                            Text(actionTitle)
                         }
                     } label: {
                         Image(systemName: "ellipsis")
@@ -230,7 +212,8 @@ struct ChallengesCard: View {
                 HStack(spacing: 4) {
                     Text("\(challenge.playerIds.count)")
                         .font(.custom("RussoOne-Regular", size: 14))
-                    Image(systemName: "person.2.fill")
+
+                    Image(systemName: systemIconName(for: challenge.playerIds.count))
                 }
                 .foregroundStyle(.light1)
                 .padding(.horizontal)
@@ -243,10 +226,24 @@ struct ChallengesCard: View {
                 .fill(Color.light4)
         )
         .contentShape(RoundedRectangle(cornerRadius: 22))
+        .alert(alertTitle, isPresented: $showConfirmAlert) {
+            Button("Cancel", role: .cancel) {}
+
+            Button(actionTitle, role: .destructive) {
+                Task {
+                    if isHost {
+                        await session.deleteChallenge(challenge)
+                    } else {
+                        await session.leaveChallenge(challenge)
+                    }
+                }
+            }
+        } message: {
+            Text(alertMessage)
+        }
     }
 
-    // MARK: - Status UI
-
+    /// Status title label
     private func statusTitle(_ s: ChallengeStatus) -> String {
         switch s {
         case .waiting: return "Waiting"
@@ -255,11 +252,17 @@ struct ChallengesCard: View {
         }
     }
 
+    /// Status background color
     private func statusColor(_ s: ChallengeStatus) -> Color {
         switch s {
         case .waiting: return .orange
-        case .active:  return .green
-        case .ended:   return .red
+        case .active:  return Color("Green1")
+        case .ended:   return Color("Red1")
         }
+    }
+
+    /// Player count icon
+    private func systemIconName(for count: Int) -> String {
+        count <= 1 ? "person.fill" : "person.2.fill"
     }
 }

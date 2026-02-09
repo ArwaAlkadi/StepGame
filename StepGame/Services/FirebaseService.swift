@@ -2,8 +2,6 @@
 //  FirebaseService.swift
 //  StepGame
 //
-//  Created by Arwa Alkadi on 27/01/2026.
-//
 
 import Foundation
 import FirebaseAuth
@@ -62,6 +60,31 @@ final class FirebaseService {
         return player
     }
 
+    func fetchPlayers(uids: [String]) async throws -> [Player] {
+        let unique = Array(Set(uids)).filter { !$0.isEmpty }
+        guard !unique.isEmpty else { return [] }
+
+        var result: [Player] = []
+        let chunkSize = 10
+        var i = 0
+
+        while i < unique.count {
+            let end = min(i + chunkSize, unique.count)
+            let chunk = Array(unique[i..<end])
+
+            let snap = try await db.collection("players")
+                .whereField(FieldPath.documentID(), in: chunk)
+                .getDocuments()
+
+            let players: [Player] = snap.documents.compactMap { try? $0.data(as: Player.self) }
+            result.append(contentsOf: players)
+
+            i = end
+        }
+
+        return result
+    }
+
     // MARK: - Challenges
     func createChallenge(
         hostUid: String,
@@ -75,12 +98,10 @@ final class FirebaseService {
 
         let start = Date()
         let end = Calendar.current.date(byAdding: .day, value: durationDays, to: start)
-        ?? start.addingTimeInterval(TimeInterval(durationDays * 86400))
+            ?? start.addingTimeInterval(TimeInterval(durationDays * 86400))
 
         let isSocial = (mode == .social)
 
-        // Social: waiting until host starts.
-        // Solo: active immediately.
         let status: ChallengeStatus = isSocial ? .waiting : .active
         let startedAt: Date? = isSocial ? nil : start
 
@@ -97,23 +118,34 @@ final class FirebaseService {
             startDate: start,
             endDate: end,
             extensionSeconds: 0,
-            createdAt: Date()
+            createdAt: Date(),
+            startedAt: startedAt,
+            winnerId: nil,
+            winnerFinishedAt: nil
         )
-        challenge.startedAt = startedAt
 
         let ref = db.collection("challenges").document()
         try ref.setData(from: challenge)
 
+        // MARK: - Place Counter Seed (Stored In Firestore)
+        try await ref.setData([
+            "nextPlace": 1
+        ], merge: true)
+
         var saved = challenge
         saved.id = ref.documentID
 
-        // Host participant doc
         let part = ChallengeParticipant(
             challengeId: ref.documentID,
             playerId: hostUid,
             steps: 0,
             progress: 0,
-            characterState: .normal
+            characterState: .normal,
+            lastUpdated: Date(),
+            createdAt: Date(),
+            finishedAt: nil,
+            place: nil,
+            didShowResultPopup: false
         )
 
         try await db.collection("challenges")
@@ -150,18 +182,21 @@ final class FirebaseService {
         var newIds = ch.playerIds
         newIds.append(uid)
 
-        // Keep status as-is (social stays waiting until host starts)
         try await db.collection("challenges").document(challengeId).updateData([
             "playerIds": newIds
         ])
 
-        // Joiner participant doc
         let part = ChallengeParticipant(
             challengeId: challengeId,
             playerId: uid,
             steps: 0,
             progress: 0,
-            characterState: .normal
+            characterState: .normal,
+            lastUpdated: Date(),
+            createdAt: Date(),
+            finishedAt: nil,
+            place: nil,
+            didShowResultPopup: false
         )
 
         try await db.collection("challenges")
@@ -176,7 +211,6 @@ final class FirebaseService {
 
     // MARK: - Start Social Challenge (Host)
     func startChallenge(challengeId: String, hostUid: String) async throws {
-        // Client-side host check happens in GameSession; server rules should enforce too.
         try await db.collection("challenges")
             .document(challengeId)
             .updateData([
@@ -201,15 +235,86 @@ final class FirebaseService {
 
         let now = Date()
 
+        // MARK: - Participant Progress Update
         try await ref.setData([
             "challengeId": challengeId,
             "playerId": uid,
             "steps": steps,
             "progress": progress,
             "characterState": characterState.rawValue,
-            "lastUpdated": Timestamp(date: now),
-            "createdAt": Timestamp(date: now) // merge true keeps original if already exists
+            "lastUpdated": Timestamp(date: now)
         ], merge: true)
+    }
+
+    // MARK: - Results (Atomic finish + place + winner)
+    func tryMarkFinishedAndClaimWinnerIfNeeded(
+        challengeId: String,
+        uid: String,
+        now: Date = Date()
+    ) async throws {
+
+        let chRef = db.collection("challenges").document(challengeId)
+        let pRef = chRef.collection("participants").document(uid)
+
+        try await db.runTransaction { tx, errPtr -> Any? in
+            do {
+                let chSnap = try tx.getDocument(chRef)
+                let pSnap = try tx.getDocument(pRef)
+
+                let winnerId = chSnap.data()?["winnerId"] as? String
+                let alreadyFinished = (pSnap.data()?["finishedAt"] as? Timestamp) != nil
+                if alreadyFinished { return nil }
+
+                let nextPlace = (chSnap.data()?["nextPlace"] as? Int) ?? 1
+                let assignedPlace = nextPlace
+
+                // MARK: - Mark Participant Finished
+                tx.setData([
+                    "finishedAt": Timestamp(date: now),
+                    "place": assignedPlace,
+                    "lastUpdated": Timestamp(date: now)
+                ], forDocument: pRef, merge: true)
+
+                // MARK: - Increment Place Counter
+                tx.setData([
+                    "nextPlace": assignedPlace + 1
+                ], forDocument: chRef, merge: true)
+
+                // MARK: - Claim Winner If Needed
+                if winnerId == nil {
+                    tx.setData([
+                        "winnerId": uid,
+                        "winnerFinishedAt": Timestamp(date: now)
+                    ], forDocument: chRef, merge: true)
+                }
+
+                return nil
+            } catch let e {
+                errPtr?.pointee = e as NSError
+                return nil
+            }
+        }
+    }
+
+    func markDidShowResultPopup(challengeId: String, uid: String) async throws {
+        let ref = db.collection("challenges")
+            .document(challengeId)
+            .collection("participants")
+            .document(uid)
+
+        try await ref.setData([
+            "didShowResultPopup": true
+        ], merge: true)
+    }
+
+    // MARK: - Mark Challenge Ended
+    func markChallengeEnded(challengeId: String, now: Date = Date()) async throws {
+        try await db.collection("challenges")
+            .document(challengeId)
+            .updateData([
+                "status": ChallengeStatus.ended.rawValue,
+                "endedAt": Timestamp(date: now)
+            ])
     }
 
     // MARK: - Realtime Listeners
@@ -242,6 +347,46 @@ final class FirebaseService {
                 let list: [ChallengeParticipant] = docs.compactMap { try? $0.data(as: ChallengeParticipant.self) }
                 onChange(list)
             }
+    }
+
+    // MARK: - Delete Challenge (Host)
+    func deleteChallenge(challengeId: String) async throws {
+        let chRef = db.collection("challenges").document(challengeId)
+
+        let partsSnap = try await chRef.collection("participants").getDocuments()
+
+        let batch = db.batch()
+        for d in partsSnap.documents {
+            batch.deleteDocument(d.reference)
+        }
+        batch.deleteDocument(chRef)
+
+        try await batch.commit()
+    }
+
+    // MARK: - Player Profile
+    func updatePlayerProfile(uid: String, name: String, characterType: CharacterType) async throws -> Player {
+        let ref = db.collection("players").document(uid)
+        let now = Date()
+
+        try await ref.setData([
+            "name": name,
+            "characterType": characterType.rawValue,
+            "lastUpdated": Timestamp(date: now)
+        ], merge: true)
+
+        return try await fetchPlayer(uid: uid)
+    }
+
+    // MARK: - Leave Challenge (Player)
+    func leaveChallenge(challengeId: String, uid: String) async throws {
+        let ref = db.collection("challenges").document(challengeId)
+
+        try await ref.updateData([
+            "playerIds": FieldValue.arrayRemove([uid])
+        ])
+
+        try await ref.collection("participants").document(uid).delete()
     }
 
     // MARK: - Helpers

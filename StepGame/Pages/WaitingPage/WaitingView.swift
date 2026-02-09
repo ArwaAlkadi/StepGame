@@ -2,7 +2,6 @@
 //  WaitingView.swift
 //  StepGame
 //
-//  Created by Arwa Alkadi on 30/01/2026.
 //
 
 import SwiftUI
@@ -13,34 +12,70 @@ struct WaitingRoomView: View {
     @EnvironmentObject private var session: GameSession
     @StateObject private var vm = WaitingRoomViewModel()
 
+    @State private var showLeaveAlert = false
+    @State private var showShareSheet = false
+    @State private var didCopy = false
+
     var body: some View {
         ZStack {
             Color.light3.ignoresSafeArea()
 
             VStack(spacing: 18) {
 
-                // Title
+                // MARK: - Leave / Close
+                HStack {
+                    Spacer()
+                    Button {
+                        showLeaveAlert = true
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 28, height: 28)
+                            .foregroundStyle(Color.light1.opacity(0.9))
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.top, 10)
+
                 Text(vm.titleText)
                     .font(.custom("RussoOne-Regular", size: 34))
                     .foregroundStyle(Color.light1)
-                    .padding(.top, 10)
 
-                // Steps pill
                 StepsPill(text: vm.goalStepsText)
 
-                // Join code + copy
-                JoinCodePill(code: vm.joinCodeText) {
-                    vm.copyJoinCode()
+                // MARK: - Join Code Actions
+                HStack(spacing: 14) {
+
+                    JoinCodePill(
+                        code: vm.joinCodeText,
+                        didCopy: didCopy
+                    ) {
+                        UIPasteboard.general.string = vm.joinCodeText
+                        withAnimation { didCopy = true }
+
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                            withAnimation { didCopy = false }
+                        }
+                    }
+
+                    Button {
+                        showShareSheet = true
+                    } label: {
+                        Image(systemName: "square.and.arrow.up.fill")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(Color.light1)
+                            .frame(width: 44, height: 44)
+                            .background(Circle().fill(Color.white.opacity(0.85)))
+                    }
                 }
 
                 Spacer(minLength: 10)
 
-                // Center lobby
                 LobbyCenter(players: vm.lobbyPlayers)
 
                 Spacer()
 
-                // Bottom area
                 if vm.isHost {
                     Button {
                         Task { await vm.startChallenge() }
@@ -58,7 +93,6 @@ struct WaitingRoomView: View {
                     .disabled(vm.isStarting || !vm.canStart)
                     .opacity((vm.isStarting || !vm.canStart) ? 0.6 : 1)
                     .padding(.bottom, 18)
-
                 } else {
                     Text(vm.footerTextForPlayer)
                         .font(.custom("RussoOne-Regular", size: 18))
@@ -69,11 +103,34 @@ struct WaitingRoomView: View {
             }
             .padding(.horizontal, 20)
         }
+        .navigationBarBackButtonHidden(true)
+
+        // MARK: - Share Sheet
+        .sheet(isPresented: $showShareSheet) {
+            ActivityView(
+                activityItems: [
+                    "Join my StepGame challenge \nCode: \(vm.joinCodeText)\nstepgame://join?code=\(vm.joinCodeText)"
+                ]
+            )
+        }
+
+        // MARK: - Leave Confirmation
+        .alert("Leave Challenge?", isPresented: $showLeaveAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Leave", role: .destructive) {
+                Task { await vm.leaveOrDeleteChallenge() }
+            }
+        } message: {
+            Text("Are you sure you want to leave? The challenge will be cancelled if you're the host.")
+        }
+
         .onAppear {
             vm.bind(session: session)
         }
+
         .onDisappear {
             vm.unbind()
+            Task { await session.handleExitWaitingRoomIfStillWaiting() }
         }
     }
 }
@@ -89,7 +146,7 @@ private struct StepsPill: View {
                 .font(.custom("RussoOne-Regular", size: 14))
                 .foregroundStyle(.white)
 
-            Image(systemName: "exclamationmark.circle.fill")
+            Image(systemName: "shoeprints.fill")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundStyle(.white)
         }
@@ -101,6 +158,7 @@ private struct StepsPill: View {
 
 private struct JoinCodePill: View {
     let code: String
+    let didCopy: Bool
     let onCopy: () -> Void
 
     var body: some View {
@@ -110,9 +168,18 @@ private struct JoinCodePill: View {
                 .foregroundStyle(Color.light1)
 
             Button(action: onCopy) {
-                Image(systemName: "doc.on.doc.fill")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(Color.light1)
+                Group {
+                    if didCopy {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(Color.light1)
+                    } else {
+                        Image("CopyIcon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 18, height: 18)
+                    }
+                }
             }
             .buttonStyle(.plain)
         }
@@ -126,7 +193,6 @@ private struct LobbyCenter: View {
 
     var body: some View {
         ZStack {
-
             Image("Tent")
                 .resizable()
                 .scaledToFit()
@@ -134,9 +200,9 @@ private struct LobbyCenter: View {
                 .opacity(0.55)
 
             let slots = slotPositions()
+            let shown = Array(players.prefix(4))
 
-            ForEach(0..<min(players.count, 4), id: \.self) { i in
-                let p = players[i]
+            ForEach(Array(shown.enumerated()), id: \.element.id) { i, p in
                 LobbyAvatar(
                     image: p.avatarAsset,
                     name: p.name + (p.isMe ? " (Me)" : "")
@@ -147,6 +213,7 @@ private struct LobbyCenter: View {
         .frame(height: 360)
     }
 
+    // \\ Lobby avatar positions
     private func slotPositions() -> [CGPoint] {
         [
             CGPoint(x: 90,  y: 120),
@@ -167,7 +234,6 @@ private struct LobbyAvatar: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 70, height: 70)
-                .padding(16)
                 .background(Circle().fill(Color.light4.opacity(0.7)))
 
             Text(name)
@@ -175,4 +241,17 @@ private struct LobbyAvatar: View {
                 .foregroundStyle(Color.light1)
         }
     }
+}
+
+struct ActivityView: UIViewControllerRepresentable {
+    var activityItems: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: nil
+        )
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

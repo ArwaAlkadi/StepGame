@@ -2,8 +2,7 @@
 //  StartView.swift
 //  StepGame
 //
-//  Created by Arwa Alkadi on 27/01/2026.
-//
+
 
 import SwiftUI
 import UIKit
@@ -15,42 +14,68 @@ struct StartView: View {
     @EnvironmentObject var health: HealthKitManager
     @StateObject private var vm = StartViewModel()
 
-    @State private var showSetup = false   // ✅ NEW
+    @State private var showSetup = false
+    @State private var showProfile = false
 
     var body: some View {
         ZStack {
 
-            Image("Map")
+            Image("Map2")
                 .resizable()
                 .scaledToFill()
                 .frame(
                     width: UIScreen.main.bounds.width,
                     height: UIScreen.main.bounds.height
                 )
-                .blur(radius: 3)
+                .blur(radius: 3.5)
                 .clipped()
                 .ignoresSafeArea()
 
-            VStack(spacing: 22) {
-                HStack {
-                    Spacer()
+            VStack(spacing: 20) {
 
-                    ZStack {
-                        Circle()
-                            .fill(Color.light3.opacity(0.30))
-                            .frame(width: 84, height: 84)
+                ZStack {
 
-                        Image(vm.avatarImageName(characterType: session.player?.characterType))
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 64, height: 64)
+                    HStack {
+                        Spacer()
+
+                        Button {
+                            showProfile = true
+                        } label: {
+                            Image(session.player?.characterType.avatarKey() ?? "character1_avatar")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 64, height: 64)
+                                .background(
+                                    Circle().fill(Color.light4.opacity(0.7))
+                                )
+                                .overlay(
+                                    Circle().stroke(Color.light2.opacity(0.8), lineWidth: 3)
+                                )
+                                .clipShape(Circle())
+                                .padding(30)
+                        }
+                        .buttonStyle(.plain)
+                        .fullScreenCover(isPresented: $showProfile) {
+                            NavigationStack {
+                                ProfileView()
+                                    .environmentObject(session)
+                            }
+                        }
                     }
-                    .padding(20)
+
+                    if !health.isAuthorized {
+                        HealthPermissionGate(
+                            onAllow: { health.requestAuthorization() },
+                            onOpenSettings: { health.openAppSettings() }
+                        )
+                        .padding(.horizontal, 18)
+                        .padding(.top, 70)
+                    }
                 }
 
                 Spacer()
 
-                VStack(spacing: 10) {
+                VStack {
                     Text(vm.greetingText(playerName: session.player?.name))
                         .font(.custom("RussoOne-Regular", size: 36))
                         .foregroundStyle(Color.light1)
@@ -59,64 +84,46 @@ struct StartView: View {
                         .font(.custom("RussoOne-Regular", size: 24))
                         .foregroundStyle(Color.light1)
                 }
-                .multilineTextAlignment(.center)
 
-                Spacer()
-
-                VStack(spacing: 14) {
-
-                    // ✅ Start => يفتح SetupChallenge فقط
-                    Button {
-                        showSetup = true
-                    } label: {
-                        BigButtonLabel(title: "Start new challenge")
-                    }
-                    .disabled(!vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized))
-                    .opacity(vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized) ? 1 : 0.5)
-
-                    Button {
-                        withAnimation(.easeInOut) { vm.showJoinPopup = true }
-                    } label: {
-                        BigButtonLabel(title: "Join with code")
-                    }
-                    .disabled(!vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized))
-                    .opacity(vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized) ? 1 : 0.5)
+                Button {
+                    showSetup = true
+                } label: {
+                    BigButtonLabel(title: "Start new challenge")
                 }
-                .padding(.bottom, 24)
+                .disabled(!vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized))
+                .opacity(vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized) ? 1 : 0.5)
 
-                if let msg = session.errorMessage {
-                    Text(msg)
-                        .font(.custom("RussoOne-Regular", size: 12))
-                        .foregroundStyle(.red)
-                        .padding(.bottom, 8)
+                Button {
+                    withAnimation(.easeInOut) { vm.showJoinPopup = true }
+                } label: {
+                    BigButtonLabel(title: "Join with code")
                 }
-
-                if !health.isAuthorized {
-                    HealthPermissionGate(
-                        onAllow: {
-                            health.requestAuthorization()
-                        },
-                        onOpenSettings: {
-                            health.openAppSettings()
-                        }
-                    )
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, 18)
-                }
+                .disabled(!vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized))
+                .opacity(vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized) ? 1 : 0.5)
+                .padding(.bottom, 70)
             }
 
+            // MARK: - Join Code Popup
             if vm.showJoinPopup {
                 JoinCodePopup(
                     isPresented: $vm.showJoinPopup,
-                    isLoading: session.isLoading,
                     onJoin: { code in
-                        Task { await session.joinWithCode(code) }
+                        /// Clear any previous error
+                        session.clearError()
+
+                        await session.joinWithCode(code)
+
+                            /// Return error message to keep popup open
+                        if let msg = session.errorMessage, !msg.isEmpty {
+                            return msg
+                        }
+
+                        return nil
                     }
                 )
                 .transition(.opacity)
             }
         }
-        // ✅ SHEET لصفحة Setup
         .sheet(isPresented: $showSetup) {
             SetupChallengeView(isPresented: $showSetup)
                 .environmentObject(session)
@@ -131,15 +138,16 @@ struct StartView: View {
                 }
             }
         }
-        .onReceive(NotificationCenter.default.publisher(
-            for: UIApplication.willEnterForegroundNotification
-        )) { _ in
-            Task {
-                await health.refreshAuthorizationState()
-            }
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: UIApplication.willEnterForegroundNotification
+            )
+        ) { _ in
+            Task { await health.refreshAuthorizationState() }
         }
     }
 }
+
 // MARK: - UI Helpers
 
 private struct BigButtonLabel: View {
@@ -148,13 +156,11 @@ private struct BigButtonLabel: View {
     var body: some View {
         Text(title)
             .font(.custom("RussoOne-Regular", size: 20))
-            .foregroundStyle(Color.light3)
-            .frame(maxWidth: .infinity)
-            .frame(height: 58)
-            .background(
-                RoundedRectangle(cornerRadius: 30).fill(Color.light1)
-            )
-            .padding(.horizontal, 26)
+            .foregroundColor(.light3)
+            .frame(width: 280, height: 55)
+            .background(Color("Light1"))
+            .cornerRadius(30)
+            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3)
     }
 }
 
@@ -164,38 +170,59 @@ private struct HealthPermissionGate: View {
 
     var body: some View {
         VStack(spacing: 10) {
+
+            // MARK: - Health Permission Gate
             Text("Steps Access Required")
                 .font(.custom("RussoOne-Regular", size: 16))
                 .foregroundStyle(Color.light1)
 
-            Text("To play, please allow access to your step count.")
+            Text("To play, please allow step access from the Health app settings.")
                 .font(.custom("RussoOne-Regular", size: 12))
                 .foregroundStyle(Color.light2)
                 .multilineTextAlignment(.center)
 
-            HStack(spacing: 10) {
-                Button(action: onAllow) {
-                    Text("Allow Steps")
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light3)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 42)
-                        .background(RoundedRectangle(cornerRadius: 21).fill(Color.light1))
-                }
-                .buttonStyle(.plain)
-
-                Button(action: onOpenSettings) {
-                    Text("Open Settings")
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light1)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 42)
-                        .background(RoundedRectangle(cornerRadius: 21).fill(Color.light4))
-                }
-                .buttonStyle(.plain)
+            Button(action: onOpenSettings) {
+                Text("Open Settings")
+                    .font(.custom("RussoOne-Regular", size: 14))
+                    .foregroundStyle(Color.light1)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 42)
+                    .background(RoundedRectangle(cornerRadius: 21).fill(Color.light4.opacity(0.7)))
             }
+            .buttonStyle(.plain)
         }
         .padding(14)
-        .background(RoundedRectangle(cornerRadius: 22).fill(Color.light3.opacity(0.92)))
+        .background(RoundedRectangle(cornerRadius: 22).fill(Color.light3))
+    }
+}
+
+#Preview("StartView") {
+    StartViewPreviewHost()
+}
+
+// MARK: - Preview Host
+private struct StartViewPreviewHost: View {
+    @StateObject private var session = GameSession()
+    @StateObject private var health = HealthKitManager()
+
+    var body: some View {
+        NavigationStack {
+            StartView()
+                .environmentObject(session)
+                .environmentObject(health)
+        }
+        .onAppear {
+            session.player = Player(
+                id: "preview_uid",
+                name: "Arwa",
+                totalChallenges: 0,
+                completedChallenges: 0,
+                totalSteps: 0,
+                characterType: .character1,
+                lastUpdated: Date(),
+                createdAt: Date()
+            )
+            session.playerName = "Arwa"
+        }
     }
 }

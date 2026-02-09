@@ -2,8 +2,6 @@
 //  GameSession.swift
 //  StepGame
 //
-//  Created by Arwa Alkadi on 03/02/2026.
-//
 
 import SwiftUI
 import Combine
@@ -15,6 +13,7 @@ final class GameSession: ObservableObject {
     // MARK: - UI State
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
+    @Published var isPresentingSetupChallenge: Bool = false
 
     // MARK: - Auth / Player
     @Published private(set) var uid: String? = nil
@@ -27,17 +26,9 @@ final class GameSession: ObservableObject {
     // MARK: - Challenges List
     @Published var challenges: [Challenge] = []
 
-    var activeChallenges: [Challenge] {
-        challenges.filter { $0.status == .active || $0.status == .waiting }
-    }
-
-    var endedChallenges: [Challenge] {
-        challenges.filter { $0.status == .ended }
-    }
-
-    var hasAnyChallenges: Bool {
-        !challenges.isEmpty
-    }
+    var activeChallenges: [Challenge] { challenges.filter { $0.status == .active } }
+    var endedChallenges: [Challenge] { challenges.filter { $0.status == .ended } }
+    var hasAnyChallenges: Bool { !challenges.isEmpty }
 
     // MARK: - Participants (Selected Challenge)
     @Published private(set) var participants: [ChallengeParticipant] = []
@@ -81,7 +72,7 @@ final class GameSession: ObservableObject {
                 playerName = ""
             }
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = mapGenericError(error)
         }
     }
 
@@ -95,7 +86,9 @@ final class GameSession: ObservableObject {
                 self.challenges = list
 
                 let selectedId = self.challenge?.id
-                let stillExists = selectedId.flatMap { id in list.contains(where: { $0.id == id }) } ?? false
+                let stillExists = selectedId.flatMap { id in
+                    list.contains(where: { $0.id == id })
+                } ?? false
 
                 if !stillExists {
                     self.challenge = self.pickDefaultChallenge(from: list)
@@ -128,6 +121,7 @@ final class GameSession: ObservableObject {
                     self.myParticipant = nil
                     return
                 }
+
                 self.challenge = updated
 
                 if let id = updated.id {
@@ -149,6 +143,7 @@ final class GameSession: ObservableObject {
         }
     }
 
+    // MARK: - Participant Selection
     private func recomputeMyParticipant() {
         guard let uid else {
             myParticipant = nil
@@ -157,6 +152,7 @@ final class GameSession: ObservableObject {
         myParticipant = participants.first(where: { $0.playerId == uid })
     }
 
+    // MARK: - Selection & Presentation
     func selectChallenge(_ ch: Challenge) {
         challenge = ch
         participants = []
@@ -165,6 +161,23 @@ final class GameSession: ObservableObject {
         if let id = ch.id {
             startSelectedChallengeListener(challengeId: id)
             startParticipantsListenerIfNeeded(challengeId: id)
+        }
+    }
+
+    func presentSetupChallenge() {
+        isPresentingSetupChallenge = true
+    }
+
+    // MARK: - Results Helpers
+    func isChallengeInResultState(_ ch: Challenge, now: Date = Date()) -> Bool {
+        (ch.winnerId != nil) || (now >= ch.effectiveEndDate) || (ch.status == .ended)
+    }
+
+    func markMyResultPopupShownIfNeeded(challengeId: String) async {
+        guard let uid else { return }
+        do {
+            try await firebase.markDidShowResultPopup(challengeId: challengeId, uid: uid)
+        } catch {
         }
     }
 
@@ -192,20 +205,22 @@ final class GameSession: ObservableObject {
             playerName = p.name
             startMyChallengesListener(uid: uid)
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = mapGenericError(error)
         }
     }
 
     // MARK: - Create Challenge
+    @discardableResult
     func createNewChallenge(
         name: String,
         mode: ChallengeMode,
         goalSteps: Int,
         durationDays: Int
-    ) async {
+    ) async -> String? {
         guard let uid else {
-            errorMessage = "Missing user session."
-            return
+            let msg = "Missing user session."
+            errorMessage = msg
+            return msg
         }
 
         isLoading = true
@@ -221,22 +236,28 @@ final class GameSession: ObservableObject {
                 durationDays: durationDays
             )
             selectChallenge(ch)
+            return nil
         } catch {
-            errorMessage = error.localizedDescription
+            let msg = mapGenericError(error)
+            errorMessage = msg
+            return msg
         }
     }
 
     // MARK: - Join With Code
-    func joinWithCode(_ code: String) async {
+    @discardableResult
+    func joinWithCode(_ code: String) async -> String? {
         guard let uid else {
-            errorMessage = "Missing user session."
-            return
+            let msg = "Missing user session."
+            errorMessage = msg
+            return msg
         }
 
         let cleaned = code.trimmingCharacters(in: .whitespacesAndNewlines)
         guard cleaned.count >= 4 else {
-            errorMessage = "Invalid code. Try again."
-            return
+            let msg = "Invalid code. Try again."
+            errorMessage = msg
+            return msg
         }
 
         isLoading = true
@@ -246,8 +267,11 @@ final class GameSession: ObservableObject {
         do {
             let ch = try await firebase.joinChallenge(by: cleaned, uid: uid)
             selectChallenge(ch)
+            return nil
         } catch {
-            errorMessage = error.localizedDescription
+            let msg = mapJoinError(error)
+            errorMessage = msg
+            return msg
         }
     }
 
@@ -273,13 +297,11 @@ final class GameSession: ObservableObject {
         do {
             try await firebase.startChallenge(challengeId: challengeId, hostUid: uid)
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = mapGenericError(error)
         }
     }
 
-    // MARK: - HealthKit -> Firebase (Challenge Period)
-    /// Call this from MapView.onAppear (or when a challenge becomes active).
-    /// It periodically reads steps from (startedAt ?? startDate) -> now and updates Firestore participant.
+    // MARK: - Steps Sync
     func beginStepsSync(health: HealthKitManager) {
         stepSyncCancellable?.cancel()
 
@@ -301,10 +323,7 @@ final class GameSession: ObservableObject {
         guard let uid else { return }
         guard let ch = challenge, let challengeId = ch.id else { return }
 
-        // Only sync when active
         guard ch.status == .active else { return }
-
-        // Must be authorized
         guard health.isAuthorized else { return }
 
         do {
@@ -314,7 +333,6 @@ final class GameSession: ObservableObject {
             let goal = max(ch.goalSteps, 1)
             let progress = min(max(Double(steps) / Double(goal), 0), 1)
 
-            // Keep state simple here (MapViewModel has a richer UI state)
             let state: CharacterState = (progress >= 1.0) ? .active : .normal
 
             try await firebase.updateParticipantSteps(
@@ -325,12 +343,139 @@ final class GameSession: ObservableObject {
                 characterState: state
             )
         } catch {
-            // Don’t spam UI with Health errors; keep it silent unless you want to surface it later.
+        }
+    }
+
+    // MARK: - Delete / Leave / Waiting Logic
+    func deleteChallenge(_ ch: Challenge) async {
+        guard let uid else {
+            errorMessage = "Missing user session."
+            return
+        }
+        guard let id = ch.id else { return }
+        guard ch.createdBy == uid else {
+            errorMessage = "Only the host can delete this challenge."
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            try await firebase.deleteChallenge(challengeId: id)
+
+            if self.challenge?.id == id {
+                self.challenge = self.pickDefaultChallenge(from: self.challenges.filter { $0.id != id })
+            }
+        } catch {
+            errorMessage = mapGenericError(error)
+        }
+    }
+
+    func leaveChallenge(_ ch: Challenge) async {
+        guard let uid else {
+            errorMessage = "Missing user session."
+            return
+        }
+        guard let id = ch.id else { return }
+
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            try await firebase.leaveChallenge(challengeId: id, uid: uid)
+
+            if self.challenge?.id == id {
+                self.challenge = self.pickDefaultChallenge(from: self.challenges.filter { $0.id != id })
+            }
+        } catch {
+            errorMessage = mapGenericError(error)
+        }
+    }
+
+    func handleExitWaitingRoomIfStillWaiting() async {
+        guard let uid else { return }
+        guard let ch = challenge, let id = ch.id else { return }
+        guard ch.status == .waiting else { return }
+
+        do {
+            if ch.createdBy == uid {
+                try await firebase.deleteChallenge(challengeId: id)
+            } else {
+                try await firebase.leaveChallenge(challengeId: id, uid: uid)
+            }
+
+            self.challenge = self.pickDefaultChallenge(from: self.challenges.filter { $0.id != id })
+            self.participants = []
+            self.myParticipant = nil
+
+        } catch {
+            self.errorMessage = mapGenericError(error)
         }
     }
 
     // MARK: - Convenience
     func clearError() {
         errorMessage = nil
+    }
+
+    func updateProfile(name: String, characterType: CharacterType) async {
+        guard let uid else {
+            errorMessage = "Missing user session."
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            let updated = try await firebase.updatePlayerProfile(
+                uid: uid,
+                name: name,
+                characterType: characterType
+            )
+            player = updated
+            playerName = updated.name
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    // MARK: - Error Mapping
+    private func mapJoinError(_ error: Error) -> String {
+        let ns = error as NSError
+
+        if ns.domain == "Join" {
+            switch ns.code {
+            case 404: return "Code not found. Please check and try again."
+            case 409: return "This challenge is full."
+            case 400: return "Something went wrong. Please try again."
+            default:  return ns.localizedDescription
+            }
+        }
+
+        let desc = ns.localizedDescription.lowercased()
+        if desc.contains("network") || desc.contains("offline") || desc.contains("no network") || desc.contains("unavailable") {
+            return "No internet connection. Please try again."
+        }
+        if desc.contains("permission") || desc.contains("not authorized") || desc.contains("unauth") {
+            return "You don’t have permission to join right now."
+        }
+
+        return "Couldn’t join. Please try again."
+    }
+
+    private func mapGenericError(_ error: Error) -> String {
+        let ns = error as NSError
+        let desc = ns.localizedDescription.lowercased()
+
+        if desc.contains("network") || desc.contains("offline") || desc.contains("unavailable") {
+            return "No internet connection. Please try again."
+        }
+
+        return ns.localizedDescription
     }
 }

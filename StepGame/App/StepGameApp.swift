@@ -2,7 +2,6 @@
 //  StepGameApp.swift
 //  StepGame
 //
-//  Created by Arwa Alkadi on 03/02/2026.
 //
 
 import SwiftUI

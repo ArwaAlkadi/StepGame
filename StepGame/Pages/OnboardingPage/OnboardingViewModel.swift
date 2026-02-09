@@ -1,8 +1,21 @@
-//
-//  OnboardingViewModel.swift
-//  StepGame
-//
-//  Created by Arwa Alkadi on 27/01/2026.
-//
+// MARK: - ViewModel
 
-import Foundation
+import SwiftUI
+import Combine
+
+final class OnboardingViewModel: ObservableObject {
+
+    @Published var currentPage: Int = 0
+    let totalPages: Int = 3
+
+    func next() {
+        if currentPage < totalPages - 1 {
+            currentPage += 1
+        }
+    }
+
+    func skip() {
+        currentPage = totalPages - 1
+    }
+}
+

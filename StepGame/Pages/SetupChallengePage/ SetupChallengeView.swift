@@ -9,39 +9,45 @@ import Combine
 struct SetupChallengeView: View {
 
     @Binding var isPresented: Bool
+    var onDismissWithoutCreating: (() -> Void)? = nil
+
     @EnvironmentObject var session: GameSession
-
     @StateObject private var vm = SetupChallengeViewModel()
-
-    @State private var showSharePopup = false
-    @StateObject private var shareVM = ShareChallengeCodeViewModel(code: "")
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.15).ignoresSafeArea()
+            Color.light3.ignoresSafeArea()
 
             VStack(spacing: 18) {
 
-                // Header
+                // MARK: - Close Action
                 HStack {
-                    Text("Create a New Challenge")
-                        .font(.custom("RussoOne-Regular", size: 22))
-                        .foregroundStyle(Color.light1)
-
                     Spacer()
 
-                    Button { isPresented = false } label: {
+                    Button {
+                        isPresented = false
+                        onDismissWithoutCreating?()
+                    } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(Color.light3)
                             .frame(width: 30, height: 30)
-                            .background(Circle().fill(Color.light1.opacity(0.9)))
+                            .background(
+                                Circle()
+                                    .fill(Color.light1.opacity(0.9))
+                            )
                     }
                     .buttonStyle(.plain)
                 }
 
-                // Name
+                Text("Create a New Challenge")
+                    .font(.custom("RussoOne-Regular", size: 22))
+                    .foregroundStyle(Color.light1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                // MARK: - Challenge Name
                 VStack(alignment: .leading, spacing: 6) {
+
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 16)
                             .fill(Color.light4.opacity(0.55))
@@ -68,8 +74,9 @@ struct SetupChallengeView: View {
                     .padding(.leading, 6)
                 }
 
-                // Period
+                // MARK: - Period Selection
                 VStack(alignment: .leading, spacing: 10) {
+
                     Text("Period")
                         .font(.custom("RussoOne-Regular", size: 18))
                         .foregroundStyle(Color.light1)
@@ -79,35 +86,46 @@ struct SetupChallengeView: View {
                             PeriodChip(
                                 title: option.title,
                                 isSelected: vm.selectedPeriod == option
-                            ) { vm.selectedPeriod = option }
+                            ) {
+                                vm.selectedPeriod = option
+                            }
                         }
                     }
                 }
 
-                // Steps
+                // MARK: - Step Goal
                 VStack(alignment: .leading, spacing: 10) {
+
                     Text("Steps")
                         .font(.custom("RussoOne-Regular", size: 18))
                         .foregroundStyle(Color.light1)
 
-                    Slider(value: $vm.steps, in: 1000...500_000, step: 500)
+                    Slider(value: $vm.steps, in: 1000...500_000, step: 100)
                         .tint(Color.light1)
+                        .onChange(of: vm.steps) { _, newValue in
+                            vm.steps = (newValue / 100).rounded() * 100
+                        }
 
                     HStack {
                         Text("1000")
+
                         Spacer()
+
+                        Text("\(Int(vm.steps).formatted())")
+                            .font(.custom("RussoOne-Regular", size: 14))
+                            .foregroundStyle(Color.light1.opacity(0.9))
+
+                        Spacer()
+
                         Text("500,000")
                     }
                     .font(.custom("RussoOne-Regular", size: 12))
                     .foregroundStyle(Color.light2)
-
-                    Text("\(Int(vm.steps).formatted()) steps")
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light1.opacity(0.9))
                 }
 
-                // Mode
+                // MARK: - Mode Selection
                 HStack(spacing: 14) {
+
                     ModeChip(
                         title: "Solo",
                         systemIcon: "person.fill",
@@ -127,7 +145,7 @@ struct SetupChallengeView: View {
 
                 Spacer(minLength: 6)
 
-                // Create
+                // MARK: - Create Challenge
                 Button {
                     Task {
                         let outcome = await vm.createChallenge(session: session)
@@ -136,9 +154,8 @@ struct SetupChallengeView: View {
                         case .soloCreated:
                             isPresented = false
 
-                        case .groupCreated(let joinCode):
-                            shareVM.code = joinCode
-                            showSharePopup = true
+                        case .groupCreated:
+                            isPresented = false
 
                         case .failed:
                             break
@@ -151,7 +168,8 @@ struct SetupChallengeView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(
-                            RoundedRectangle(cornerRadius: 26).fill(Color.light1)
+                            RoundedRectangle(cornerRadius: 26)
+                                .fill(Color.light1)
                         )
                 }
                 .buttonStyle(.plain)
@@ -161,20 +179,7 @@ struct SetupChallengeView: View {
             }
             .padding(18)
             .frame(maxWidth: 380)
-            .frame(height: 520)
-            .background(RoundedRectangle(cornerRadius: 28).fill(Color.light3))
             .padding(.horizontal, 20)
-        }
-        .overlay {
-            if showSharePopup {
-                ShareChallengeCodePopup(
-                    isPresented: $showSharePopup,
-                    vm: shareVM,
-                    onContinue: {
-                        isPresented = false
-                    }
-                )
-            }
         }
     }
 }
@@ -190,12 +195,12 @@ private struct PeriodChip: View {
         Button(action: action) {
             Text(title)
                 .font(.custom("RussoOne-Regular", size: 14))
-                .foregroundStyle(Color.light1)
+                .foregroundStyle(isSelected ? Color.white : Color.light1)
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
                 .background(
                     Capsule()
-                        .fill(isSelected ? Color.white : Color.light3)
+                        .fill(isSelected ? Color.light1 : Color.white)
                         .overlay(
                             Capsule()
                                 .stroke(Color.light4.opacity(0.35), lineWidth: 1)
@@ -219,17 +224,51 @@ private struct ModeChip: View {
                 Text(title)
             }
             .font(.custom("RussoOne-Regular", size: 14))
-            .foregroundStyle(Color.light1)
+            .foregroundStyle(isSelected ? Color.white : Color.light1)
             .frame(maxWidth: .infinity)
             .frame(height: 48)
             .background(
                 Capsule()
-                    .fill(isSelected ? Color.white : Color.light3)
+                    .fill(isSelected ? Color.light1 : Color.white)
                     .overlay(
                         Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
                     )
             )
         }
         .buttonStyle(.plain)
+    }
+}
+
+#Preview("SetupChallengeView") {
+    SetupChallengePreviewHost()
+}
+
+// MARK: - Preview Host
+private struct SetupChallengePreviewHost: View {
+    @State private var presented: Bool = true
+
+    @StateObject private var session = GameSession()
+    @StateObject private var health = HealthKitManager()
+
+    var body: some View {
+        SetupChallengeView(isPresented: $presented)
+            .environmentObject(session)
+            .environmentObject(health)
+            .onAppear {
+                // \\ Preview demo data
+                if session.player == nil {
+                    session.player = Player(
+                        id: "preview_uid",
+                        name: "Arwa",
+                        totalChallenges: 0,
+                        completedChallenges: 0,
+                        totalSteps: 0,
+                        characterType: .character1,
+                        lastUpdated: Date(),
+                        createdAt: Date()
+                    )
+                    session.playerName = "Arwa"
+                }
+            }
     }
 }

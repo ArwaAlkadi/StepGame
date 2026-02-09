@@ -2,8 +2,6 @@
 //  HealthKitService.swift
 //  StepGame
 //
-//  Created by Arwa Alkadi on 27/01/2026.
-//
 
 import Foundation
 import HealthKit
@@ -13,7 +11,6 @@ import UIKit
 @MainActor
 final class HealthKitManager: ObservableObject {
 
-    // MARK: - Properties
     private let store = HKHealthStore()
 
     @Published private(set) var isAuthorized: Bool = false
@@ -39,36 +36,46 @@ final class HealthKitManager: ObservableObject {
         }
     }
 
-    /// ✅ Correct check for READ authorization
+    // MARK: - Refresh Authorization State
+    /// Performs a lightweight read to verify access without treating all errors as denial
     func refreshAuthorizationState() async {
         guard HKHealthStore.isHealthDataAvailable(),
-              let stepType else {
+              let _ = stepType else {
             isAuthorized = false
             return
         }
 
+        let now = Date()
+        let start = now.addingTimeInterval(-5 * 60)
+
         do {
-            let ok = try await hasReadAuthorization(for: stepType)
-            isAuthorized = ok
+            _ = try await fetchSteps(from: start, to: now)
+            isAuthorized = true
         } catch {
-            // لو صار خطأ اعتبريها غير مصرح
-            isAuthorized = false
+            if isAuthorizationError(error) {
+                isAuthorized = false
+            } else {
+                isAuthorized = true
+            }
         }
     }
 
-    private func hasReadAuthorization(for stepType: HKQuantityType) async throws -> Bool {
-        try await withCheckedThrowingContinuation { cont in
-            store.getRequestStatusForAuthorization(toShare: [], read: [stepType]) { status, error in
-                if let error {
-                    cont.resume(throwing: error)
-                    return
-                }
+    // MARK: - Authorization Error Detection
+    private func isAuthorizationError(_ error: Error) -> Bool {
+        let ns = error as NSError
 
-                // ✅ If request is unnecessary => already authorized (or user responded and we have access)
-                // In practice for READ, this is the reliable signal.
-                cont.resume(returning: status == .unnecessary)
+        if ns.domain == HKErrorDomain,
+           let code = HKError.Code(rawValue: ns.code) {
+            switch code {
+            case .errorAuthorizationDenied,
+                 .errorAuthorizationNotDetermined:
+                return true
+            default:
+                return false
             }
         }
+
+        return false
     }
 
     func openAppSettings() {
@@ -76,7 +83,7 @@ final class HealthKitManager: ObservableObject {
         UIApplication.shared.open(url)
     }
 
-    // MARK: - Steps Fetch (Range)
+    // MARK: - Steps Fetch
 
     func fetchSteps(from startDate: Date, to endDate: Date) async throws -> Int {
         guard HKHealthStore.isHealthDataAvailable(),
@@ -101,6 +108,7 @@ final class HealthKitManager: ObservableObject {
                     return
                 }
 
+                // MARK: - Cumulative Step Count
                 let sum = result?.sumQuantity()?.doubleValue(for: HKUnit.count()) ?? 0
                 cont.resume(returning: Int(sum))
             }
