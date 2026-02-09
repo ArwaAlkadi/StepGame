@@ -22,11 +22,7 @@ struct MapView: View {
 
     @State private var showProfile = false
     @State private var reopenChallengesSheetAfterProfileDismiss = false
-    
-    @State private var showBackToMe = false
-    @State private var scrollOffset: CGFloat = 0
-    @State private var myMarkerY: CGFloat = .nan
-    
+
     // MARK: - Single Sheet (Challenges only)
     private enum ActiveSheet: Identifiable {
         case challenges
@@ -67,6 +63,7 @@ struct MapView: View {
         }
         .onChange(of: session.challenge?.id) { _, _ in
             vm.bind(session: session)
+            vm.startStepsSync(health: health) // ✅ يبدأ فقط إذا مو منتهي
         }
         .onChange(of: session.player?.name) { _, _ in
             vm.bind(session: session)
@@ -77,111 +74,22 @@ struct MapView: View {
     }
 
     // MARK: - Subviews
-
-    private struct ScrollOffsetKey: PreferenceKey {
-        static var defaultValue: CGFloat = 0
-        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-            value = nextValue()
-        }
-    }
-
-    private struct MyMarkerYKey: PreferenceKey {
-        static var defaultValue: CGFloat = .nan
-        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-            value = nextValue()
-        }
-    }
-    
-    private func updateBackToMe(viewportHeight: CGFloat) {
-        guard !myMarkerY.isNaN else {
-            showBackToMe = false
-            return
-        }
-
-        // مكان اللاعب على الشاشة = مكانه داخل الصورة - scrollOffset
-        let yOnScreen = myMarkerY - scrollOffset
-
-        let margin: CGFloat = 80 // متى نعتبره "بعيد"
-        let isOffscreen = (yOnScreen < -margin) || (yOnScreen > viewportHeight + margin)
-
-        withAnimation(.easeInOut(duration: 0.2)) {
-            showBackToMe = isOffscreen
-        }
-    }
-    
     private var mapContent: some View {
-        GeometryReader { viewport in
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
-
-                    // ✅ نقرأ Scroll Offset من أعلى المحتوى
-                    Color.clear
-                        .frame(height: 0)
-                        .background(
-                            GeometryReader { g in
-                                Color.clear.preference(
-                                    key: ScrollOffsetKey.self,
-                                    value: -g.frame(in: .named("MAP_SCROLL")).minY
-                                )
-                            }
-                        )
-
-                    Image("Map")
-                        .resizable()
-                        .scaledToFit()
-                        .overlay {
-                            GeometryReader { geo in
-                                ZStack {
-                                    mapOverlay(size: geo.size)
-
-                                    // ✅ نقطة مخفية عند "Me" نستخدمها للـ scrollTo + قياس Y
-                                    if let me = vm.mapPlayers.first(where: { $0.isMe }) {
-                                        let mePos = vm.positionForPlayer(me, mapSize: geo.size)
-
-                                        Color.clear
-                                            .frame(width: 1, height: 1)
-                                            .position(mePos)
-                                            .id("ME_ANCHOR")
-                                            .preference(key: MyMarkerYKey.self, value: mePos.y)
-                                    }
-
-                                    // ✅ الرياح (اختياري) إذا تبيها هنا
-                                    WindTumbleweedView(mapSize: geo.size)
-                                }
-                            }
+        ScrollView(showsIndicators: false) {
+            Image("Map")
+                .resizable()
+                .scaledToFit()
+                .overlay {
+                    GeometryReader { geo in
+                        ZStack {
+                            mapOverlay(size: geo.size)
+                            WindTumbleweedView(mapSize: geo.size)
                         }
-                }
-                .coordinateSpace(name: "MAP_SCROLL")
-                .overlay(alignment: .bottomTrailing) {
-                    if showBackToMe {
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.35)) {
-                                proxy.scrollTo("ME_ANCHOR", anchor: .center)
-                            }
-                        } label: {
-                            Text("Back to Me")
-                                .font(.custom("RussoOne-Regular", size: 16))
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 10)
-                                .background(Capsule().fill(Color.light4.opacity(0.95)))
-                                .foregroundStyle(Color.light1)
-                                .overlay(Capsule().stroke(Color.light1, lineWidth: 2))
-                        }
-                        .padding(.trailing, 16)
-                        .padding(.bottom, 18)
-                        .transition(.move(edge: .trailing).combined(with: .opacity))
                     }
                 }
-                .onPreferenceChange(ScrollOffsetKey.self) { v in
-                    scrollOffset = v
-                    updateBackToMe(viewportHeight: viewport.size.height)
-                }
-                .onPreferenceChange(MyMarkerYKey.self) { v in
-                    myMarkerY = v
-                    updateBackToMe(viewportHeight: viewport.size.height)
-                }
-            }
         }
+        .contentMargins(0, for: .scrollContent)
+        .ignoresSafeArea()
     }
 
     private func mapOverlay(size: CGSize) -> some View {
@@ -215,6 +123,7 @@ struct MapView: View {
             myAvatar: vm.myHudAvatar,
             stepsLeftText: vm.stepsLeftText,
             daysLeftText: vm.daysLeftText,
+            isChallengeEnded: vm.isChallengeEnded, // ✅
             onTapMyAvatar: {
                 reopenChallengesSheetAfterProfileDismiss = true
                 selectedDetent = .height(90)
@@ -244,7 +153,6 @@ struct MapView: View {
     }
 
     // MARK: - Challenges Sheet
-
     private func makeChallengesSheet() -> some View {
         ChallengesSheet(
             onTapCreate: {
@@ -274,7 +182,6 @@ struct MapView: View {
     }
 
     // MARK: - Other Views
-
     private func makeJoinPopup() -> some View {
         JoinCodePopup(
             isPresented: $showJoinPopup,
@@ -308,7 +215,6 @@ struct MapView: View {
     }
 
     // MARK: - Handlers
-
     private func onJoinDismiss() {
         if reopenChallengesSheetAfterJoinDismiss {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
@@ -339,6 +245,7 @@ private struct MapHUDLayer: View {
     var myAvatar: String
     var stepsLeftText: String
     var daysLeftText: String
+    var isChallengeEnded: Bool // ✅
 
     var onTapMyAvatar: () -> Void
 
@@ -362,14 +269,17 @@ private struct MapHUDLayer: View {
                     .padding(.top, 50)
                 )
 
-            HStack {
-                VStack(alignment: .leading, spacing: 10) {
-                    InfoPill(icon: "shoeprints.fill", text: stepsLeftText)
-                    InfoPill(icon: "hourglass", text: daysLeftText)
+            // ✅ يختفي إذا التحدي منتهي
+            if !isChallengeEnded {
+                HStack {
+                    VStack(alignment: .leading, spacing: 10) {
+                        InfoPill(icon: "shoeprints.fill", text: stepsLeftText)
+                        InfoPill(icon: "hourglass", text: daysLeftText)
+                    }
+                    Spacer()
                 }
-                Spacer()
+                .padding()
             }
-            .padding()
 
             Spacer()
         }
@@ -387,7 +297,6 @@ private struct MapPlayerMarker: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            
             Image(systemName: "bubble.middle.bottom.fill")
                 .resizable()
                 .scaledToFit()
@@ -406,7 +315,6 @@ private struct MapPlayerMarker: View {
                     .multilineTextAlignment(.center)
                     .offset(y: -6)
                 }
-           
 
             Image(mapSprite)
                 .resizable()

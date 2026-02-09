@@ -109,7 +109,7 @@ struct WaitingRoomView: View {
         .sheet(isPresented: $showShareSheet) {
             ActivityView(
                 activityItems: [
-                    "Join my StepGame challenge \nCode: \(vm.joinCodeText)\nstepgame://join?code=\(vm.joinCodeText)"
+                    "🔥 Steepish Challenge!\n\n🎟 Code: \(vm.joinCodeText)\n\nJoin the challenge — think you can beat me? 🏆"
                 ]
             )
         }
