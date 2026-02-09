@@ -243,8 +243,13 @@ final class MapViewModel: ObservableObject {
 
     // MARK: - Positions
     func positionForPlayer(_ player: MapPlayerVM, mapSize: CGSize) -> CGPoint {
-        let base = positionForProgress(progress: CGFloat(player.progress), mapSize: mapSize)
 
+        let base = positionForProgress(
+            progress: CGFloat(player.progress),
+            mapSize: mapSize
+        )
+
+        // اللاعبين اللي نفس التقدم تقريباً
         let grouped = mapPlayers
             .sorted { $0.id < $1.id }
             .filter { abs($0.progress - player.progress) < 0.001 }
@@ -252,12 +257,18 @@ final class MapViewModel: ObservableObject {
         guard grouped.count > 1 else { return base }
         guard let idx = grouped.firstIndex(where: { $0.id == player.id }) else { return base }
 
-        let angle = (2.0 * Double.pi) * (Double(idx) / Double(grouped.count))
-        let radius: CGFloat = player.isMe ? 18 : 14
+        // 👇 المسافة بينهم (قريبة من عرض الصورة 90)
+        let horizontalSpacing: CGFloat = 70
+
+        // توزيع متوازن حول النقطة الأساسية
+        let totalWidth = CGFloat(grouped.count - 1) * horizontalSpacing
+        let startOffset = -totalWidth / 2
+
+        let xOffset = startOffset + CGFloat(idx) * horizontalSpacing
 
         return CGPoint(
-            x: base.x + CGFloat(cos(angle)) * radius,
-            y: base.y + CGFloat(sin(angle)) * radius
+            x: base.x + xOffset,
+            y: base.y
         )
     }
 

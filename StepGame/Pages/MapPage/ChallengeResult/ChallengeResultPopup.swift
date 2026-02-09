@@ -199,7 +199,7 @@ struct ChallengeResultPopup: View {
             }
             .padding(18)
             .frame(maxWidth: 350)
-            .frame(height: 320)
+            .frame(height: 340)
             .background(
                 RoundedRectangle(cornerRadius: 28).fill(Color.light3)
             )
