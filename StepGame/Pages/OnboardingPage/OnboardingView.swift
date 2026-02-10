@@ -4,6 +4,8 @@ struct OnboardingView: View {
 
     @StateObject private var viewModel = OnboardingViewModel()
 
+    private let swipeThreshold: CGFloat = 50
+
     var body: some View {
         VStack {
             // MARK: - Top Bar
@@ -87,6 +89,18 @@ struct OnboardingView: View {
             Color(red: 0.98, green: 0.94, blue: 0.88)
                 .ignoresSafeArea()
         )
+        // MARK: - Swipe Gesture
+        .gesture(
+            DragGesture()
+                .onEnded { value in
+                    if value.translation.width < -swipeThreshold {
+                        viewModel.next()
+                    } else if value.translation.width > swipeThreshold {
+                        viewModel.previous()
+                    }
+                }
+        )
+        .animation(.easeInOut, value: viewModel.currentPage)
     }
 }
 
@@ -103,7 +117,11 @@ extension OnboardingView {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 350)
-                .offset(x: 25, y: -10)
+                // 👇 هنا التعديل المهم
+                .offset(
+                    x: viewModel.currentPage == 1 ? 0 : 25,
+                    y: viewModel.currentPage == 1 ? 0 : -10
+                )
         }
     }
 

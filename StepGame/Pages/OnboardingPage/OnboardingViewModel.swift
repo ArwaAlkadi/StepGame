@@ -13,6 +13,12 @@ final class OnboardingViewModel: ObservableObject {
         }
     }
 
+    func previous() {
+        if currentPage > 0 {
+            currentPage -= 1
+        }
+    }
+
     func skip() {
         currentPage = totalPages - 1
     }
