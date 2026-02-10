@@ -21,13 +21,23 @@ struct OfflineBanner: View {
                     .frame(width: 60, height: 60)
                    
                 
-                Text("Oops… You’re Offline")
+                Text("Uh-oh! You’re Offline..")
                     .font(.custom("RussoOne-Regular", size: 16))
                     .foregroundStyle(.light3)
 
                 Spacer()
 
-               
+                Button {
+                    withAnimation(.easeInOut) {
+                        isVisible = false
+                    }
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.light3)
+                        .padding(12)
+                }
+                .buttonStyle(.plain)
             }
             .foregroundStyle(.light3)
             .padding(.horizontal, 14)
@@ -36,23 +46,8 @@ struct OfflineBanner: View {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(Color.light1)
             )
-            .overlay(alignment: .topTrailing) {
-
-                Button {
-                    withAnimation(.easeInOut) {
-                        isVisible = false
-                    }
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.light3)
-                        .padding(12)
-                }
-                .buttonStyle(.plain)
-                
-            }
             .padding(.horizontal, 14)
-            .padding(.top, 10)
+            .padding(.top, 20)
                 
                 Spacer()
           }

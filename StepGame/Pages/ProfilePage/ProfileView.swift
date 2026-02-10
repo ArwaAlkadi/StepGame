@@ -63,14 +63,12 @@ struct ProfileView: View {
         HStack {
             if vm.isEditing {
                 Button {
-                    Task { await doneTapped() }
+                    dismiss()
                 } label: {
-                    Text("Done")
+                    Text("Cancel")
                         .font(.custom("RussoOne-Regular", size: 18))
                         .foregroundStyle(Color.light1)
                 }
-                .disabled(vm.isSaving)
-                .opacity(vm.isSaving ? 0.6 : 1)
 
             } else {
                 Button {
@@ -83,6 +81,18 @@ struct ProfileView: View {
             }
 
             Spacer()
+
+            if vm.isEditing {
+                Button {
+                    Task { await doneTapped() }
+                } label: {
+                    Text("Done")
+                        .font(.custom("RussoOne-Regular", size: 18))
+                        .foregroundStyle(Color.light1)
+                }
+                .disabled(vm.isSaving)
+                .opacity(vm.isSaving ? 0.6 : 1)
+            }
         }
         .padding(.top, 6)
     }
