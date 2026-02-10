@@ -336,6 +336,12 @@ struct ChallengesCard: View {
         guard challenge.status == .ended else { return nil }
         guard let place = myPlaceForThisChallenge else { return nil }
 
+        let playerCount = challenge.playerIds.count
+
+        if playerCount == 1 {
+            return "PlaceSolo"
+        }
+
         switch place {
         case 1: return "Place1"
         case 2: return "Place2"
