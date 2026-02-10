@@ -30,6 +30,7 @@ final class MapViewModel: ObservableObject {
         let steps: Int
         let progress: Double
         let isMe: Bool
+        let place: Int?
     }
 
     @Published private(set) var mapPlayers: [MapPlayerVM] = []
@@ -294,7 +295,8 @@ final class MapViewModel: ObservableObject {
                 mapSprite: mapSprite,
                 steps: part.steps,
                 progress: progress,
-                isMe: isMe
+                isMe: isMe,
+                place: part.place
             )
         }
 

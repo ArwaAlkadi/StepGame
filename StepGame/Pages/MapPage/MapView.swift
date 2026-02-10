@@ -10,6 +10,7 @@ struct MapView: View {
 
     @EnvironmentObject private var session: GameSession
     @EnvironmentObject private var health: HealthKitManager
+    @EnvironmentObject private var connectivity: ConnectivityMonitor
 
     @StateObject private var vm = MapViewModel()
 
@@ -22,7 +23,9 @@ struct MapView: View {
 
     @State private var showProfile = false
     @State private var reopenChallengesSheetAfterProfileDismiss = false
+    @State private var showOfflineBanner = true
 
+   
     // MARK: - Single Sheet (Challenges only)
     private enum ActiveSheet: Identifiable {
         case challenges
@@ -38,6 +41,10 @@ struct MapView: View {
             mapContent
             hudLayer
             resultPopup
+            
+            if !connectivity.isOnline {
+                OfflineBanner(isVisible: $showOfflineBanner)
+                       }
         }
         .sheet(item: $activeSheet) { _ in
             makeChallengesSheet()
@@ -107,7 +114,9 @@ struct MapView: View {
                     mapSprite: p.mapSprite,
                     name: p.name,
                     steps: p.steps,
-                    isMe: p.isMe
+                    isMe: p.isMe,
+                    isGroup: vm.isGroupChallenge,
+                    place: p.place
                 )
                 .position(vm.positionForPlayer(p, mapSize: size))
                 .animation(.easeInOut(duration: 0.35), value: p.progress)
@@ -294,18 +303,36 @@ private struct MapPlayerMarker: View {
     let steps: Int
     let isMe: Bool
 
+    let isGroup: Bool
+    let place: Int?
+
     var body: some View {
         VStack(spacing: 6) {
+
             Image(systemName: "bubble.middle.bottom.fill")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 70)
                 .foregroundStyle(.white)
                 .overlay(alignment: .center) {
+
                     VStack(spacing: 2) {
-                        Text(isMe ? "Me" : name)
-                            .font(.custom("RussoOne-Regular", size: 10))
-                            .foregroundStyle(.light1)
+
+                        HStack(spacing: 4) {
+
+                            Text(isMe ? "Me" : name)
+                                .font(.custom("RussoOne-Regular", size: 10))
+                                .foregroundStyle(.light1)
+
+                            if isGroup, let place,
+                               (1...3).contains(place) {
+
+                                Image(placeAssetName(place))
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 14, height: 14)
+                            }
+                        }
 
                         Text("\(steps.formatted()) Steps")
                             .font(.custom("RussoOne-Regular", size: 10))
@@ -319,6 +346,15 @@ private struct MapPlayerMarker: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 90, height: 90)
+        }
+    }
+
+    private func placeAssetName(_ place: Int) -> String {
+        switch place {
+        case 1: return "Place1"
+        case 2: return "Place2"
+        case 3: return "Place3"
+        default: return "Place1"
         }
     }
 }
