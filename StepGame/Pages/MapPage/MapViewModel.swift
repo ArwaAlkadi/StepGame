@@ -59,17 +59,19 @@ final class MapViewModel: ObservableObject {
 
     // MARK: - Map Points
     private let pathPoints: [CGPoint] = [
-        .init(x: 0.312, y: 0.889),
-        .init(x: 0.510, y: 0.805),
-        .init(x: 0.473, y: 0.661),
-        .init(x: 0.548, y: 0.522),
-        .init(x: 0.420, y: 0.448),
-        .init(x: 0.532, y: 0.358),
-        .init(x: 0.448, y: 0.256),
-        .init(x: 0.570, y: 0.167),
-        .init(x: 0.558, y: 0.068),
+        .init(x: 0.714, y: 0.867),
+        .init(x: 0.705, y: 0.746),
+        .init(x: 0.596, y: 0.660),
+        .init(x: 0.696, y: 0.594),
+        .init(x: 0.554, y: 0.509),
+        .init(x: 0.670, y: 0.433),
+        .init(x: 0.546, y: 0.357),
+        .init(x: 0.690, y: 0.293),
+        .init(x: 0.573, y: 0.199),
+        .init(x: 0.693, y: 0.121),
+        .init(x: 0.770, y: 0.053),
     ]
-
+    
     private let flagAnchors: [CGPoint] = [
         .init(x: 0.604, y: 0.847),
         .init(x: 0.595, y: 0.726),
@@ -347,7 +349,7 @@ final class MapViewModel: ObservableObject {
         return "\(daysLeft) Day Left"
     }
 
-    // MARK: - Positions
+    // MARK: - Player Map Positioning
     func positionForPlayer(_ player: MapPlayerVM, mapSize: CGSize) -> CGPoint {
 
         let base = positionForProgress(
@@ -359,18 +361,45 @@ final class MapViewModel: ObservableObject {
             .sorted { $0.id < $1.id }
             .filter { abs($0.progress - player.progress) < 0.001 }
 
-        guard grouped.count > 1 else { return base }
-        guard let idx = grouped.firstIndex(where: { $0.id == player.id }) else { return base }
+        guard grouped.count > 1 else {
+            return clampToBounds(base, mapSize: mapSize)
+        }
 
-        let horizontalSpacing: CGFloat = 70
+        guard let idx = grouped.firstIndex(where: { $0.id == player.id }) else {
+            return clampToBounds(base, mapSize: mapSize)
+        }
+
+        let horizontalSpacing: CGFloat = 65
 
         let totalWidth = CGFloat(grouped.count - 1) * horizontalSpacing
         let startOffset = -totalWidth / 2
         let xOffset = startOffset + CGFloat(idx) * horizontalSpacing
 
-        return CGPoint(
+        let shifted = CGPoint(
             x: base.x + xOffset,
             y: base.y
+        )
+
+        return clampToBounds(shifted, mapSize: mapSize)
+    }
+    
+    private func clampToBounds(_ point: CGPoint, mapSize: CGSize) -> CGPoint {
+
+        let bubbleWidth: CGFloat = 60
+        let spriteWidth: CGFloat = 85
+
+        let paddingX: CGFloat = max(bubbleWidth, spriteWidth) / 2 + 12
+        let paddingY: CGFloat = spriteWidth / 2 + 10
+
+        let minX = paddingX
+        let maxX = mapSize.width - paddingX
+
+        let minY = paddingY
+        let maxY = mapSize.height - paddingY
+
+        return CGPoint(
+            x: min(max(point.x, minX), maxX),
+            y: min(max(point.y, minY), maxY)
         )
     }
 

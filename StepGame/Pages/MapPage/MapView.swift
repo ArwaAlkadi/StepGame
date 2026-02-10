@@ -312,7 +312,7 @@ private struct MapPlayerMarker: View {
             Image(systemName: "bubble.middle.bottom.fill")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 70)
+                .frame(width: 60)
                 .foregroundStyle(.white)
                 .overlay(alignment: .center) {
 
@@ -335,7 +335,7 @@ private struct MapPlayerMarker: View {
                         }
 
                         Text("\(steps.formatted()) Steps")
-                            .font(.custom("RussoOne-Regular", size: 10))
+                            .font(.custom("RussoOne-Regular", size: 8))
                             .foregroundStyle(.light2)
                     }
                     .multilineTextAlignment(.center)
@@ -345,7 +345,7 @@ private struct MapPlayerMarker: View {
             Image(mapSprite)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 90, height: 90)
+                .frame(width: 85, height: 85)
         }
     }
 
@@ -375,7 +375,7 @@ struct FlagMarker: View {
             Text("\(number)")
                 .font(.custom("RussoOne-Regular", size: 12))
                 .foregroundStyle(.light1)
-                .padding(.bottom, 30)
+                .padding(.bottom, 25)
                 .padding(.trailing, 8)
         }
     }

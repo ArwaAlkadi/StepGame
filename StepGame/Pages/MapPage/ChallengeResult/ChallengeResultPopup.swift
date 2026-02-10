@@ -203,7 +203,7 @@ struct ChallengeResultPopup: View {
                         Image(systemName: "xmark.circle.fill")
                             .resizable()
                             .scaledToFit()
-                            .foregroundStyle(.light2)
+                            .foregroundStyle(.light1)
                             .frame(width: 30, height: 30)
                     }
                     .buttonStyle(.plain)
