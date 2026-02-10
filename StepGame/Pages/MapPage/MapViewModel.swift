@@ -194,6 +194,8 @@ final class MapViewModel: ObservableObject {
 
         self.challenge = session.challenge
 
+        lastUploadedSteps = nil
+
         if isChallengeEnded {
             stopStepsSync()
         }
@@ -279,7 +281,6 @@ final class MapViewModel: ObservableObject {
             let name = p?.name ?? (isMe ? "Me" : shortId(part.playerId))
             let hudAvatar = type.avatarKey()
 
-            /// progress mapped to flags positions
             let mapped = mappedProgressForSteps(part.steps, goalSteps: ch.goalSteps)
             let progress = Double(mapped)
 
@@ -426,32 +427,43 @@ final class MapViewModel: ObservableObject {
         }
 
         let now = Date()
-        let startOfDay = Calendar.current.startOfDay(for: now)
+
+        let startRaw = ch.startedAt ?? ch.startDate
+        let startDay = Calendar.current.startOfDay(for: startRaw)
+
+        let endDay = Calendar.current.date(byAdding: .day, value: ch.durationDays, to: startDay)
+            ?? startDay.addingTimeInterval(TimeInterval(ch.durationDays * 86400))
+
+        let end = min(now, endDay)
 
         do {
-            let stepsToday = try await health.fetchSteps(from: startOfDay, to: now)
-            if lastUploadedSteps == stepsToday { return }
+            let stepsTotal = try await health.fetchSteps(from: startDay, to: end)
+            if lastUploadedSteps == stepsTotal { return }
 
             let goal = max(ch.goalSteps, 1)
-            let progress = min(max(Double(stepsToday) / Double(goal), 0), 1)
+            let progress = min(max(Double(stepsTotal) / Double(goal), 0), 1)
             let state: CharacterState = (progress >= 1) ? .active : .normal
 
             try await firebase.updateParticipantSteps(
                 challengeId: chId,
                 uid: uid,
-                steps: stepsToday,
+                steps: stepsTotal,
                 progress: progress,
                 characterState: state
             )
 
-            lastUploadedSteps = stepsToday
+            lastUploadedSteps = stepsTotal
 
-            if stepsToday >= goal {
+            if stepsTotal >= goal {
                 try? await firebase.tryMarkFinishedAndClaimWinnerIfNeeded(
                     challengeId: chId,
                     uid: uid,
                     now: now
                 )
+            }
+
+            if now >= endDay {
+                stopStepsSync()
             }
         } catch {
             // silent
@@ -496,7 +508,7 @@ final class MapViewModel: ObservableObject {
         let diff = stepsProgress - expected
 
         let activeThreshold: CGFloat = 0.10
-        let lazyThreshold: CGFloat = -0.30
+        let lazyThreshold: CGFloat = -0.10
 
         if diff >= activeThreshold { return .active }
         if diff <= lazyThreshold { return .lazy }
@@ -581,9 +593,8 @@ final class MapViewModel: ObservableObject {
         if id.count <= 6 { return id }
         return "\(id.prefix(3))...\(id.suffix(3))"
     }
-    
+
     func syncFromHealth(health: HealthKitManager) async {
         await syncOnce(health: health)
     }
-    
 }

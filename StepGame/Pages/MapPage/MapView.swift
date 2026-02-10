@@ -245,7 +245,7 @@ private struct MapHUDLayer: View {
     var myAvatar: String
     var stepsLeftText: String
     var daysLeftText: String
-    var isChallengeEnded: Bool // ✅
+    var isChallengeEnded: Bool
 
     var onTapMyAvatar: () -> Void
 
@@ -269,7 +269,6 @@ private struct MapHUDLayer: View {
                     .padding(.top, 50)
                 )
 
-            // ✅ يختفي إذا التحدي منتهي
             if !isChallengeEnded {
                 HStack {
                     VStack(alignment: .leading, spacing: 10) {
@@ -393,7 +392,7 @@ struct PlayerAvatar: View {
             .scaledToFit()
             .frame(width: size, height: size)
             .background(Circle().fill(Color.light4))
-            .overlay(Circle().stroke(Color.light2, lineWidth: 3))
+            .overlay(Circle().stroke(Color.light1, lineWidth: 3))
     }
 }
 
@@ -429,7 +428,7 @@ struct ProfileAvatarButton: View {
                 .scaledToFit()
                 .frame(width: size, height: size)
                 .background(Circle().fill(Color.light4))
-                .overlay(Circle().stroke(Color.light2, lineWidth: 3))
+                .overlay(Circle().stroke(Color.light1, lineWidth: 3))
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)

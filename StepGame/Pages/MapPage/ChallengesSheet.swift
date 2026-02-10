@@ -109,7 +109,7 @@ struct ChallengesSheet: View {
         VStack(spacing: 12) {
             Text("No active challenges")
                 .font(.custom("RussoOne-Regular", size: 16))
-                .foregroundColor(.gray)
+                .foregroundColor(.light1.opacity(0.4))
         }
     }
 

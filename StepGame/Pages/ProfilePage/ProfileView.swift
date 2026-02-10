@@ -132,13 +132,13 @@ struct ProfileView: View {
 
             Text("Name")
                 .font(.custom("RussoOne-Regular", size: 14))
-                .foregroundStyle(Color.light1.opacity(0.5))
+                .foregroundStyle(Color.light1)
                 .padding(.horizontal)
 
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color.light4.opacity(0.7))
-                    .stroke(Color.light1, lineWidth: 1)
+                    .stroke(Color.light1, lineWidth: 2)
                     .frame(height: 54)
 
                 TextField("Name", text: $vm.draftName)
