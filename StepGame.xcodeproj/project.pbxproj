@@ -12,7 +12,6 @@
 		EC6BAB1E2F315A3000BDBEC8 /* GameSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */; };
 		EC7628CB2F395ADB008952D9 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7628CA2F395ADB008952D9 /* Models.swift */; };
 		EC7628D42F396171008952D9 /* ChallengeResultPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7628D32F396171008952D9 /* ChallengeResultPopup.swift */; };
-		EC7628D62F39619F008952D9 /* ChallengeResultSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7628D52F39619F008952D9 /* ChallengeResultSheet.swift */; };
 		EC77AE8E2F3B9A320056D261 /* OfflineBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC77AE8D2F3B9A320056D261 /* OfflineBanner.swift */; };
 		ECCAEE3A2F218A8B0047C5DF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = ECCAEE392F218A8B0047C5DF /* FirebaseAuth */; };
 		ECCAEE3C2F218A8B0047C5DF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = ECCAEE3B2F218A8B0047C5DF /* FirebaseFirestore */; };
@@ -53,7 +52,6 @@
 		EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSession.swift; sourceTree = "<group>"; };
 		EC7628CA2F395ADB008952D9 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		EC7628D32F396171008952D9 /* ChallengeResultPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResultPopup.swift; sourceTree = "<group>"; };
-		EC7628D52F39619F008952D9 /* ChallengeResultSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResultSheet.swift; sourceTree = "<group>"; };
 		EC77AE8D2F3B9A320056D261 /* OfflineBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineBanner.swift; sourceTree = "<group>"; };
 		ECCAEE282F21888B0047C5DF /* StepGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAEE3D2F218AAA0047C5DF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -114,7 +112,6 @@
 			isa = PBXGroup;
 			children = (
 				EC7628D32F396171008952D9 /* ChallengeResultPopup.swift */,
-				EC7628D52F39619F008952D9 /* ChallengeResultSheet.swift */,
 			);
 			path = ChallengeResult;
 			sourceTree = "<group>";
@@ -383,7 +380,6 @@
 				ECCB96032F294DFF00DBC1F5 /* JoinWithCodePopup.swift in Sources */,
 				ECCB978A2F2C3DB300DBC1F5 /* WaitingViewModel.swift in Sources */,
 				ECCB95D72F29484A00DBC1F5 /* HealthKitService.swift in Sources */,
-				EC7628D62F39619F008952D9 /* ChallengeResultSheet.swift in Sources */,
 				ECCB95DF2F294C3D00DBC1F5 /* OnboardingView.swift in Sources */,
 				ECCB96012F294DE900DBC1F5 /* ProfileView.swift in Sources */,
 				EC7628CB2F395ADB008952D9 /* Models.swift in Sources */,

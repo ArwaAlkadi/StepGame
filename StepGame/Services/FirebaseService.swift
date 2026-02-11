@@ -95,16 +95,13 @@ final class FirebaseService {
     ) async throws -> Challenge {
 
         let joinCode = Self.generateJoinCode()
-
         let now = Date()
-
         let startDay = Calendar.current.startOfDay(for: now)
 
         let endDay = Calendar.current.date(byAdding: .day, value: durationDays, to: startDay)
             ?? startDay.addingTimeInterval(TimeInterval(durationDays * 86400))
 
         let isSocial = (mode == .social)
-
         let status: ChallengeStatus = isSocial ? .waiting : .active
         let startedAt: Date? = isSocial ? nil : now
 
@@ -130,10 +127,7 @@ final class FirebaseService {
         let ref = db.collection("challenges").document()
         try ref.setData(from: challenge)
 
-        // MARK: - Place Counter Seed (Stored In Firestore)
-        try await ref.setData([
-            "nextPlace": 1
-        ], merge: true)
+        try await ref.setData(["nextPlace": 1], merge: true)
 
         var saved = challenge
         saved.id = ref.documentID
@@ -238,7 +232,6 @@ final class FirebaseService {
 
         let now = Date()
 
-        // MARK: - Participant Progress Update
         try await ref.setData([
             "challengeId": challengeId,
             "playerId": uid,
@@ -271,19 +264,16 @@ final class FirebaseService {
                 let nextPlace = (chSnap.data()?["nextPlace"] as? Int) ?? 1
                 let assignedPlace = nextPlace
 
-                // MARK: - Mark Participant Finished
                 tx.setData([
                     "finishedAt": Timestamp(date: now),
                     "place": assignedPlace,
                     "lastUpdated": Timestamp(date: now)
                 ], forDocument: pRef, merge: true)
 
-                // MARK: - Increment Place Counter
                 tx.setData([
                     "nextPlace": assignedPlace + 1
                 ], forDocument: chRef, merge: true)
 
-                // MARK: - Claim Winner If Needed
                 if winnerId == nil {
                     tx.setData([
                         "winnerId": uid,
@@ -344,7 +334,6 @@ final class FirebaseService {
     // MARK: - Delete Challenge (Host)
     func deleteChallenge(challengeId: String) async throws {
         let chRef = db.collection("challenges").document(challengeId)
-
         let partsSnap = try await chRef.collection("participants").getDocuments()
 
         let batch = db.batch()
@@ -401,4 +390,98 @@ final class FirebaseService {
                 onChange(try? snap.data(as: ChallengeParticipant.self))
             }
     }
+
+    // MARK: - Feature: Solo Reward (+1 day)
+    func addOneDayExtension(challengeId: String) async throws {
+        let ref = db.collection("challenges").document(challengeId)
+
+        try await db.runTransaction { tx, errPtr -> Any? in
+            do {
+                let snap = try tx.getDocument(ref)
+                let current = (snap.data()?["extensionSeconds"] as? Int) ?? 0
+
+                tx.setData([
+                    "extensionSeconds": current + 86400
+                ], forDocument: ref, merge: true)
+
+                return nil
+            } catch let e {
+                errPtr?.pointee = e as NSError
+                return nil
+            }
+        }
+    }
+    
+   
+
+    func markSoloPuzzleFailed(challengeId: String, uid: String) async throws {
+        let ref = db.collection("challenges").document(challengeId)
+            .collection("participants").document(uid)
+
+        try await ref.setData([
+            "soloPuzzleFailedAt": Timestamp(date: Date())
+        ], merge: true)
+    }
+
+    func markGroupAttackPuzzleFailed(challengeId: String, uid: String) async throws {
+        let ref = db.collection("challenges").document(challengeId)
+            .collection("participants").document(uid)
+
+        try await ref.setData([
+            "groupAttackPuzzleFailedAt": Timestamp(date: Date())
+        ], merge: true)
+    }
+    
+    func applyGroupAttack(
+        challengeId: String,
+        targetId: String,
+        attackerId: String,
+        attackTimeSeconds: Double
+    ) async throws {
+
+        let ref = db.collection("challenges")
+            .document(challengeId)
+            .collection("participants")
+            .document(targetId)
+
+        let now = Date()
+        let expires = now.addingTimeInterval(3 * 60 * 60)
+
+        try await ref.setData([
+            "sabotageState": CharacterState.lazy.rawValue,
+            "sabotageExpiresAt": Timestamp(date: expires),
+            "sabotageByPlayerId": attackerId,
+
+            // ✅ NEW: store attacker time for defense comparison
+            "sabotageAttackTimeSeconds": attackTimeSeconds,
+            "sabotageAppliedAt": Timestamp(date: now)
+        ], merge: true)
+    }
+    
+    func markGroupAttackSucceeded(challengeId: String, uid: String) async throws {
+        let ref = db.collection("challenges").document(challengeId)
+            .collection("participants").document(uid)
+
+        try await ref.setData([
+            "groupAttackSucceededAt": Timestamp(date: Date())
+        ], merge: true)
+    }
+    
+    func cancelGroupAttack(
+        challengeId: String,
+        targetId: String
+    ) async throws {
+
+        let ref = db.collection("challenges")
+            .document(challengeId)
+            .collection("participants")
+            .document(targetId)
+
+        try await ref.setData([
+            "sabotageState": FieldValue.delete(),
+            "sabotageExpiresAt": FieldValue.delete(),
+            "sabotageByPlayerId": FieldValue.delete()
+        ], merge: true)
+    }
+    
 }

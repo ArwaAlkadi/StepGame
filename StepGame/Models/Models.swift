@@ -193,10 +193,21 @@ struct ChallengeParticipant: Identifiable, Codable {
     var lastUpdated: Date
     var createdAt: Date
 
+    // MARK: - Sabotage (existing / keep)
     var sabotageState: CharacterState?
     var sabotageExpiresAt: Date?
     var sabotageByPlayerId: String?
 
+    // MARK: - Puzzle Locks (24h after losing)
+    var soloPuzzleFailedAt: Date?
+    var groupAttackPuzzleFailedAt: Date?
+    // ⚠️ Defense: no 24h lock (لأن الدفاع حق إنقاذ)
+    // var groupDefensePuzzleFailedAt: Date?
+
+    // MARK: - Attack metadata (to compare with defense time)
+    var sabotageAttackTimeSeconds: Double?
+    var sabotageAppliedAt: Date?
+    var groupAttackSucceededAt: Date?
     /// Result tracking per participant
     var finishedAt: Date? = nil
     var place: Int? = nil
@@ -211,9 +222,17 @@ struct ChallengeParticipant: Identifiable, Codable {
         characterState: CharacterState = .normal,
         lastUpdated: Date = Date(),
         createdAt: Date = Date(),
+
         sabotageState: CharacterState? = nil,
         sabotageExpiresAt: Date? = nil,
         sabotageByPlayerId: String? = nil,
+
+        soloPuzzleFailedAt: Date? = nil,
+        groupAttackPuzzleFailedAt: Date? = nil,
+
+        sabotageAttackTimeSeconds: Double? = nil,
+        sabotageAppliedAt: Date? = nil,
+        groupAttackSucceededAt: Date? = nil,
         finishedAt: Date? = nil,
         place: Int? = nil,
         didShowResultPopup: Bool? = nil
@@ -226,9 +245,18 @@ struct ChallengeParticipant: Identifiable, Codable {
         self.characterState = characterState
         self.lastUpdated = lastUpdated
         self.createdAt = createdAt
+
         self.sabotageState = sabotageState
         self.sabotageExpiresAt = sabotageExpiresAt
         self.sabotageByPlayerId = sabotageByPlayerId
+
+        self.soloPuzzleFailedAt = soloPuzzleFailedAt
+        self.groupAttackPuzzleFailedAt = groupAttackPuzzleFailedAt
+
+        self.sabotageAttackTimeSeconds = sabotageAttackTimeSeconds
+        self.sabotageAppliedAt = sabotageAppliedAt
+        self.groupAttackSucceededAt = groupAttackSucceededAt
+
         self.finishedAt = finishedAt
         self.place = place
         self.didShowResultPopup = didShowResultPopup

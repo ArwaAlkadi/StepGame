@@ -2,9 +2,9 @@
 //  MapView.swift
 //  StepGame
 //
-
 import SwiftUI
 import UIKit
+import Combine
 
 struct MapView: View {
 
@@ -25,7 +25,12 @@ struct MapView: View {
     @State private var reopenChallengesSheetAfterProfileDismiss = false
     @State private var showOfflineBanner = true
 
-   
+    @State private var puzzleResult: PuzzleResult? = nil
+    
+    // ✅ Feature states
+    @State private var activeMapPopup: MapPopupType? = nil
+    @State private var activePuzzle: PuzzleRequest? = nil
+
     // MARK: - Single Sheet (Challenges only)
     private enum ActiveSheet: Identifiable {
         case challenges
@@ -33,7 +38,8 @@ struct MapView: View {
     }
 
     @State private var activeSheet: ActiveSheet? = .challenges
-
+    @State private var now = Date()
+    private let uiTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     var body: some View {
         ZStack {
             Color.light2.ignoresSafeArea()
@@ -41,13 +47,19 @@ struct MapView: View {
             mapContent
             hudLayer
             resultPopup
-            
+            mapPopupLayer
+
             if !connectivity.isOnline {
                 OfflineBanner(isVisible: $showOfflineBanner)
-                       }
+            }
         }
         .sheet(item: $activeSheet) { _ in
             makeChallengesSheet()
+        }
+        .sheet(item: $puzzleResult) { res in
+            PuzzleResultSheet(result: res) {
+                puzzleResult = nil
+            }
         }
         .fullScreenCover(isPresented: $showJoinPopup, onDismiss: onJoinDismiss) {
             makeJoinPopup()
@@ -58,11 +70,23 @@ struct MapView: View {
         .fullScreenCover(isPresented: $showProfile, onDismiss: onProfileDismiss) {
             makeProfileView()
         }
+        .fullScreenCover(item: $activePuzzle) { req in
+            PuzzleWiringView(timeLimit: 8) { success, time, didTimeout in
+                Task { await handlePuzzleFinish(req: req, success: success, time: time, didTimeout: didTimeout) }
+            }
+        }
+
         .onAppear {
             selectedDetent = .height(90)
             activeSheet = .challenges
             vm.bind(session: session)
             vm.startStepsSync(health: health)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                   activePuzzle = .soloExtension
+               }
+        }
+        .onReceive(uiTimer) { t in
+            now = t
         }
         .onDisappear {
             vm.stopStepsSync()
@@ -78,8 +102,236 @@ struct MapView: View {
         .onChange(of: session.player?.characterType) { _, _ in
             vm.bind(session: session)
         }
+        // ✅ listen to popup trigger from VM
+        .onChange(of: vm.pendingMapPopup) { popup in
+            activeMapPopup = popup
+        }
     }
 
+    private func handlePuzzleFinish(
+        req: PuzzleRequest,
+        success: Bool,
+        time: Double,
+        didTimeout: Bool
+    ) async {
+
+        guard let chId = session.challenge?.id else { return }
+        guard let myId = session.uid else { return }
+
+        switch req {
+
+        // MARK: - SOLO
+        case .soloExtension:
+            if success {
+                do {
+                    try await FirebaseService.shared.addOneDayExtension(challengeId: chId)
+                } catch {
+                    print("❌ addOneDayExtension failed:", error.localizedDescription)
+                }
+
+                puzzleResult = PuzzleResult(
+                    context: .solo,
+                    success: true,
+                    myTime: time,
+                    opponentTime: nil,
+                    reason: .solved,
+                    title: "✅ You Won",
+                    message: "+1 day extension added!"
+                )
+
+            } else {
+                // ✅ سجل قفل 24h
+                do {
+                    try await FirebaseService.shared.markSoloPuzzleFailed(challengeId: chId, uid: myId)
+                } catch {
+                    print("❌ markSoloPuzzleFailed failed:", error.localizedDescription)
+                }
+
+                puzzleResult = PuzzleResult(
+                    context: .solo,
+                    success: false,
+                    myTime: time,
+                    opponentTime: nil,
+                    reason: didTimeout ? .timeOut : .notSolved,
+                    title: "❌ You Lost",
+                    message: didTimeout ? "Time is up." : "You didn’t solve the wiring."
+                )
+            }
+
+
+        // MARK: - GROUP ATTACK
+        case .groupAttack:
+            guard let targetId = vm.leadingPlayerId, targetId != myId else {
+                puzzleResult = PuzzleResult(
+                    context: .groupAttack,
+                    success: false,
+                    myTime: time,
+                    opponentTime: nil,
+                    reason: .notSolved,
+                    title: "❌ Attack Failed",
+                    message: "Couldn’t find a valid target."
+                )
+                return
+            }
+
+            if success {
+                do {
+                    // ✅ يطبّق الافيكت على الخصم + يخزن وقتك
+                    try await FirebaseService.shared.applyGroupAttack(
+                        challengeId: chId,
+                        targetId: targetId,
+                        attackerId: myId,
+                        attackTimeSeconds: time
+                    )
+
+                    // ✅ Cooldown 24h بعد الفوز (حسب نظامك)
+                    try await FirebaseService.shared.markGroupAttackSucceeded(challengeId: chId, uid: myId)
+
+                } catch {
+                    print("❌ applyGroupAttack failed:", error.localizedDescription)
+                }
+
+                puzzleResult = PuzzleResult(
+                    context: .groupAttack,
+                    success: true,
+                    myTime: time,
+                    opponentTime: nil,
+                    reason: .solved,
+                    title: "⚔️ Attack Succeeded",
+                    message: "You sabotaged your friend for 3 hours!"
+                )
+
+            } else {
+                do {
+                    // ✅ Lock 24h بعد الخسارة
+                    try await FirebaseService.shared.markGroupAttackPuzzleFailed(challengeId: chId, uid: myId)
+                } catch {
+                    print("❌ markGroupAttackPuzzleFailed failed:", error.localizedDescription)
+                }
+
+                puzzleResult = PuzzleResult(
+                    context: .groupAttack,
+                    success: false,
+                    myTime: time,
+                    opponentTime: nil,
+                    reason: didTimeout ? .timeOut : .notSolved,
+                    title: "❌ Attack Failed",
+                    message: didTimeout ? "Time is up." : "You didn’t solve the wiring."
+                )
+            }
+
+
+        // MARK: - GROUP DEFENSE
+        case .groupDefense:
+            // أنا المدافع => target = myId
+            let oppTime = vm.myParticipant?.sabotageAttackTimeSeconds
+            let attackerId = vm.myParticipant?.sabotageByPlayerId
+
+            // لو ما فيه هجوم أصلاً
+            if attackerId == nil {
+                puzzleResult = PuzzleResult(
+                    context: .groupDefense,
+                    success: success,
+                    myTime: time,
+                    opponentTime: nil,
+                    reason: success ? .solved : (didTimeout ? .timeOut : .notSolved),
+                    title: success ? "✅ Defended" : "❌ Defense Failed",
+                    message: success ? "No active attack to defend." : (didTimeout ? "Time is up." : "You didn’t solve the wiring.")
+                )
+                return
+            }
+
+            // 1) إذا فشلتي/انتهى الوقت => ما نلغي الافيكت
+            if !success {
+                puzzleResult = PuzzleResult(
+                    context: .groupDefense,
+                    success: false,
+                    myTime: time,
+                    opponentTime: oppTime,
+                    reason: didTimeout ? .timeOut : .notSolved,
+                    title: "❌ Defense Failed",
+                    message: didTimeout ? "You ran out of time." : "You didn’t solve the wiring."
+                )
+                return
+            }
+
+            // 2) إذا نجحتي: قارنة مع وقت المهاجم
+            if let opp = oppTime {
+                if time <= opp {
+                    // ✅ أنت أسرع => إلغاء الافيكت
+                    do {
+                        try await FirebaseService.shared.cancelGroupAttack(challengeId: chId, targetId: myId)
+                    } catch {
+                        print("❌ cancelGroupAttack failed:", error.localizedDescription)
+                    }
+
+                    puzzleResult = PuzzleResult(
+                        context: .groupDefense,
+                        success: true,
+                        myTime: time,
+                        opponentTime: opp,
+                        reason: .solved,
+                        title: "✅ Defended",
+                        message: "You were faster than the attacker. Sabotage removed!"
+                    )
+                } else {
+                    // ❌ أنت أبطأ => يبقى الافيكت
+                    puzzleResult = PuzzleResult(
+                        context: .groupDefense,
+                        success: false,
+                        myTime: time,
+                        opponentTime: opp,
+                        reason: .slowerThanOpponent(myTime: time, opponentTime: opp),
+                        title: "❌ Defense Failed",
+                        message: "You solved it, but the attacker was faster."
+                    )
+                }
+            } else {
+                // ما عندنا وقت مهاجم (احتياط): إذا نجحتي نلغي الافيكت وخلاص
+                do {
+                    try await FirebaseService.shared.cancelGroupAttack(challengeId: chId, targetId: myId)
+                } catch {
+                    print("❌ cancelGroupAttack failed:", error.localizedDescription)
+                }
+
+                puzzleResult = PuzzleResult(
+                    context: .groupDefense,
+                    success: true,
+                    myTime: time,
+                    opponentTime: nil,
+                    reason: .solved,
+                    title: "✅ Defended",
+                    message: "Sabotage removed!"
+                )
+            }
+        }
+    }
+    // MARK: - Puzzle Launchers
+    private func startSoloGameSafely() {
+        activeSheet = nil
+        activeMapPopup = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            activePuzzle = .soloExtension
+        }
+    }
+
+    private func startAttackerGameSafely() {
+        activeSheet = nil
+        activeMapPopup = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            activePuzzle = .groupAttack
+        }
+    }
+
+    private func startDefenderGameSafely() {
+        activeSheet = nil
+        activeMapPopup = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            activePuzzle = .groupDefense
+        }
+    }
+
+    
     // MARK: - Subviews
     private var mapContent: some View {
         ScrollView(showsIndicators: false) {
@@ -100,7 +352,9 @@ struct MapView: View {
     }
 
     private func mapOverlay(size: CGSize) -> some View {
-        Group {
+        ZStack {
+
+            // ✅ Flags
             ForEach(Array(vm.milestones.enumerated()), id: \.offset) { index, value in
                 FlagMarker(
                     number: value,
@@ -109,6 +363,7 @@ struct MapView: View {
                 .position(vm.flagPosition(index: index, mapSize: size))
             }
 
+            // ✅ Players
             ForEach(vm.mapPlayers) { p in
                 MapPlayerMarker(
                     mapSprite: p.mapSprite,
@@ -116,14 +371,16 @@ struct MapView: View {
                     steps: p.steps,
                     isMe: p.isMe,
                     isGroup: vm.isGroupChallenge,
-                    place: p.place
+                    place: p.place,
+                    attackedByName: p.attackedByName,
+                    isUnderSabotage: p.isUnderSabotage,
+                    sabotageExpiresAt: p.sabotageExpiresAt
                 )
                 .position(vm.positionForPlayer(p, mapSize: size))
                 .animation(.easeInOut(duration: 0.35), value: p.progress)
             }
         }
     }
-
     private var hudLayer: some View {
         MapHUDLayer(
             title: vm.titleText,
@@ -132,7 +389,7 @@ struct MapView: View {
             myAvatar: vm.myHudAvatar,
             stepsLeftText: vm.stepsLeftText,
             daysLeftText: vm.daysLeftText,
-            isChallengeEnded: vm.isChallengeEnded, // ✅
+            isChallengeEnded: vm.isChallengeEnded,
             onTapMyAvatar: {
                 reopenChallengesSheetAfterProfileDismiss = true
                 selectedDetent = .height(90)
@@ -158,6 +415,37 @@ struct MapView: View {
             )
             .transition(.opacity)
             .zIndex(1000)
+        }
+    }
+
+    // ✅ Popups layer
+    @ViewBuilder
+    private var mapPopupLayer: some View {
+        if let popup = activeMapPopup {
+            ZStack {
+                Color.black.opacity(0.45).ignoresSafeArea()
+
+                switch popup {
+                case .soloLate:
+                    SoloLatePopupView(
+                        onClose: { activeMapPopup = nil },
+                        onConfirm: startSoloGameSafely
+                    )
+
+                case .groupAttacker:
+                    GroupAttackPopupView(
+                        onClose: { activeMapPopup = nil },
+                        onConfirm: startAttackerGameSafely
+                    )
+
+                case .groupDefender:
+                    GroupDefensePopupView(
+                        onClose: { activeMapPopup = nil },
+                        onConfirm: startDefenderGameSafely
+                    )
+                }
+            }
+            .zIndex(3000)
         }
     }
 
@@ -190,7 +478,6 @@ struct MapView: View {
         .interactiveDismissDisabled(true)
     }
 
-    // MARK: - Other Views
     private func makeJoinPopup() -> some View {
         JoinCodePopup(
             isPresented: $showJoinPopup,
@@ -223,7 +510,6 @@ struct MapView: View {
         }
     }
 
-    // MARK: - Handlers
     private func onJoinDismiss() {
         if reopenChallengesSheetAfterJoinDismiss {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
@@ -296,7 +582,6 @@ private struct MapHUDLayer: View {
 }
 
 // MARK: - Player Marker (On Map)
-
 private struct MapPlayerMarker: View {
     let mapSprite: String
     let name: String
@@ -306,8 +591,27 @@ private struct MapPlayerMarker: View {
     let isGroup: Bool
     let place: Int?
 
+    let attackedByName: String?
+    let isUnderSabotage: Bool
+    let sabotageExpiresAt: Date?
+
+    // ✅ حركة مؤقتة أثناء السحب فقط
+    @GestureState private var dragOffset: CGSize = .zero
+
     var body: some View {
         VStack(spacing: 6) {
+
+            if let attackedByName,
+               isUnderSabotage,
+               let expires = sabotageExpiresAt {
+
+                HStack(spacing: 4) {
+                    Text("⚔️ \(attackedByName)")
+                    Text(timeRemainingString(until: expires))
+                        .foregroundStyle(.yellow)
+                }
+                .font(.custom("RussoOne-Regular", size: 10))
+            }
 
             Image(systemName: "bubble.middle.bottom.fill")
                 .resizable()
@@ -315,18 +619,13 @@ private struct MapPlayerMarker: View {
                 .frame(width: 60)
                 .foregroundStyle(.white)
                 .overlay(alignment: .center) {
-
                     VStack(spacing: 2) {
-
                         HStack(spacing: 4) {
-
                             Text(isMe ? "Me" : name)
                                 .font(.custom("RussoOne-Regular", size: 10))
                                 .foregroundStyle(.light1)
 
-                            if isGroup, let place,
-                               (1...3).contains(place) {
-
+                            if isGroup, let place, (1...3).contains(place) {
                                 Image(placeAssetName(place))
                                     .resizable()
                                     .scaledToFit()
@@ -347,6 +646,27 @@ private struct MapPlayerMarker: View {
                 .scaledToFit()
                 .frame(width: 85, height: 85)
         }
+        // ✅ يتحرك مع إصبعك
+        .offset(dragOffset)
+        // ✅ ويرجع لمكانه أول ما تترك
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: dragOffset)
+        // ✅ السحب على “الكتلة كلها”
+        .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .updating($dragOffset) { value, state, _ in
+                    state = value.translation   // حركة مؤقتة
+                }
+        )
+    }
+
+    private func timeRemainingString(until date: Date) -> String {
+        let remaining = Int(date.timeIntervalSince(Date()))
+        if remaining <= 0 { return "0m" }
+
+        let hours = remaining / 3600
+        let minutes = (remaining % 3600) / 60
+        return hours > 0 ? "\(hours)h \(minutes)m" : "\(minutes)m"
     }
 
     private func placeAssetName(_ place: Int) -> String {
