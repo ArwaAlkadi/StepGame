@@ -103,11 +103,18 @@ struct SetupChallengeView: View {
                         .font(.custom("RussoOne-Regular", size: 18))
                         .foregroundStyle(Color.light1)
 
-                    Slider(value: $vm.steps, in: 1000...500_000, step: 100)
-                        .tint(Color.light1)
-                        .onChange(of: vm.steps) { _, newValue in
-                            vm.steps = (newValue / 100).rounded() * 100
-                        }
+                    CustomStepSlider(
+                        value: $vm.steps,
+                        min: 1000,
+                        max: 500_000,
+                        step: 100,
+                        fillColor: Color.light1,
+                        trackColor: Color.white
+                    )
+                    .onChange(of: vm.steps) { _, newValue in
+                        vm.steps = (newValue / 100).rounded() * 100
+                    }
+                    .frame(height: 34)
 
                     HStack {
                         Text("1000")
@@ -282,5 +289,62 @@ private struct SetupChallengePreviewHost: View {
                     session.playerName = "Arwa"
                 }
             }
+    }
+}
+
+
+// MARK: - Custom flat slider 
+private struct CustomStepSlider: View {
+
+    @Binding var value: Double
+    let min: Double
+    let max: Double
+    let step: Double
+    let fillColor: Color
+    let trackColor: Color
+
+    private let trackHeight: CGFloat = 12
+    private let thumbSize: CGFloat = 34
+
+    var body: some View {
+        GeometryReader { geo in
+            let width = geo.size.width
+            let available = Swift.max(1, width - thumbSize)
+
+            let safeValue = Swift.min(Swift.max(value, min), max)
+            let progress = CGFloat((safeValue - min) / (max - min))
+            let x = progress * available
+
+            ZStack(alignment: .leading) {
+
+                Capsule()
+                    .fill(trackColor)
+                    .frame(height: trackHeight)
+
+                Capsule()
+                    .fill(fillColor)
+                    .frame(width: x + thumbSize / 2, height: trackHeight)
+
+                Circle()
+                    .fill(fillColor)
+                    .frame(width: thumbSize, height: thumbSize)
+                    .offset(x: x)
+            }
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { g in
+                        let loc = Swift.min(
+                            Swift.max(0, g.location.x - thumbSize / 2),
+                            available
+                        )
+                        let raw = Double(loc / available) * (max - min) + min
+                        let snapped = (raw / step).rounded() * step
+                        value = Swift.min(Swift.max(snapped, min), max)
+                    }
+            )
+        }
+        .frame(height: thumbSize)
+        .accessibilityValue(Text("\(Int(value))"))
     }
 }
