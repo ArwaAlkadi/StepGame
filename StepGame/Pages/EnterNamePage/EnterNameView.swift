@@ -15,7 +15,7 @@ struct EnterNameView: View {
     @StateObject private var vm = EnterNameViewModel()
     @StateObject private var keyboard = KeyboardObserver()
 
-    @State private var showOfflineBanner: Bool = true
+    @State private var showOfflineBanner: Bool = false
 
     var body: some View {
         ZStack(alignment: .top) {
