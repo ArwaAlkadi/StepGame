@@ -11,9 +11,12 @@ struct SetupChallengeView: View {
     @Binding var isPresented: Bool
     var onDismissWithoutCreating: (() -> Void)? = nil
 
+    @EnvironmentObject private var connectivity: ConnectivityMonitor
     @EnvironmentObject var session: GameSession
     @StateObject private var vm = SetupChallengeViewModel()
 
+    @State private var showOfflineBanner: Bool = true
+    
     var body: some View {
         ZStack {
             Color.light3.ignoresSafeArea()
@@ -147,16 +150,14 @@ struct SetupChallengeView: View {
 
                 // MARK: - Create Challenge
                 Button {
+                    guard connectivity.isOnline else { return }
+
                     Task {
                         let outcome = await vm.createChallenge(session: session)
 
                         switch outcome {
-                        case .soloCreated:
+                        case .soloCreated, .groupCreated:
                             isPresented = false
-
-                        case .groupCreated:
-                            isPresented = false
-
                         case .failed:
                             break
                         }
@@ -173,16 +174,27 @@ struct SetupChallengeView: View {
                         )
                 }
                 .buttonStyle(.plain)
-                .disabled(session.isLoading)
-                .opacity(session.isLoading ? 0.6 : 1.0)
+                .disabled(session.isLoading || !connectivity.isOnline)
+                .opacity((session.isLoading || !connectivity.isOnline) ? 0.6 : 1.0)
                 .padding(.top, 8)
             }
             .padding(18)
             .frame(maxWidth: 380)
             .padding(.horizontal, 20)
+            
+            OfflineBanner(isVisible: $showOfflineBanner)
+            
         }
+        .onChange(of: connectivity.isOnline) { _, online in
+                 if online {
+                     withAnimation(.easeInOut) { showOfflineBanner = false }
+                 }
+             }
+       
     }
+   
 }
+
 
 // MARK: - Components
 
@@ -239,6 +251,7 @@ private struct ModeChip: View {
     }
 }
 
+// MARK: - Preview Host
 #Preview("SetupChallengeView") {
     SetupChallengePreviewHost()
 }
@@ -249,13 +262,14 @@ private struct SetupChallengePreviewHost: View {
 
     @StateObject private var session = GameSession()
     @StateObject private var health = HealthKitManager()
+    @StateObject private var connectivity = ConnectivityMonitor()
 
     var body: some View {
         SetupChallengeView(isPresented: $presented)
             .environmentObject(session)
             .environmentObject(health)
+            .environmentObject(connectivity)
             .onAppear {
-                // \\ Preview demo data
                 if session.player == nil {
                     session.player = Player(
                         id: "preview_uid",

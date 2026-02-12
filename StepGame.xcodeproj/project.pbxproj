@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		EC2548B32F34194E0003414C /* MapPathEditorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */; };
+		EC26DE262F3D3873007DDE2B /* WiringGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC26DE202F3D3873007DDE2B /* WiringGameViewModel.swift */; };
+		EC26DE292F3D3992007DDE2B /* PuzzlePromptPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC26DE282F3D3992007DDE2B /* PuzzlePromptPopup.swift */; };
+		EC26DE2B2F3D39CA007DDE2B /*  PuzzleWiringPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC26DE2A2F3D39CA007DDE2B /*  PuzzleWiringPage.swift */; };
+		EC26DE2D2F3D3A01007DDE2B /* PuzzleResultPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC26DE2C2F3D3A01007DDE2B /* PuzzleResultPopUp.swift */; };
 		EC6BAB1C2F3159E300BDBEC8 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6BAB1B2F3159E300BDBEC8 /* RootView.swift */; };
 		EC6BAB1E2F315A3000BDBEC8 /* GameSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */; };
 		EC7628CB2F395ADB008952D9 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7628CA2F395ADB008952D9 /* Models.swift */; };
@@ -33,13 +37,9 @@
 		ECCB95EF2F294CC900DBC1F5 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95EE2F294CC900DBC1F5 /* MapView.swift */; };
 		ECCB95F12F294CD100DBC1F5 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */; };
 		ECCB95F32F294CEF00DBC1F5 /* ChallengesSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */; };
-		ECCB95F72F294D5C00DBC1F5 /* PuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F62F294D5C00DBC1F5 /* PuzzleView.swift */; };
-		ECCB95F92F294D7000DBC1F5 /* PuzzleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95F82F294D7000DBC1F5 /* PuzzleViewModel.swift */; };
-		ECCB95FB2F294D9D00DBC1F5 /* PuzzleResultPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */; };
 		ECCB95FF2F294DD900DBC1F5 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB95FE2F294DD900DBC1F5 /* ProfileViewModel.swift */; };
 		ECCB96012F294DE900DBC1F5 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96002F294DE900DBC1F5 /* ProfileView.swift */; };
 		ECCB96032F294DFF00DBC1F5 /* JoinWithCodePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */; };
-		ECCB96052F294E0F00DBC1F5 /* ShareCodePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB96042F294E0F00DBC1F5 /* ShareCodePopup.swift */; };
 		ECCB97882F2C3DA100DBC1F5 /* WaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB97872F2C3DA100DBC1F5 /* WaitingView.swift */; };
 		ECCB978A2F2C3DB300DBC1F5 /* WaitingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */; };
 		ECCB978F2F2D89E500DBC1F5 /* RussoOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */; };
@@ -48,6 +48,10 @@
 
 /* Begin PBXFileReference section */
 		EC2548B22F34194E0003414C /* MapPathEditorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPathEditorHelper.swift; sourceTree = "<group>"; };
+		EC26DE202F3D3873007DDE2B /* WiringGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiringGameViewModel.swift; sourceTree = "<group>"; };
+		EC26DE282F3D3992007DDE2B /* PuzzlePromptPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzlePromptPopup.swift; sourceTree = "<group>"; };
+		EC26DE2A2F3D39CA007DDE2B /*  PuzzleWiringPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = " PuzzleWiringPage.swift"; sourceTree = "<group>"; };
+		EC26DE2C2F3D3A01007DDE2B /* PuzzleResultPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleResultPopUp.swift; sourceTree = "<group>"; };
 		EC6BAB1B2F3159E300BDBEC8 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSession.swift; sourceTree = "<group>"; };
 		EC7628CA2F395ADB008952D9 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -72,13 +76,9 @@
 		ECCB95EE2F294CC900DBC1F5 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengesSheet.swift; sourceTree = "<group>"; };
-		ECCB95F62F294D5C00DBC1F5 /* PuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleView.swift; sourceTree = "<group>"; };
-		ECCB95F82F294D7000DBC1F5 /* PuzzleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleViewModel.swift; sourceTree = "<group>"; };
-		ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleResultPopup.swift; sourceTree = "<group>"; };
 		ECCB95FE2F294DD900DBC1F5 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		ECCB96002F294DE900DBC1F5 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinWithCodePopup.swift; sourceTree = "<group>"; };
-		ECCB96042F294E0F00DBC1F5 /* ShareCodePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCodePopup.swift; sourceTree = "<group>"; };
 		ECCB97872F2C3DA100DBC1F5 /* WaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingView.swift; sourceTree = "<group>"; };
 		ECCB97892F2C3DB300DBC1F5 /* WaitingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingViewModel.swift; sourceTree = "<group>"; };
 		ECCB978E2F2D89E500DBC1F5 /* RussoOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RussoOne-Regular.ttf"; sourceTree = "<group>"; };
@@ -108,12 +108,31 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		EC7628D22F395DA5008952D9 /* ChallengeResult */ = {
+		EC26DE1F2F3D3873007DDE2B /* View */ = {
 			isa = PBXGroup;
 			children = (
-				EC7628D32F396171008952D9 /* ChallengeResultPopup.swift */,
+				EC26DE282F3D3992007DDE2B /* PuzzlePromptPopup.swift */,
+				EC26DE2A2F3D39CA007DDE2B /*  PuzzleWiringPage.swift */,
+				EC26DE2C2F3D3A01007DDE2B /* PuzzleResultPopUp.swift */,
 			);
-			path = ChallengeResult;
+			path = View;
+			sourceTree = "<group>";
+		};
+		EC26DE212F3D3873007DDE2B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				EC26DE202F3D3873007DDE2B /* WiringGameViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		EC26DE222F3D3873007DDE2B /* PuzzlePage */ = {
+			isa = PBXGroup;
+			children = (
+				EC26DE212F3D3873007DDE2B /* ViewModel */,
+				EC26DE1F2F3D3873007DDE2B /* View */,
+			);
+			path = PuzzlePage;
 			sourceTree = "<group>";
 		};
 		ECCAEE1F2F21888B0047C5DF = {
@@ -159,7 +178,7 @@
 				ECCB95EE2F294CC900DBC1F5 /* MapView.swift */,
 				ECCB95F02F294CD100DBC1F5 /* MapViewModel.swift */,
 				ECCB95F22F294CEF00DBC1F5 /* ChallengesSheet.swift */,
-				EC7628D22F395DA5008952D9 /* ChallengeResult */,
+				EC7628D32F396171008952D9 /* ChallengeResultPopup.swift */,
 			);
 			path = MapPage;
 			sourceTree = "<group>";
@@ -197,7 +216,7 @@
 			children = (
 				ECCB95EA2F294CA700DBC1F5 /*  SetupChallengeView.swift */,
 				ECCB95EC2F294CAE00DBC1F5 /*  SetupChallengeViewModel.swift */,
-				ECCB96042F294E0F00DBC1F5 /* ShareCodePopup.swift */,
+				ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */,
 			);
 			path = SetupChallengePage;
 			sourceTree = "<group>";
@@ -216,7 +235,6 @@
 			children = (
 				ECCB95E62F294C8100DBC1F5 /* StartView.swift */,
 				ECCB95E82F294C8F00DBC1F5 /* StartViewModel.swift */,
-				ECCB96022F294DFF00DBC1F5 /* JoinWithCodePopup.swift */,
 			);
 			path = StartPage;
 			sourceTree = "<group>";
@@ -231,7 +249,7 @@
 				ECCB95C22F29472F00DBC1F5 /* SetupChallengePage */,
 				ECCB97862F2C3D5900DBC1F5 /* WaitingPage */,
 				ECCB95BD2F29472F00DBC1F5 /* MapPage */,
-				ECCB95D92F294BED00DBC1F5 /* Puzzle */,
+				EC26DE222F3D3873007DDE2B /* PuzzlePage */,
 				ECCB95BF2F29472F00DBC1F5 /* ProfilePage */,
 				EC2548B12F34193E0003414C /* Helpers */,
 			);
@@ -263,16 +281,6 @@
 				EC6BAB1D2F315A3000BDBEC8 /* GameSession.swift */,
 			);
 			path = App;
-			sourceTree = "<group>";
-		};
-		ECCB95D92F294BED00DBC1F5 /* Puzzle */ = {
-			isa = PBXGroup;
-			children = (
-				ECCB95F62F294D5C00DBC1F5 /* PuzzleView.swift */,
-				ECCB95F82F294D7000DBC1F5 /* PuzzleViewModel.swift */,
-				ECCB95FA2F294D9D00DBC1F5 /* PuzzleResultPopup.swift */,
-			);
-			path = Puzzle;
 			sourceTree = "<group>";
 		};
 		ECCB97862F2C3D5900DBC1F5 /* WaitingPage */ = {
@@ -383,25 +391,25 @@
 				ECCB95DF2F294C3D00DBC1F5 /* OnboardingView.swift in Sources */,
 				ECCB96012F294DE900DBC1F5 /* ProfileView.swift in Sources */,
 				EC7628CB2F395ADB008952D9 /* Models.swift in Sources */,
-				ECCB96052F294E0F00DBC1F5 /* ShareCodePopup.swift in Sources */,
 				ECCB95E72F294C8100DBC1F5 /* StartView.swift in Sources */,
 				EC6BAB1C2F3159E300BDBEC8 /* RootView.swift in Sources */,
 				ECCF7DCE2F3A5EA70003F772 /* WindTumbleweed.swift in Sources */,
+				EC26DE292F3D3992007DDE2B /* PuzzlePromptPopup.swift in Sources */,
 				EC6BAB1E2F315A3000BDBEC8 /* GameSession.swift in Sources */,
 				ECCB95E92F294C8F00DBC1F5 /* StartViewModel.swift in Sources */,
+				EC26DE2B2F3D39CA007DDE2B /*  PuzzleWiringPage.swift in Sources */,
 				ECCB95EF2F294CC900DBC1F5 /* MapView.swift in Sources */,
-				ECCB95FB2F294D9D00DBC1F5 /* PuzzleResultPopup.swift in Sources */,
 				ECCB95ED2F294CAE00DBC1F5 /*  SetupChallengeViewModel.swift in Sources */,
+				EC26DE262F3D3873007DDE2B /* WiringGameViewModel.swift in Sources */,
 				EC7628D42F396171008952D9 /* ChallengeResultPopup.swift in Sources */,
 				ECCB95FF2F294DD900DBC1F5 /* ProfileViewModel.swift in Sources */,
 				ECCB95E12F294C4500DBC1F5 /* OnboardingViewModel.swift in Sources */,
 				ECCB95CD2F29478100DBC1F5 /* StepGameApp.swift in Sources */,
 				ECCB95DB2F294C0F00DBC1F5 /* SplashView.swift in Sources */,
 				ECCB95DD2F294C2100DBC1F5 /* SplashViewModel.swift in Sources */,
-				ECCB95F72F294D5C00DBC1F5 /* PuzzleView.swift in Sources */,
-				ECCB95F92F294D7000DBC1F5 /* PuzzleViewModel.swift in Sources */,
 				ECCB95E32F294C5A00DBC1F5 /* EnterNameView.swift in Sources */,
 				ECCB95F12F294CD100DBC1F5 /* MapViewModel.swift in Sources */,
+				EC26DE2D2F3D3A01007DDE2B /* PuzzleResultPopUp.swift in Sources */,
 				ECCB95F32F294CEF00DBC1F5 /* ChallengesSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

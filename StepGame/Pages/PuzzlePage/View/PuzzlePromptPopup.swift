@@ -1,7 +1,12 @@
-
+//
+//  PuzzlePromptPopup.swift
+//  StepGame
+//
+//
 
 import SwiftUI
 
+// MARK: - Solo Late Popup
 struct SoloLatePopupView: View {
     var onClose: () -> Void
     var onConfirm: () -> Void
@@ -84,7 +89,7 @@ struct SoloLatePopupView: View {
     }
 }
 
-
+// MARK: - Group Attack Popup
 struct GroupAttackPopupView: View {
     var onClose: () -> Void
     var onConfirm: () -> Void
@@ -167,21 +172,17 @@ struct GroupAttackPopupView: View {
     }
 }
 
-
-
-
-
-
+// MARK: - Group Defense Popup
 struct GroupDefensePopupView: View {
     var onClose: () -> Void
     var onConfirm: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 14) {
-            
+
             HStack {
                 Spacer()
-                Button {  } label: {
+                Button { onClose() } label: {
                     Image(systemName: "xmark.circle.fill")
                         .resizable()
                         .scaledToFit()
@@ -190,16 +191,14 @@ struct GroupDefensePopupView: View {
                 }
                 .buttonStyle(.plain)
             }
-            
+
             Spacer()
-        
-            VStack (spacing: 20) {
+
+            VStack(spacing: 20) {
                 Text("Defend Your Progress!")
                     .font(.custom("RussoOne-Regular", size: 24))
                     .foregroundStyle(Color.light1)
                     .multilineTextAlignment(.center)
-                    
-                   
 
                 Text("Solve the puzzle to protect your progress. Want to try?")
                     .font(.custom("RussoOne-Regular", size: 16))
@@ -207,53 +206,42 @@ struct GroupDefensePopupView: View {
                     .multilineTextAlignment(.center)
             }
             .padding(.horizontal)
-          
+
             Spacer()
-            
+
             HStack(spacing: 12) {
-                
-                Button {
-                    onClose()
-                } label: {
-                    HStack(spacing: 10) {
-                       Text("Later")
-                    }
-                    .font(.custom("RussoOne-Regular", size: 14))
-                    .foregroundStyle(Color.light1)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 48)
-                    .background(
-                        Capsule()
-                            .fill( Color.white)
-                            .overlay(
-                                Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
-                            )
-                    )
+
+                Button { onClose() } label: {
+                    Text("Later")
+                        .font(.custom("RussoOne-Regular", size: 14))
+                        .foregroundStyle(Color.light1)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(
+                            Capsule()
+                                .fill(Color.white)
+                                .overlay(
+                                    Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
+                                )
+                        )
                 }
                 .buttonStyle(.plain)
 
-              
-                Button {
-                    onConfirm()
-                } label: {
-                    HStack(spacing: 10) {
-                       Text("Defend")
-                    }
-                    .font(.custom("RussoOne-Regular", size: 14))
-                    .foregroundStyle(Color.light1)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 48)
-                    .background(
-                        Capsule()
-                            .fill(Color.white)
-                            .overlay(
-                                Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
-                            )
-                    )
+                Button { onConfirm() } label: {
+                    Text("Defend")
+                        .font(.custom("RussoOne-Regular", size: 14))
+                        .foregroundStyle(Color.light1)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(
+                            Capsule()
+                                .fill(Color.white)
+                                .overlay(
+                                    Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
+                                )
+                        )
                 }
-
                 .buttonStyle(.plain)
-
             }
             .padding(.vertical)
         }
@@ -267,32 +255,10 @@ struct GroupDefensePopupView: View {
     }
 }
 
-
-
-
-
-
-
-import Foundation
-
-enum MapPopupType: Identifiable {
-    case soloLate
-    case groupAttacker
-    case groupDefender
-
-    var id: Int { hashValue }
-}
-
-
-
-#Preview {
+#Preview("PuzzlePromptViews") {
     ZStack {
         Color.black.opacity(0.4).ignoresSafeArea()
-
-        GroupDefensePopupView(
-            onClose: { print("Later tapped") },
-            onConfirm: { print("Defend tapped") }
-        )
-        .padding()
+        GroupDefensePopupView(onClose: {}, onConfirm: {})
+            .padding()
     }
 }

@@ -98,8 +98,8 @@ struct EnterNameView: View {
                                             .foregroundStyle(.light1)
                                     )
                             }
-                            .disabled(!vm.isStartEnabled || session.isLoading)
-                            .opacity((!vm.isStartEnabled || session.isLoading) ? 0.5 : 1)
+                            .disabled(!vm.isStartEnabled || session.isLoading || !connectivity.isOnline)
+                            .opacity((!vm.isStartEnabled || session.isLoading || !connectivity.isOnline) ? 0.5 : 1)
 
                             // \\ Error Message
                             if let msg = session.errorMessage {

@@ -126,7 +126,7 @@ struct MapView: View {
                 do {
                     try await FirebaseService.shared.addOneDayExtension(challengeId: chId)
                 } catch {
-                    print("❌ addOneDayExtension failed:", error.localizedDescription)
+                    print("addOneDayExtension failed:", error.localizedDescription)
                 }
 
                 puzzleResult = PuzzleResult(
@@ -135,16 +135,16 @@ struct MapView: View {
                     myTime: time,
                     opponentTime: nil,
                     reason: .solved,
-                    title: "✅ You Won",
+                    title: "Awesome!",
                     message: "+1 day extension added!"
                 )
 
             } else {
-                // ✅ سجل قفل 24h
+               
                 do {
                     try await FirebaseService.shared.markSoloPuzzleFailed(challengeId: chId, uid: myId)
                 } catch {
-                    print("❌ markSoloPuzzleFailed failed:", error.localizedDescription)
+                    print("markSoloPuzzleFailed failed:", error.localizedDescription)
                 }
 
                 puzzleResult = PuzzleResult(
@@ -153,8 +153,8 @@ struct MapView: View {
                     myTime: time,
                     opponentTime: nil,
                     reason: didTimeout ? .timeOut : .notSolved,
-                    title: "❌ You Lost",
-                    message: didTimeout ? "Time is up." : "You didn’t solve the wiring."
+                    title: "Oops!",
+                    message: didTimeout ? "Time is up" : "You didn’t solve the wiring"
                 )
             }
 
@@ -168,8 +168,8 @@ struct MapView: View {
                     myTime: time,
                     opponentTime: nil,
                     reason: .notSolved,
-                    title: "❌ Attack Failed",
-                    message: "Couldn’t find a valid target."
+                    title: "Attack Failed",
+                    message: "Couldn’t find a valid target"
                 )
                 return
             }
@@ -188,7 +188,7 @@ struct MapView: View {
                     try await FirebaseService.shared.markGroupAttackSucceeded(challengeId: chId, uid: myId)
 
                 } catch {
-                    print("❌ applyGroupAttack failed:", error.localizedDescription)
+                    print("applyGroupAttack failed:", error.localizedDescription)
                 }
 
                 puzzleResult = PuzzleResult(
@@ -197,8 +197,8 @@ struct MapView: View {
                     myTime: time,
                     opponentTime: nil,
                     reason: .solved,
-                    title: "⚔️ Attack Succeeded",
-                    message: "You sabotaged your friend for 3 hours!"
+                    title: "Attack Succeeded!",
+                    message: "You sabotaged your friend for 3 hours"
                 )
 
             } else {
@@ -206,7 +206,7 @@ struct MapView: View {
                     // ✅ Lock 24h بعد الخسارة
                     try await FirebaseService.shared.markGroupAttackPuzzleFailed(challengeId: chId, uid: myId)
                 } catch {
-                    print("❌ markGroupAttackPuzzleFailed failed:", error.localizedDescription)
+                    print("markGroupAttackPuzzleFailed failed:", error.localizedDescription)
                 }
 
                 puzzleResult = PuzzleResult(
@@ -215,8 +215,8 @@ struct MapView: View {
                     myTime: time,
                     opponentTime: nil,
                     reason: didTimeout ? .timeOut : .notSolved,
-                    title: "❌ Attack Failed",
-                    message: didTimeout ? "Time is up." : "You didn’t solve the wiring."
+                    title: "Oops!",
+                    message: didTimeout ? "Time is up.." : "You didn’t solve the wiring.."
                 )
             }
 
@@ -235,8 +235,8 @@ struct MapView: View {
                     myTime: time,
                     opponentTime: nil,
                     reason: success ? .solved : (didTimeout ? .timeOut : .notSolved),
-                    title: success ? "✅ Defended" : "❌ Defense Failed",
-                    message: success ? "No active attack to defend." : (didTimeout ? "Time is up." : "You didn’t solve the wiring.")
+                    title: success ? "Defended" : "Defense Failed",
+                    message: success ? "No active attack to defend." : (didTimeout ? "Time is up." : "You didn’t solve the wiring..")
                 )
                 return
             }
@@ -249,8 +249,8 @@ struct MapView: View {
                     myTime: time,
                     opponentTime: oppTime,
                     reason: didTimeout ? .timeOut : .notSolved,
-                    title: "❌ Defense Failed",
-                    message: didTimeout ? "You ran out of time." : "You didn’t solve the wiring."
+                    title: "Defense Failed",
+                    message: didTimeout ? "You ran out of time.." : "You didn’t solve the wiring.."
                 )
                 return
             }
@@ -262,7 +262,7 @@ struct MapView: View {
                     do {
                         try await FirebaseService.shared.cancelGroupAttack(challengeId: chId, targetId: myId)
                     } catch {
-                        print("❌ cancelGroupAttack failed:", error.localizedDescription)
+                        print("cancelGroupAttack failed:", error.localizedDescription)
                     }
 
                     puzzleResult = PuzzleResult(
@@ -271,7 +271,7 @@ struct MapView: View {
                         myTime: time,
                         opponentTime: opp,
                         reason: .solved,
-                        title: "✅ Defended",
+                        title: "Awesome!",
                         message: "You were faster than the attacker. Sabotage removed!"
                     )
                 } else {
@@ -282,8 +282,8 @@ struct MapView: View {
                         myTime: time,
                         opponentTime: opp,
                         reason: .slowerThanOpponent(myTime: time, opponentTime: opp),
-                        title: "❌ Defense Failed",
-                        message: "You solved it, but the attacker was faster."
+                        title: "Oops!",
+                        message: "You solved it, but the attacker was faster.."
                     )
                 }
             } else {
@@ -291,7 +291,7 @@ struct MapView: View {
                 do {
                     try await FirebaseService.shared.cancelGroupAttack(challengeId: chId, targetId: myId)
                 } catch {
-                    print("❌ cancelGroupAttack failed:", error.localizedDescription)
+                    print("cancelGroupAttack failed:", error.localizedDescription)
                 }
 
                 puzzleResult = PuzzleResult(
@@ -300,7 +300,7 @@ struct MapView: View {
                     myTime: time,
                     opponentTime: nil,
                     reason: .solved,
-                    title: "✅ Defended",
+                    title: "Awesome!",
                     message: "Sabotage removed!"
                 )
             }
@@ -595,7 +595,6 @@ private struct MapPlayerMarker: View {
     let isUnderSabotage: Bool
     let sabotageExpiresAt: Date?
 
-    // ✅ حركة مؤقتة أثناء السحب فقط
     @GestureState private var dragOffset: CGSize = .zero
 
     var body: some View {
