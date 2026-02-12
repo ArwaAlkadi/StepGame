@@ -11,6 +11,8 @@ struct SoloLatePopupView: View {
     var onClose: () -> Void
     var onConfirm: () -> Void
 
+    @State private var isConfirmSelected: Bool = true
+    
     var body: some View {
         VStack(spacing: 14) {
 
@@ -45,37 +47,21 @@ struct SoloLatePopupView: View {
 
             HStack(spacing: 12) {
 
-                Button { onClose() } label: {
-                    Text("No")
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light1)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .background(
-                            Capsule()
-                                .fill(Color.white)
-                                .overlay(
-                                    Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
-                                )
-                        )
+                PopupChipButton(
+                    title: "No",
+                    isSelected: !isConfirmSelected
+                ) {
+                    isConfirmSelected = false
+                    onClose()
                 }
-                .buttonStyle(.plain)
 
-                Button { onConfirm() } label: {
-                    Text("Attack")
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light1)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .background(
-                            Capsule()
-                                .fill(Color.white)
-                                .overlay(
-                                    Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
-                                )
-                        )
+                PopupChipButton(
+                    title: "Yes",
+                    isSelected: isConfirmSelected
+                ) {
+                    isConfirmSelected = true
+                    onConfirm()
                 }
-                .buttonStyle(.plain)
             }
             .padding(.vertical)
         }
@@ -94,6 +80,8 @@ struct GroupAttackPopupView: View {
     var onClose: () -> Void
     var onConfirm: () -> Void
 
+    @State private var isConfirmSelected: Bool = true
+    
     var body: some View {
         VStack(spacing: 14) {
 
@@ -128,39 +116,24 @@ struct GroupAttackPopupView: View {
 
             HStack(spacing: 12) {
 
-                Button { onClose() } label: {
-                    Text("No")
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light1)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .background(
-                            Capsule()
-                                .fill(Color.white)
-                                .overlay(
-                                    Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
-                                )
-                        )
+                PopupChipButton(
+                    title: "No",
+                    isSelected: !isConfirmSelected
+                ) {
+                    isConfirmSelected = false
+                    onClose()
                 }
-                .buttonStyle(.plain)
 
-                Button { onConfirm() } label: {
-                    Text("Attack")
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light1)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .background(
-                            Capsule()
-                                .fill(Color.white)
-                                .overlay(
-                                    Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
-                                )
-                        )
+                PopupChipButton(
+                    title: "Attack",
+                    isSelected: isConfirmSelected
+                ) {
+                    isConfirmSelected = true
+                    onConfirm()
                 }
-                .buttonStyle(.plain)
             }
             .padding(.vertical)
+            
         }
         .padding(18)
         .frame(maxWidth: 350)
@@ -177,6 +150,8 @@ struct GroupDefensePopupView: View {
     var onClose: () -> Void
     var onConfirm: () -> Void
 
+    @State private var isConfirmSelected: Bool = true
+    
     var body: some View {
         VStack(spacing: 14) {
 
@@ -211,39 +186,24 @@ struct GroupDefensePopupView: View {
 
             HStack(spacing: 12) {
 
-                Button { onClose() } label: {
-                    Text("Later")
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light1)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .background(
-                            Capsule()
-                                .fill(Color.white)
-                                .overlay(
-                                    Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
-                                )
-                        )
+                PopupChipButton(
+                    title: "Later",
+                    isSelected: !isConfirmSelected
+                ) {
+                    isConfirmSelected = false
+                    onClose()
                 }
-                .buttonStyle(.plain)
 
-                Button { onConfirm() } label: {
-                    Text("Defend")
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light1)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .background(
-                            Capsule()
-                                .fill(Color.white)
-                                .overlay(
-                                    Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
-                                )
-                        )
+                PopupChipButton(
+                    title: "Defend",
+                    isSelected: isConfirmSelected
+                ) {
+                    isConfirmSelected = true
+                    onConfirm()
                 }
-                .buttonStyle(.plain)
             }
             .padding(.vertical)
+            
         }
         .padding(18)
         .frame(maxWidth: 350)
@@ -260,5 +220,30 @@ struct GroupDefensePopupView: View {
         Color.black.opacity(0.4).ignoresSafeArea()
         GroupDefensePopupView(onClose: {}, onConfirm: {})
             .padding()
+    }
+}
+
+// MARK: - Components
+private struct PopupChipButton: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.custom("RussoOne-Regular", size: 14))
+                .foregroundStyle(isSelected ? Color.white : Color.light1)
+                .frame(maxWidth: .infinity)
+                .frame(height: 48)
+                .background(
+                    Capsule()
+                        .fill(isSelected ? Color.light1 : Color.white)
+                        .overlay(
+                            Capsule().stroke(Color.light4.opacity(0.35), lineWidth: 1)
+                        )
+                )
+        }
+        .buttonStyle(.plain)
     }
 }
