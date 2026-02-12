@@ -56,7 +56,7 @@ struct MapView: View {
         .sheet(item: $activeSheet) { _ in
             makeChallengesSheet()
         }
-        .sheet(item: $puzzleResult) { res in
+        .fullScreenCover(item: $puzzleResult) { res in
             PuzzleResultSheet(result: res) {
                 puzzleResult = nil
             }
