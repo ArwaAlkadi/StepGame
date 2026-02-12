@@ -31,7 +31,7 @@ struct StartView: View {
                 .clipped()
                 .ignoresSafeArea()
 
-            VStack(spacing: 20) {
+            VStack(spacing: 16) {
 
                 ZStack {
 
@@ -84,6 +84,7 @@ struct StartView: View {
                         .font(.custom("RussoOne-Regular", size: 24))
                         .foregroundStyle(Color.light1)
                 }
+                .padding(.bottom, 40)
 
                 Button {
                     showSetup = true
@@ -101,6 +102,8 @@ struct StartView: View {
                 .disabled(!vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized))
                 .opacity(vm.isInteractionEnabled(isLoading: session.isLoading, isHealthAuthorized: health.isAuthorized) ? 1 : 0.5)
                 .padding(.bottom, 70)
+                
+                Spacer()
             }
 
             // MARK: - Join Code Popup
