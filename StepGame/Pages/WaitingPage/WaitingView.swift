@@ -9,6 +9,7 @@ import Combine
 
 struct WaitingRoomView: View {
 
+    @EnvironmentObject private var connectivity: ConnectivityMonitor
     @EnvironmentObject private var session: GameSession
     @StateObject private var vm = WaitingRoomViewModel()
 
@@ -16,6 +17,8 @@ struct WaitingRoomView: View {
     @State private var showShareSheet = false
     @State private var didCopy = false
 
+    @State private var showOfflineBanner: Bool = true
+    
     var body: some View {
         ZStack {
             Color.light3.ignoresSafeArea()
@@ -102,6 +105,11 @@ struct WaitingRoomView: View {
                 }
             }
             .padding(.horizontal, 20)
+            
+            if !connectivity.isOnline {
+                OfflineBanner(isVisible: $showOfflineBanner)
+            }
+            
         }
         .navigationBarBackButtonHidden(true)
 

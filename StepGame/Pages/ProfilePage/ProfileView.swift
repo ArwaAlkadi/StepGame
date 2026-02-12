@@ -90,8 +90,8 @@ struct ProfileView: View {
                         .font(.custom("RussoOne-Regular", size: 18))
                         .foregroundStyle(Color.light1)
                 }
-                .disabled(vm.isSaving)
-                .opacity(vm.isSaving ? 0.6 : 1)
+                .disabled(vm.isSaving || !vm.hasChanges)
+                .opacity((vm.isSaving || !vm.hasChanges) ? 0.6 : 1)
             }
         }
         .padding(.top, 6)

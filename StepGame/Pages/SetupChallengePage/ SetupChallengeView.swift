@@ -182,15 +182,13 @@ struct SetupChallengeView: View {
             .frame(maxWidth: 380)
             .padding(.horizontal, 20)
             
-            OfflineBanner(isVisible: $showOfflineBanner)
+            if !connectivity.isOnline {
+                OfflineBanner(isVisible: $showOfflineBanner)
+            }
+          
             
         }
-        .onChange(of: connectivity.isOnline) { _, online in
-                 if online {
-                     withAnimation(.easeInOut) { showOfflineBanner = false }
-                 }
-             }
-       
+        
     }
    
 }

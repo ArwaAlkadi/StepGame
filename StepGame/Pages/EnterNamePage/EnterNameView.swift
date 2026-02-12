@@ -116,17 +116,16 @@ struct EnterNameView: View {
                 .animation(.easeOut(duration: 0.25), value: keyboard.height)
             }
 
-            OfflineBanner(isVisible: $showOfflineBanner)
+            if !connectivity.isOnline {
+                OfflineBanner(isVisible: $showOfflineBanner)
+            }
+          
         }
         .onTapGesture {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                             to: nil, from: nil, for: nil)
         }
-        .onChange(of: connectivity.isOnline) { _, online in
-            if online {
-                withAnimation(.easeInOut) { showOfflineBanner = false }
-            }
-        }
+       
     }
 }
 
