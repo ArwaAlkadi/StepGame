@@ -35,6 +35,7 @@ final class MapViewModel: ObservableObject {
         let attackedByName: String?
         let isUnderSabotage: Bool
         let sabotageExpiresAt: Date?
+        let isAttackedByMe: Bool
     }
 
     @Published private(set) var mapPlayers: [MapPlayerVM] = []
@@ -395,8 +396,19 @@ final class MapViewModel: ObservableObject {
                 return now < exp
             }()
 
+            let attackerId = part.sabotageByPlayerId
+
+            let isAttackedByMe = {
+                guard isUnderSabotage else { return false }
+                guard let attackerId else { return false }
+                return attackerId == myId
+            }()
+
             let attackedByName: String? = {
-                guard isUnderSabotage, let attackerId = part.sabotageByPlayerId else { return nil }
+                guard isUnderSabotage, let attackerId else { return nil }
+                if attackerId == myId {
+                    return "You"
+                }
                 return playersById[attackerId]?.name ?? shortId(attackerId)
             }()
 
@@ -414,7 +426,8 @@ final class MapViewModel: ObservableObject {
                 place: part.place,
                 attackedByName: attackedByName,
                 isUnderSabotage: isUnderSabotage,
-                sabotageExpiresAt: part.sabotageExpiresAt
+                sabotageExpiresAt: part.sabotageExpiresAt,
+                isAttackedByMe: isAttackedByMe  
             )
         }
 

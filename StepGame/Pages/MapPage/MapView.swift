@@ -356,7 +356,8 @@ struct MapView: View {
                     place: p.place,
                     attackedByName: p.attackedByName,
                     isUnderSabotage: p.isUnderSabotage,
-                    sabotageExpiresAt: p.sabotageExpiresAt
+                    sabotageExpiresAt: p.sabotageExpiresAt,
+                    isAttackedByMe: p.isAttackedByMe
                 )
                 .position(vm.positionForPlayer(p, mapSize: size))
                 .animation(.easeInOut(duration: 0.35), value: p.progress)
@@ -582,6 +583,7 @@ private struct MapPlayerMarker: View {
     let attackedByName: String?
     let isUnderSabotage: Bool
     let sabotageExpiresAt: Date?
+    let isAttackedByMe: Bool
 
     @State private var showSabotageInfo = false
     @GestureState private var dragOffset: CGSize = .zero
@@ -668,15 +670,20 @@ private struct MapPlayerMarker: View {
     private var sabotageTooltip: some View {
         VStack(spacing: 6) {
             if let attackedByName {
-                Text("Under Attack")
+
+                Text("Under Attack ⚔️")
                     .font(.custom("RussoOne-Regular", size: 14))
                     .foregroundStyle(.light1)
 
-                Text("Attacked by \(attackedByName)")
+                Text(isAttackedByMe
+                     ? "Attacked by you!"
+                     : "Attacked by \(attackedByName)")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.light1)
 
-                Text("Your character is in lazy mode for 3 hours.")
+                Text(isMe
+                     ? "Your character is in lazy mode for 3 hours"
+                     : "Their character is in lazy mode for 3 hours")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.light2)
             }
@@ -689,7 +696,7 @@ private struct MapPlayerMarker: View {
                 .fill(Color.white)
         )
     }
-
+    
     private func timeRemainingString(until date: Date) -> String {
         let remaining = Int(date.timeIntervalSince(Date()))
         if remaining <= 0 { return "0m" }
@@ -832,7 +839,8 @@ struct ProfileAvatarButton: View {
             place: 2,
             attackedByName: "Noura",
             isUnderSabotage: true,
-            sabotageExpiresAt: Date().addingTimeInterval(60 * 180)
+            sabotageExpiresAt: Date().addingTimeInterval(60 * 180),
+            isAttackedByMe: true
         )
         .padding()
     }
