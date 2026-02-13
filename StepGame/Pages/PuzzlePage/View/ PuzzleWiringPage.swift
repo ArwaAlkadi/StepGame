@@ -1,25 +1,27 @@
 //
-//   PuzzleWiringPage.swift
+//  PuzzleWiringView.swift
 //  StepGame
-//
 //
 
 import SwiftUI
 
-// MARK: - Puzzle Wiring View
 struct PuzzleWiringView: View {
 
     let timeLimit: Double
+    let onCancel: () -> Void
     let onFinish: (_ success: Bool, _ timeSeconds: Double, _ didTimeout: Bool) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: WiringGameViewModel
+    @State private var didFinish = false
 
     init(
         timeLimit: Double = 8.0,
+        onCancel: @escaping () -> Void,
         onFinish: @escaping (_ success: Bool, _ timeSeconds: Double, _ didTimeout: Bool) -> Void
     ) {
         self.timeLimit = timeLimit
+        self.onCancel = onCancel
         self.onFinish = onFinish
         self._viewModel = StateObject(wrappedValue: WiringGameViewModel(timeLimit: timeLimit))
     }
@@ -43,12 +45,16 @@ struct PuzzleWiringView: View {
         }
     }
 
+    // MARK: - Header
+
     private var header: some View {
         VStack(spacing: 8) {
-
             HStack {
                 Spacer()
-                Button { dismiss() } label: {
+                Button {
+                    onCancel()
+                    dismiss()
+                } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 34, weight: .semibold))
                         .foregroundColor(.light1)
@@ -77,6 +83,8 @@ struct PuzzleWiringView: View {
         }
     }
 
+    // MARK: - Board
+
     private var board: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)
@@ -90,14 +98,18 @@ struct PuzzleWiringView: View {
         .frame(height: 560)
     }
 
+    // MARK: - Finish
+
     private func finish(success: Bool) {
+        guard !didFinish else { return }
+        didFinish = true
+
         let spent = max(0, timeLimit - viewModel.timeRemaining)
         let didTimeout = (!success && viewModel.timeRemaining <= 0.01)
         onFinish(success, spent, didTimeout)
         dismiss()
     }
 }
-
 // MARK: - Wiring Board View
 
 struct WiringBoardView: View {
@@ -221,6 +233,3 @@ struct WireNodeCircle: View {
     }
 }
 
-#Preview("PuzzleWiringView") {
-    PuzzleWiringView(timeLimit: 8) { _, _, _ in }
-}

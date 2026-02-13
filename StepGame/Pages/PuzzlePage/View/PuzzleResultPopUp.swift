@@ -1,12 +1,11 @@
 //
-//  PuzzleResultPopUp.swift
+//  PuzzleResultPopup.swift
 //  StepGame
 //
 
 import SwiftUI
 
-// MARK: - Puzzle Result Sheet
-struct PuzzleResultSheet: View {
+struct PuzzleResultPopup: View {
     let result: PuzzleResult
     let onClose: () -> Void
 
@@ -14,6 +13,10 @@ struct PuzzleResultSheet: View {
 
     var body: some View {
         ZStack {
+            Color.black.opacity(0.45)
+                .ignoresSafeArea()
+                .onTapGesture { onClose() }
+
             card
                 .padding(.horizontal, 26)
         }
@@ -25,8 +28,6 @@ struct PuzzleResultSheet: View {
         VStack(spacing: 16) {
             headerRow
 
-           
-
             VStack(spacing: 10) {
                 Text(result.title)
                     .font(.custom("RussoOne-Regular", size: 28))
@@ -35,7 +36,7 @@ struct PuzzleResultSheet: View {
 
                 characterPreview
                     .padding()
-                
+
                 Text(result.message)
                     .font(.custom("RussoOne-Regular", size: 14))
                     .foregroundStyle(.light1)
@@ -59,20 +60,16 @@ struct PuzzleResultSheet: View {
         .background(
             RoundedRectangle(cornerRadius: 22)
                 .fill(.light3)
-               
         )
     }
 
     private var headerRow: some View {
         HStack {
             Spacer()
-
             Button { onClose() } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(.light1)
-                   
-                   
             }
             .buttonStyle(.plain)
         }
@@ -87,35 +84,26 @@ struct PuzzleResultSheet: View {
             .accessibilityLabel("Character")
     }
 
-    
-    // MARK: - Character Image
+    // MARK: - Helpers
 
     private var characterImageName: String {
         let type = session.player?.characterType ?? .character1
-
-        // base = "character1" / "character2" / "character3"
         let base = type.rawValue
-
-        // suffix = "win" or "lose"
         let suffix = result.success ? "win" : "lose"
-
         return "\(base)_\(suffix)"
     }
-
-    // MARK: - Helpers
 
     private func fmt(_ t: Double) -> String {
         String(format: "%.2fs", t)
     }
 }
 
-
 // MARK: - Preview
 
 #Preview("PuzzleResultSheet") {
     // Dummy session for preview
     let session = GameSession()
-    return PuzzleResultSheet(
+    return PuzzleResultPopup(
         result: PuzzleResult(
             context: .solo,
             success: true,
