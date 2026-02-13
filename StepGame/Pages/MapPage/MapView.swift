@@ -692,7 +692,7 @@ struct FlagMarker: View {
                 .frame(width: 80, height: 80)
 
             Text("\(number)")
-                .font(.custom("RussoOne-Regular", size: 12))
+                .font(.custom("RussoOne-Regular", size: 10))
                 .foregroundStyle(.light1)
                 .strikethrough(reached, color: .light1)
                 .padding(.bottom, 25)
