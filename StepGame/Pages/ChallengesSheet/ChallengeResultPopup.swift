@@ -1,4 +1,157 @@
 //
+//  ChallengeResultPopupView.swift
+//  StepGame
+//
+
+import SwiftUI
+import Combine
+
+// MARK: - Challenge Result Popup
+
+struct ChallengeResultPopup: View {
+
+    @Binding var isPresented: Bool
+    @StateObject var vm: ChallengeResultPopupViewModel
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.35)
+                .ignoresSafeArea()
+
+            VStack {
+                HStack {
+                    Spacer()
+                    Button { close() } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(.light1)
+                            .frame(width: 30, height: 30)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                Text(vm.titleText)
+                    .font(.custom("RussoOne-Regular", size: 30))
+                    .foregroundStyle(Color.light1)
+
+                Group {
+                    switch vm.mode {
+                    case .group:
+                        groupContent
+                    case .solo:
+                        soloContent
+                    }
+                }
+
+                Text(vm.footerText)
+                    .font(.custom("RussoOne-Regular", size: 16))
+                    .foregroundStyle(Color.light1)
+                    .multilineTextAlignment(.center)
+                    .padding()
+
+                Spacer(minLength: 0)
+            }
+            .padding(18)
+            .frame(maxWidth: 350)
+            .frame(height: 340)
+            .background(
+                RoundedRectangle(cornerRadius: 28).fill(Color.light3)
+            )
+            .padding(.horizontal, 24)
+        }
+    }
+
+    private var groupContent: some View {
+        VStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(Color.light4.opacity(0.75))
+
+                ScrollView(showsIndicators: true) {
+                    VStack(spacing: 10) {
+                        ForEach(vm.rows) { p in
+                            GroupPlayerRow(p: p)
+                        }
+                    }
+                    .padding(.vertical, 10)
+                    .padding(.leading, 12)
+                    .padding(.trailing, 8)
+                }
+            }
+            .frame(height: 130)
+        }
+    }
+
+    private var soloContent: some View {
+        VStack(spacing: 10) {
+            Image(vm.soloResultImage)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 300)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func close() {
+        withAnimation(.easeInOut) { isPresented = false }
+    }
+}
+
+// MARK: - Group Player Row
+
+private struct GroupPlayerRow: View {
+    let p: ChallengeResultPopupViewModel.Row
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(p.avatarImage)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 50, height: 50)
+                .background(Circle().fill(Color.light2.opacity(0.3)))
+
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+
+                    if let place = p.place, (1...3).contains(place) {
+                        Image(placeAssetName(place))
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 25, height: 25)
+                            .padding(.bottom, 3)
+                    }
+
+                    Text(p.name + (p.isMe ? " (Me)" : ""))
+                        .font(.custom("RussoOne-Regular", size: 14))
+                        .foregroundStyle(Color.light1)
+                }
+
+                Text(p.stepsText)
+                    .font(.custom("RussoOne-Regular", size: 11))
+                    .foregroundStyle(Color.light1.opacity(0.75))
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 6)
+    }
+
+    private func placeAssetName(_ place: Int) -> String {
+        switch place {
+        case 1: return "Place1"
+        case 2: return "Place2"
+        case 3: return "Place3"
+        default: return "Place1"
+        }
+    }
+}
+
+
+
+
+
+//
 //  ChallengeResultPopup.swift
 //  StepGame
 //
@@ -173,154 +326,5 @@ final class ChallengeResultPopupViewModel: ObservableObject {
     private func shortId(_ id: String) -> String {
         if id.count <= 6 { return id }
         return "\(id.prefix(3))...\(id.suffix(3))"
-    }
-}
-
-//
-//  ChallengeResultPopupView.swift
-//  StepGame
-//
-
-import SwiftUI
-import Combine
-
-// MARK: - Challenge Result Popup
-
-struct ChallengeResultPopup: View {
-
-    @Binding var isPresented: Bool
-    @StateObject var vm: ChallengeResultPopupViewModel
-
-    var body: some View {
-        ZStack {
-            Color.black.opacity(0.35)
-                .ignoresSafeArea()
-
-            VStack {
-                HStack {
-                    Spacer()
-                    Button { close() } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(.light1)
-                            .frame(width: 30, height: 30)
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                Text(vm.titleText)
-                    .font(.custom("RussoOne-Regular", size: 30))
-                    .foregroundStyle(Color.light1)
-
-                Group {
-                    switch vm.mode {
-                    case .group:
-                        groupContent
-                    case .solo:
-                        soloContent
-                    }
-                }
-
-                Text(vm.footerText)
-                    .font(.custom("RussoOne-Regular", size: 16))
-                    .foregroundStyle(Color.light1)
-                    .multilineTextAlignment(.center)
-                    .padding()
-
-                Spacer(minLength: 0)
-            }
-            .padding(18)
-            .frame(maxWidth: 350)
-            .frame(height: 340)
-            .background(
-                RoundedRectangle(cornerRadius: 28).fill(Color.light3)
-            )
-            .padding(.horizontal, 24)
-        }
-    }
-
-    private var groupContent: some View {
-        VStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(Color.light4.opacity(0.75))
-
-                ScrollView(showsIndicators: true) {
-                    VStack(spacing: 10) {
-                        ForEach(vm.rows) { p in
-                            GroupPlayerRow(p: p)
-                        }
-                    }
-                    .padding(.vertical, 10)
-                    .padding(.leading, 12)
-                    .padding(.trailing, 8)
-                }
-            }
-            .frame(height: 130)
-        }
-    }
-
-    private var soloContent: some View {
-        VStack(spacing: 10) {
-            Image(vm.soloResultImage)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 300)
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    private func close() {
-        withAnimation(.easeInOut) { isPresented = false }
-    }
-}
-
-// MARK: - Group Player Row
-
-private struct GroupPlayerRow: View {
-    let p: ChallengeResultPopupViewModel.Row
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(p.avatarImage)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 50, height: 50)
-                .background(Circle().fill(Color.light2.opacity(0.3)))
-
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
-
-                    if let place = p.place, (1...3).contains(place) {
-                        Image(placeAssetName(place))
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 25, height: 25)
-                            .padding(.bottom, 3)
-                    }
-
-                    Text(p.name + (p.isMe ? " (Me)" : ""))
-                        .font(.custom("RussoOne-Regular", size: 14))
-                        .foregroundStyle(Color.light1)
-                }
-
-                Text(p.stepsText)
-                    .font(.custom("RussoOne-Regular", size: 11))
-                    .foregroundStyle(Color.light1.opacity(0.75))
-            }
-
-            Spacer()
-        }
-        .padding(.horizontal, 6)
-    }
-
-    private func placeAssetName(_ place: Int) -> String {
-        switch place {
-        case 1: return "Place1"
-        case 2: return "Place2"
-        case 3: return "Place3"
-        default: return "Place1"
-        }
     }
 }
