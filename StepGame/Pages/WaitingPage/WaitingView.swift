@@ -73,6 +73,11 @@ struct WaitingRoomView: View {
                     }
                 }
 
+                Text(vm.playerCountText)
+                    .font(.custom("RussoOne-Regular", size: 14))
+                    .foregroundStyle(Color.light1.opacity(0.9))
+                    .padding(.top, -6)
+                
                 Spacer(minLength: 10)
 
                 LobbyCenter(players: vm.lobbyPlayers)

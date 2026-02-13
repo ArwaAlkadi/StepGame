@@ -156,53 +156,74 @@ final class FirebaseService {
 
     func joinChallenge(by joinCode: String, uid: String) async throws -> Challenge {
 
+        // 1) Find challenge by join code (query cannot be inside transaction)
         let q = try await db.collection("challenges")
             .whereField("joinCode", isEqualTo: joinCode)
             .limit(to: 1)
             .getDocuments()
 
         guard let doc = q.documents.first else {
-            throw NSError(domain: "Join", code: 404, userInfo: [NSLocalizedDescriptionKey: "Invalid code"])
+            throw NSError(domain: "Join", code: 404,
+                          userInfo: [NSLocalizedDescriptionKey: "Invalid code"])
         }
 
-        var ch = try doc.data(as: Challenge.self)
-        guard let challengeId = ch.id else {
-            throw NSError(domain: "Join", code: 400, userInfo: [NSLocalizedDescriptionKey: "Missing challenge id"])
+        let challengeId = doc.documentID
+        let chRef = db.collection("challenges").document(challengeId)
+        let partRef = chRef.collection("participants").document(uid)
+
+        // 2) Transaction: read + check + write atomically
+        try await db.runTransaction { tx, errPtr -> Any? in
+            do {
+                let chSnap = try tx.getDocument(chRef)
+
+                guard chSnap.exists else {
+                    throw NSError(domain: "Join", code: 404,
+                                  userInfo: [NSLocalizedDescriptionKey: "Challenge not found"])
+                }
+
+                guard let ch = try? chSnap.data(as: Challenge.self) else {
+                    throw NSError(domain: "Join", code: 500,
+                                  userInfo: [NSLocalizedDescriptionKey: "Invalid challenge data"])
+                }
+
+                // Already joined
+                if ch.playerIds.contains(uid) {
+                    return nil
+                }
+
+                // Capacity check (depends on model)
+                if ch.playerIds.count >= ch.maxPlayers {
+                    throw NSError(domain: "Join", code: 409,
+                                  userInfo: [NSLocalizedDescriptionKey: "Challenge is full"])
+                }
+
+                // Add player id atomically
+                tx.updateData([
+                    "playerIds": FieldValue.arrayUnion([uid])
+                ], forDocument: chRef)
+
+                // Create participant atomically
+                let now = Date()
+                tx.setData([
+                    "challengeId": challengeId,
+                    "playerId": uid,
+                    "steps": 0,
+                    "progress": 0,
+                    "characterState": CharacterState.normal.rawValue,
+                    "lastUpdated": Timestamp(date: now),
+                    "createdAt": Timestamp(date: now),
+                    "didShowResultPopup": false
+                ], forDocument: partRef, merge: true)
+
+                return nil
+            } catch let e {
+                errPtr?.pointee = e as NSError
+                return nil
+            }
         }
 
-        if ch.playerIds.contains(uid) { return ch }
-
-        if ch.playerIds.count >= ch.maxPlayers {
-            throw NSError(domain: "Join", code: 409, userInfo: [NSLocalizedDescriptionKey: "Challenge is full"])
-        }
-
-        var newIds = ch.playerIds
-        newIds.append(uid)
-
-        try await db.collection("challenges").document(challengeId).updateData([
-            "playerIds": newIds
-        ])
-
-        let part = ChallengeParticipant(
-            challengeId: challengeId,
-            playerId: uid,
-            steps: 0,
-            progress: 0,
-            characterState: .normal,
-            lastUpdated: Date(),
-            createdAt: Date(),
-            finishedAt: nil,
-            place: nil,
-            didShowResultPopup: false
-        )
-
-        try await db.collection("challenges")
-            .document(challengeId)
-            .collection("participants")
-            .document(uid)
-            .setData(from: part)
-
-        let updatedDoc = try await db.collection("challenges").document(challengeId).getDocument()
+        // 3) Fetch updated challenge and return it (like your current behavior)
+        let updatedDoc = try await chRef.getDocument()
         return try updatedDoc.data(as: Challenge.self)
     }
 
