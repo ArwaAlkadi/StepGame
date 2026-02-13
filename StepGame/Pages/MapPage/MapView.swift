@@ -594,28 +594,19 @@ private struct MapPlayerMarker: View {
     let attackedByName: String?
     let isUnderSabotage: Bool
     let sabotageExpiresAt: Date?
-
+    
+    @State private var showSabotageInfo = false
     @GestureState private var dragOffset: CGSize = .zero
 
     var body: some View {
         VStack(spacing: 6) {
 
-            if let attackedByName,
-               isUnderSabotage,
-               let expires = sabotageExpiresAt {
-
-                HStack(spacing: 4) {
-                    Text("⚔️ \(attackedByName)")
-                    Text(timeRemainingString(until: expires))
-                        .foregroundStyle(.yellow)
-                }
-                .font(.custom("RussoOne-Regular", size: 10))
-            }
+           
 
             Image(systemName: "bubble.middle.bottom.fill")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 60)
+                .frame(width: 80)
                 .foregroundStyle(.white)
                 .overlay(alignment: .center) {
                     VStack(spacing: 2) {
@@ -633,17 +624,49 @@ private struct MapPlayerMarker: View {
                         }
 
                         Text("\(steps.formatted()) Steps")
-                            .font(.custom("RussoOne-Regular", size: 8))
+                            .font(.custom("RussoOne-Regular", size: 10))
                             .foregroundStyle(.light2)
+                        
+                        if isUnderSabotage,
+                           let expires = sabotageExpiresAt {
+
+                            HStack(spacing: 2) {
+
+                                Text(timeRemainingString(until: expires))
+                                    .font(.custom("RussoOne-Regular", size: 8))
+                                    .foregroundStyle(.red)
+
+                                Button {
+                                    withAnimation(.spring()) {
+                                        showSabotageInfo.toggle()
+                                    }
+                                } label: {
+                                    Image(systemName: "info.circle.fill")
+                                        .foregroundStyle(.red)
+                                        .font(.system(size: 10))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
                     }
                     .multilineTextAlignment(.center)
                     .offset(y: -6)
+                    
+                    
                 }
 
             Image(mapSprite)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 85, height: 85)
+        }
+        .overlay(alignment: .top) {
+            if showSabotageInfo {
+                sabotageTooltip
+                    .offset(y: -90) // يتحكم بمكانه فوق الشخصية
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(999)
+            }
         }
         // ✅ يتحرك مع إصبعك
         .offset(dragOffset)
@@ -657,8 +680,46 @@ private struct MapPlayerMarker: View {
                     state = value.translation   // حركة مؤقتة
                 }
         )
+        .onChange(of: showSabotageInfo) { _, newValue in
+            if newValue {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    withAnimation {
+                        showSabotageInfo = false
+                    }
+                }
+            }
+        }
+        
+        
     }
+    
+    private var sabotageTooltip: some View {
+        VStack(spacing: 5) {
 
+            if let attackedByName {
+
+                Text("⚔️ Under Attack")
+                    .font(.custom("RussoOne-Regular", size: 14))
+                    .foregroundStyle(.light1)
+
+                Text("You are under attack by \(attackedByName)!")
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.light1)
+
+                Text("Your character now is in Lazy mode for 3 hours")
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.light2)
+            }
+        }
+        .font(.custom("RussoOne-Regular", size: 10))
+        .padding()
+        .frame(width: 220)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.white)
+        )
+    }
+    
     private func timeRemainingString(until date: Date) -> String {
         let remaining = Int(date.timeIntervalSince(Date()))
         if remaining <= 0 { return "0m" }
@@ -788,5 +849,26 @@ struct ProfileAvatarButton: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
+    }
+}
+
+
+#Preview("MapPlayerMarker - Sabotage") {
+    ZStack {
+         
+        Image("Map")
+
+        MapPlayerMarker(
+            mapSprite: "character1_normal",
+            name: "Arwa",
+            steps: 1234,
+            isMe: true,
+            isGroup: true,
+            place: 2,
+            attackedByName: "Noura",
+            isUnderSabotage: true,
+            sabotageExpiresAt: Date().addingTimeInterval(60 * 180) // 45 min left
+        )
+        .padding()
     }
 }
