@@ -407,13 +407,13 @@ final class MapViewModel: ObservableObject {
     }
 
     var stepsLeftText: String {
-        guard let ch = challenge else { return "0 Step Left" }
+        guard let ch = challenge else { return "0 Steps Left" }
         let left = max(0, ch.goalSteps - mySteps)
         return "\(left.formatted()) Step Left"
     }
 
     var daysLeftText: String {
-        guard let ch = challenge else { return "0 Day Left" }
+        guard let ch = challenge else { return "0 Days Left" }
 
         let cal = Calendar.current
         let todayStart = cal.startOfDay(for: Date())
@@ -422,9 +422,11 @@ final class MapViewModel: ObservableObject {
         let diff = cal.dateComponents([.day], from: todayStart, to: endDayStart).day ?? 0
         let daysLeft = max(0, diff)
 
-        return "\(daysLeft) Day Left"
-    }
+        let dayWord = daysLeft == 1 ? "Day" : "Days"
 
+        return "\(daysLeft) \(dayWord) Left"
+    }
+    
     func positionForPlayer(_ player: MapPlayerVM, mapSize: CGSize) -> CGPoint {
         let base = positionForProgress(progress: CGFloat(player.progress), mapSize: mapSize)
 
