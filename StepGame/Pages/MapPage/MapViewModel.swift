@@ -427,7 +427,7 @@ final class MapViewModel: ObservableObject {
                 attackedByName: attackedByName,
                 isUnderSabotage: isUnderSabotage,
                 sabotageExpiresAt: part.sabotageExpiresAt,
-                isAttackedByMe: isAttackedByMe  
+                isAttackedByMe: isAttackedByMe
             )
         }
 
@@ -490,23 +490,28 @@ final class MapViewModel: ObservableObject {
 
         let grouped = mapPlayers
             .sorted { $0.id < $1.id }
-            .filter { abs($0.progress - player.progress) < 0.001 }
+            .filter { abs($0.progress - player.progress) < 0.01 }  
 
-        guard grouped.count > 1 else {
+        guard grouped.count > 1,
+              let idx = grouped.firstIndex(where: { $0.id == player.id }) else {
             return clampToBounds(base, mapSize: mapSize)
         }
 
-        guard let idx = grouped.firstIndex(where: { $0.id == player.id }) else {
-            return clampToBounds(base, mapSize: mapSize)
-        }
+        let count = grouped.count
 
-        let horizontalSpacing: CGFloat = 65
-        let totalWidth = CGFloat(grouped.count - 1) * horizontalSpacing
-        let startOffset = -totalWidth / 2
-        let xOffset = startOffset + CGFloat(idx) * horizontalSpacing
+        let radius: CGFloat = min(32, 14 + CGFloat(count - 1) * 6)
+        let angleStep = (2 * CGFloat.pi) / CGFloat(count)
+        let angle = angleStep * CGFloat(idx)
 
-        let shifted = CGPoint(x: base.x + xOffset, y: base.y)
+       
+        let offset = CGPoint(
+            x: cos(angle) * radius,
+            y: sin(angle) * (radius * 0.25)
+        )
+
+        let shifted = CGPoint(x: base.x + offset.x, y: base.y + offset.y)
         return clampToBounds(shifted, mapSize: mapSize)
+        
     }
 
     private func clampToBounds(_ point: CGPoint, mapSize: CGSize) -> CGPoint {
