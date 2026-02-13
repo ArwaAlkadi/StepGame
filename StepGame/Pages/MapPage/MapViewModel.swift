@@ -409,7 +409,7 @@ final class MapViewModel: ObservableObject {
     var stepsLeftText: String {
         guard let ch = challenge else { return "0 Steps Left" }
         let left = max(0, ch.goalSteps - mySteps)
-        return "\(left.formatted()) Step Left"
+        return "\(left.formatted()) Steps Left"
     }
 
     var daysLeftText: String {

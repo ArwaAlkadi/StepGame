@@ -686,14 +686,15 @@ struct FlagMarker: View {
 
     var body: some View {
         ZStack {
-            Image(reached ? "Flag1" : "Flag2")
+            Image(reached ? "Flag2" : "Flag1")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 70, height: 70)
+                .frame(width: 80, height: 80)
 
             Text("\(number)")
                 .font(.custom("RussoOne-Regular", size: 12))
                 .foregroundStyle(.light1)
+                .strikethrough(reached, color: .light1)
                 .padding(.bottom, 25)
                 .padding(.trailing, 8)
         }
